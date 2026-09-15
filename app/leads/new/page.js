@@ -49,7 +49,7 @@ export default function NewLeadPage() {
       <div className="page-header">
         <div>
           <h2>New Lead</h2>
-          <p className="subtitle">Website ke forms jaise hi fields yahan bhi hain.</p>
+          <p className="subtitle">Same fields as the website&apos;s contact forms.</p>
         </div>
       </div>
       {error && <div className="error-banner">{error}</div>}

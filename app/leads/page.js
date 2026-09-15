@@ -68,7 +68,7 @@ export default function LeadsPage() {
 
       {error && (
         <div className="error-banner">
-          Leads load nahi ho sake: {error}
+          Couldn&apos;t load leads: {error}
         </div>
       )}
 
@@ -79,7 +79,7 @@ export default function LeadsPage() {
             <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
           </svg>
           <input
-            placeholder="Name, phone, email, address se search karein..."
+            placeholder="Search by name, phone, email, or address..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -103,10 +103,10 @@ export default function LeadsPage() {
       ) : filtered.length === 0 ? (
         <div className="table-wrap">
           <div className="empty-state">
-            <div className="big">Koi lead nahi mila</div>
+            <div className="big">No leads found</div>
             {leads.length === 0
-              ? 'Website se lead aane ka intezar karein, ya "+ New Lead" se khud add karein.'
-              : "Search/filter clear karke dobara try karein."}
+              ? 'Waiting on leads from the website, or add one with "+ New Lead".'
+              : "Try clearing your search or filters."}
           </div>
         </div>
       ) : (
