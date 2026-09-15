@@ -51,6 +51,12 @@ export default function NewLeadPage() {
           <h2>New Lead</h2>
           <p className="subtitle">Same fields as the website&apos;s contact forms.</p>
         </div>
+        <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 15, height: 15 }}>
+            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+          </svg>
+          Close
+        </button>
       </div>
       {error && <div className="error-banner">{error}</div>}
       <form className="card" onSubmit={handleSubmit}>
@@ -106,6 +112,9 @@ export default function NewLeadPage() {
         <div className="actions-row">
           <button className="btn" type="submit" disabled={saving}>
             {saving ? "Saving..." : "Create Lead"}
+          </button>
+          <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
+            Cancel
           </button>
         </div>
       </form>

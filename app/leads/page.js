@@ -39,6 +39,13 @@ export default function LeadsPage() {
     loadLeads();
   }, []);
 
+  async function handleDelete(e, id) {
+    e.stopPropagation();
+    if (!confirm("Delete this lead permanently?")) return;
+    const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
+    if (res.ok) setLeads((prev) => prev.filter((l) => l.id !== id));
+  }
+
   const filtered = useMemo(() => {
     return leads.filter((lead) => {
       if (status !== "all" && (lead.status || "new") !== status) return false;
@@ -120,6 +127,7 @@ export default function LeadsPage() {
                 <th>Source</th>
                 <th>Status</th>
                 <th>Received</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -156,6 +164,31 @@ export default function LeadsPage() {
                   </td>
                   <td className="source-tag">
                     {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : "-"}
+                  </td>
+                  <td>
+                    <div className="row-actions">
+                      <Link
+                        href={`/leads/${lead.id}`}
+                        className="icon-btn"
+                        title="Edit"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 20h9" strokeLinecap="round" />
+                          <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </Link>
+                      <button
+                        type="button"
+                        className="icon-btn danger"
+                        title="Delete"
+                        onClick={(e) => handleDelete(e, lead.id)}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

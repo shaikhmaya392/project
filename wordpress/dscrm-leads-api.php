@@ -91,3 +91,38 @@ add_action('frm_after_create_entry', function ($item_id) {
         'blocking' => false,
     ));
 }, 30, 1);
+
+/**
+ * Lets the CRM send proposal/notification emails through this site's
+ * already-configured WP Mail SMTP setup, instead of needing a separate
+ * email provider.
+ */
+add_action('rest_api_init', function () {
+    register_rest_route('dscrm/v1', '/send-email', array(
+        'methods' => 'POST',
+        'callback' => 'dscrm_send_email',
+        'permission_callback' => function ($request) {
+            $key = $request->get_header('x-api-key');
+            return is_string($key) && hash_equals(DSCRM_API_KEY, $key);
+        },
+    ));
+});
+
+function dscrm_send_email($request) {
+    $body = json_decode($request->get_body(), true) ?: array();
+    $to = isset($body['to']) ? sanitize_email($body['to']) : '';
+    $subject = isset($body['subject']) ? sanitize_text_field($body['subject']) : '';
+    $html = isset($body['html']) ? wp_kses_post($body['html']) : '';
+
+    if (!is_email($to) || !$subject || !$html) {
+        return new WP_Error('bad_request', 'to, subject and html are required', array('status' => 400));
+    }
+
+    add_filter('wp_mail_content_type', function () {
+        return 'text/html';
+    });
+    $sent = wp_mail($to, $subject, $html);
+    remove_filter('wp_mail_content_type', 'wp_mail_content_type');
+
+    return rest_ensure_response(array('sent' => (bool) $sent));
+}

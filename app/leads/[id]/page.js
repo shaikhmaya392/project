@@ -93,9 +93,17 @@ export default function LeadDetailPage() {
             </p>
           </div>
         </div>
-        <button type="button" className="btn danger" onClick={handleDelete}>
-          Delete Lead
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
+            Close
+          </button>
+          <button type="button" className="btn" onClick={() => router.push(`/leads/${id}/proposal`)}>
+            Send Proposal
+          </button>
+          <button type="button" className="btn danger" onClick={handleDelete}>
+            Delete Lead
+          </button>
+        </div>
       </div>
 
       {error && <div className="error-banner">{error}</div>}

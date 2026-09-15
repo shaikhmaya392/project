@@ -112,6 +112,22 @@ a { color: inherit; }
   padding-left: 4px;
 }
 
+.user-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--sidebar-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-footer-name { font-size: 13px; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-footer-role { font-size: 11px; color: #6b7086; }
+.user-footer-logout {
+  background: transparent; border: none; color: #6b7086; cursor: pointer; padding: 6px; border-radius: 8px; flex-shrink: 0;
+}
+.user-footer-logout:hover { background: var(--sidebar-hover); color: #fff; }
+.user-footer-logout svg { width: 16px; height: 16px; }
+
 /* Content */
 .content { flex: 1; padding: 26px 34px 60px; max-width: 1280px; min-width: 0; }
 
@@ -276,6 +292,16 @@ textarea { resize: vertical; }
 .bar-row .bar-track { flex: 1; height: 9px; background: var(--border-soft); border-radius: 999px; overflow: hidden; }
 .bar-row .bar-fill { height: 100%; border-radius: 999px; }
 .bar-row .bar-count { width: 28px; text-align: right; color: var(--text); font-weight: 600; }
+
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.icon-btn {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  cursor: pointer; text-decoration: none;
+}
+.icon-btn svg { width: 14px; height: 14px; }
+.icon-btn:hover { color: var(--blue); border-color: var(--blue); }
+.icon-btn.danger:hover { color: var(--red); border-color: var(--red); }
 
 .lead-row { border-radius: 10px; }
 .lead-row:hover { background: #fafbfd; }

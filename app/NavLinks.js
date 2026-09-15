@@ -19,6 +19,16 @@ const groups = [
           </svg>
         ),
       },
+      {
+        href: "/inbox",
+        label: "Inbox",
+        icon: (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 12h-6l-2 3h-4l-2-3H2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5.5 5h13l3.5 7v7a2 2 0 01-2 2H4a2 2 0 01-2-2v-7z" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ),
+      },
     ],
   },
   {
@@ -40,6 +50,43 @@ const groups = [
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 6h16M4 6l5 6.5V19l6-2v-4.5L20 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ),
+      },
+      {
+        href: "/proposals",
+        label: "Proposals",
+        icon: (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14 3v6h6M9 13h6M9 17h6" strokeLinecap="round" />
+          </svg>
+        ),
+      },
+    ],
+  },
+  {
+    label: "Insights",
+    links: [
+      {
+        href: "/reports",
+        label: "Reports",
+        icon: (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7 15l4-5 3 3 5-7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ),
+      },
+      {
+        href: "/workflows",
+        label: "Workflows",
+        icon: (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="6" cy="6" r="2.5" />
+            <circle cx="18" cy="6" r="2.5" />
+            <circle cx="12" cy="18" r="2.5" />
+            <path d="M8.2 7.2L11 16M15.8 7.2L13 16M8.5 6h7" strokeLinecap="round" />
           </svg>
         ),
       },
