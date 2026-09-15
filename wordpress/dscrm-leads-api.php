@@ -5,7 +5,7 @@
  * Install: WordPress Admin -> Code Snippets (WPCode) -> Add New
  *   - Code Type: PHP Snippet
  *   - Insertion: Run Everywhere (Auto Insert)
- *   - Paste this entire file, replace the two constants below, then Activate.
+ *   - Paste this entire file, then Activate.
  *
  * Every time a Formidable Forms entry is submitted on the site, this pushes
  * a normalized copy of it straight to the CRM's webhook endpoint. Historical
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('DSCRM_WEBHOOK_URL', 'https://REPLACE_WITH_YOUR_CRM_DOMAIN/api/leads/webhook');
+define('DSCRM_WEBHOOK_URL', 'https://project-git-claude-modest-wozniak-3wa2f6-shaheer-9f09.vercel.app/api/leads/webhook');
 define('DSCRM_API_KEY', 'REPLACE_WITH_GENERATED_API_KEY');
 
 add_action('frm_after_create_entry', function ($item_id) {
