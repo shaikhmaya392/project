@@ -97,9 +97,6 @@ export default function LeadDetailPage() {
           <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
             Close
           </button>
-          <button type="button" className="btn" onClick={() => router.push(`/leads/${id}/proposal`)}>
-            Send Proposal
-          </button>
           <button type="button" className="btn danger" onClick={handleDelete}>
             Delete Lead
           </button>

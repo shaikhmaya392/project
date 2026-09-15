@@ -104,7 +104,7 @@ export default function NewProposalPage() {
       } else {
         alert(`Proposal ${data.proposal.number} sent to ${clientEmail}`);
       }
-      router.push(`/leads/${id}`);
+      router.push("/leads");
     } catch (err) {
       setError(err.message);
       setSaving(false);
@@ -120,7 +120,7 @@ export default function NewProposalPage() {
           <h2>Send Proposal</h2>
           <p className="subtitle">For {lead.name || "this lead"} &middot; emailed with an Accept link</p>
         </div>
-        <button type="button" className="btn secondary" onClick={() => router.push(`/leads/${id}`)}>
+        <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 15, height: 15 }}>
             <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
           </svg>
@@ -251,7 +251,7 @@ export default function NewProposalPage() {
           <button className="btn" type="submit" disabled={saving || services.length === 0}>
             {saving ? "Sending..." : "Send Proposal"}
           </button>
-          <button type="button" className="btn secondary" onClick={() => router.push(`/leads/${id}`)}>
+          <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
             Cancel
           </button>
         </div>
