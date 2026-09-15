@@ -168,6 +168,17 @@ export default function LeadsPage() {
                   <td>
                     <div className="row-actions">
                       <Link
+                        href={`/leads/${lead.id}/proposal`}
+                        className="icon-btn"
+                        title="Send Proposal"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M14 3v6h6M9 13h6M9 17h6" strokeLinecap="round" />
+                        </svg>
+                      </Link>
+                      <Link
                         href={`/leads/${lead.id}`}
                         className="icon-btn"
                         title="Edit"
