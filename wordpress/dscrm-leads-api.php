@@ -1,66 +1,25 @@
 <?php
 /**
- * DS Permitting - CRM Leads Bridge
+ * DS Permitting - CRM Lead Forwarder
  *
  * Install: WordPress Admin -> Code Snippets (WPCode) -> Add New
  *   - Code Type: PHP Snippet
  *   - Insertion: Run Everywhere (Auto Insert)
- *   - Paste this entire file, then Activate.
+ *   - Paste this entire file, replace the two constants below, then Activate.
  *
- * Creates a `wp_ds_crm_leads` table, auto-captures every Formidable Forms
- * submission into it, and exposes a REST API (protected by an API key)
- * that the Next.js CRM app reads/writes through.
+ * Every time a Formidable Forms entry is submitted on the site, this pushes
+ * a normalized copy of it straight to the CRM's webhook endpoint. Historical
+ * entries do not need this snippet - those were imported separately.
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Replace this with the key given to you alongside this file, and use the
-// exact same value for the WORDPRESS_API_KEY env var on the Vercel project.
+define('DSCRM_WEBHOOK_URL', 'https://REPLACE_WITH_YOUR_CRM_DOMAIN/api/leads/webhook');
 define('DSCRM_API_KEY', 'REPLACE_WITH_GENERATED_API_KEY');
 
-function dscrm_table() {
-    global $wpdb;
-    return $wpdb->prefix . 'ds_crm_leads';
-}
-
-add_action('init', function () {
-    global $wpdb;
-    $table = dscrm_table();
-    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
-        return;
-    }
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    $charset_collate = $wpdb->get_charset_collate();
-    $sql = "CREATE TABLE {$table} (
-        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        frm_item_id BIGINT UNSIGNED DEFAULT NULL,
-        name VARCHAR(255) DEFAULT '',
-        email VARCHAR(255) DEFAULT '',
-        phone VARCHAR(100) DEFAULT '',
-        address TEXT,
-        service_type VARCHAR(255) DEFAULT '',
-        message TEXT,
-        source VARCHAR(50) DEFAULT 'manual',
-        form_name VARCHAR(255) DEFAULT '',
-        status VARCHAR(50) DEFAULT 'new',
-        assigned_to VARCHAR(255) DEFAULT '',
-        notes TEXT,
-        raw_data LONGTEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-        UNIQUE KEY frm_item_id (frm_item_id)
-    ) {$charset_collate};";
-    dbDelta($sql);
-});
-
-/**
- * Build a normalized lead record from a Formidable Forms entry id using the
- * raw tables directly, so it works regardless of Formidable version/API.
- */
-function dscrm_build_lead_from_entry($item_id) {
+add_action('frm_after_create_entry', function ($item_id) {
     global $wpdb;
 
     $item = $wpdb->get_row($wpdb->prepare(
@@ -68,7 +27,7 @@ function dscrm_build_lead_from_entry($item_id) {
         $item_id
     ));
     if (!$item) {
-        return null;
+        return;
     }
 
     $form = $wpdb->get_row($wpdb->prepare(
@@ -94,150 +53,41 @@ function dscrm_build_lead_from_entry($item_id) {
         $raw[$label] = $value;
         $lower = strtolower($label);
 
-        if ($data['name'] === '' && strpos($lower, 'name') !== false) {
+        if ($data['name'] === '' && (strpos($lower, 'name') !== false)) {
             $data['name'] = $value;
         } elseif ($data['email'] === '' && strpos($lower, 'email') !== false) {
             $data['email'] = $value;
-        } elseif ($data['phone'] === '' && (strpos($lower, 'phone') !== false || strpos($lower, 'contact') !== false)) {
+        } elseif ($data['phone'] === '' && strpos($lower, 'phone') !== false) {
             $data['phone'] = $value;
-        } elseif ($data['address'] === '' && strpos($lower, 'address') !== false) {
+        } elseif ($data['address'] === '' && strpos($lower, 'located') !== false) {
             $data['address'] = $value;
-        } elseif ($data['service_type'] === '' && (strpos($lower, 'service') !== false || strpos($lower, 'permit') !== false)) {
+        } elseif ($data['service_type'] === '' && (strpos($lower, 'help') !== false || strpos($lower, 'service') !== false || strpos($lower, 'subject') !== false)) {
             $data['service_type'] = $value;
         } else {
             $message_parts[] = $label . ': ' . $value;
         }
     }
 
-    return array(
-        'frm_item_id' => $item_id,
+    $payload = array(
+        'frm_item_id' => (int) $item_id,
         'name' => $data['name'],
         'email' => $data['email'],
         'phone' => $data['phone'],
         'address' => $data['address'],
         'service_type' => $data['service_type'],
         'message' => implode("\n", $message_parts),
-        'source' => 'website_form',
         'form_name' => $form ? $form->name : '',
-        'status' => 'new',
-        'raw_data' => wp_json_encode($raw),
+        'raw_data' => $raw,
         'created_at' => $item->created_at,
-        'updated_at' => current_time('mysql'),
     );
-}
 
-function dscrm_upsert_entry($item_id) {
-    global $wpdb;
-    $lead = dscrm_build_lead_from_entry($item_id);
-    if (!$lead) {
-        return;
-    }
-    $existing = $wpdb->get_var($wpdb->prepare(
-        'SELECT id FROM ' . dscrm_table() . ' WHERE frm_item_id = %d',
-        $item_id
+    wp_remote_post(DSCRM_WEBHOOK_URL, array(
+        'headers' => array(
+            'Content-Type' => 'application/json',
+            'x-api-key' => DSCRM_API_KEY,
+        ),
+        'body' => wp_json_encode($payload),
+        'timeout' => 10,
+        'blocking' => false,
     ));
-    if ($existing) {
-        return;
-    }
-    $wpdb->insert(dscrm_table(), $lead);
-}
-
-// Capture new submissions in real time.
-add_action('frm_after_create_entry', function ($entry_id) {
-    dscrm_upsert_entry($entry_id);
 }, 30, 1);
-
-add_action('rest_api_init', function () {
-    register_rest_route('dscrm/v1', '/leads', array(
-        array('methods' => 'GET', 'callback' => 'dscrm_get_leads', 'permission_callback' => 'dscrm_auth'),
-        array('methods' => 'POST', 'callback' => 'dscrm_create_lead', 'permission_callback' => 'dscrm_auth'),
-    ));
-    register_rest_route('dscrm/v1', '/leads/(?P<id>\d+)', array(
-        array('methods' => 'GET', 'callback' => 'dscrm_get_lead', 'permission_callback' => 'dscrm_auth'),
-        array('methods' => array('PATCH', 'POST'), 'callback' => 'dscrm_update_lead', 'permission_callback' => 'dscrm_auth'),
-        array('methods' => 'DELETE', 'callback' => 'dscrm_delete_lead', 'permission_callback' => 'dscrm_auth'),
-    ));
-    register_rest_route('dscrm/v1', '/backfill', array(
-        'methods' => 'POST',
-        'callback' => 'dscrm_backfill',
-        'permission_callback' => 'dscrm_auth',
-    ));
-});
-
-function dscrm_auth($request) {
-    $key = $request->get_header('x-api-key');
-    return is_string($key) && hash_equals(DSCRM_API_KEY, $key);
-}
-
-function dscrm_get_leads() {
-    global $wpdb;
-    $rows = $wpdb->get_results('SELECT * FROM ' . dscrm_table() . ' ORDER BY created_at DESC', ARRAY_A);
-    return rest_ensure_response($rows);
-}
-
-function dscrm_get_lead($request) {
-    global $wpdb;
-    $row = $wpdb->get_row($wpdb->prepare(
-        'SELECT * FROM ' . dscrm_table() . ' WHERE id = %d',
-        (int) $request['id']
-    ), ARRAY_A);
-    if (!$row) {
-        return new WP_Error('not_found', 'Lead not found', array('status' => 404));
-    }
-    return rest_ensure_response($row);
-}
-
-function dscrm_create_lead($request) {
-    global $wpdb;
-    $body = json_decode($request->get_body(), true) ?: array();
-    $allowed = array('name', 'email', 'phone', 'address', 'service_type', 'message', 'status', 'assigned_to', 'notes');
-    $data = array('source' => 'manual', 'created_at' => current_time('mysql'), 'updated_at' => current_time('mysql'));
-    foreach ($allowed as $field) {
-        $data[$field] = isset($body[$field]) ? sanitize_textarea_field($body[$field]) : '';
-    }
-    if ($data['status'] === '') {
-        $data['status'] = 'new';
-    }
-    $wpdb->insert(dscrm_table(), $data);
-    $id = $wpdb->insert_id;
-    return dscrm_get_lead(new WP_REST_Request('GET', '', array('id' => $id)));
-}
-
-function dscrm_update_lead($request) {
-    global $wpdb;
-    $id = (int) $request['id'];
-    $body = json_decode($request->get_body(), true) ?: array();
-    $allowed = array('name', 'email', 'phone', 'address', 'service_type', 'message', 'status', 'assigned_to', 'notes');
-    $data = array('updated_at' => current_time('mysql'));
-    foreach ($allowed as $field) {
-        if (array_key_exists($field, $body)) {
-            $data[$field] = sanitize_textarea_field($body[$field]);
-        }
-    }
-    $wpdb->update(dscrm_table(), $data, array('id' => $id));
-    return dscrm_get_lead($request);
-}
-
-function dscrm_delete_lead($request) {
-    global $wpdb;
-    $wpdb->delete(dscrm_table(), array('id' => (int) $request['id']));
-    return rest_ensure_response(array('deleted' => true));
-}
-
-// One-time (safe to re-run) import of every historical Formidable entry.
-function dscrm_backfill() {
-    global $wpdb;
-    $ids = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}frm_items");
-    $imported = 0;
-    foreach ($ids as $item_id) {
-        $before = $wpdb->get_var($wpdb->prepare(
-            'SELECT id FROM ' . dscrm_table() . ' WHERE frm_item_id = %d',
-            $item_id
-        ));
-        if (!$before) {
-            dscrm_upsert_entry((int) $item_id);
-            $imported++;
-        }
-    }
-    return rest_ensure_response(array('scanned' => count($ids), 'imported' => $imported));
-}

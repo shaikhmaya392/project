@@ -1,8 +1,9 @@
 import "./globals.css";
+import NavLinks from "./NavLinks";
 
 export const metadata = {
   title: "DS Permitting CRM",
-  description: "Leads dashboard for DS Permitting Services",
+  description: "Leads and permit pipeline dashboard for DS Permitting Services",
 };
 
 export default function RootLayout({ children }) {
@@ -11,11 +12,19 @@ export default function RootLayout({ children }) {
       <body>
         <div className="shell">
           <aside className="sidebar">
-            <h1>DS Permitting CRM</h1>
-            <nav>
-              <a href="/leads">Leads</a>
-              <a href="/leads/new">+ New Lead</a>
-            </nav>
+            <div className="brand">
+              <img src="/logo.png" alt="DS Permitting Services" />
+              <div className="brand-text">
+                <div className="brand-name">DS Permitting</div>
+                <div className="brand-sub">CRM</div>
+              </div>
+            </div>
+            <NavLinks />
+            <div className="sidebar-footer">
+              DS Permitting Services
+              <br />
+              Fort McCoy, FL
+            </div>
           </aside>
           <main className="content">{children}</main>
         </div>

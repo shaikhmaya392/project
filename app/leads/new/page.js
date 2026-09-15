@@ -47,10 +47,14 @@ export default function NewLeadPage() {
   return (
     <div>
       <div className="page-header">
-        <h2>New Lead</h2>
+        <div>
+          <h2>New Lead</h2>
+          <p className="subtitle">Website ke forms jaise hi fields yahan bhi hain.</p>
+        </div>
       </div>
       {error && <div className="error-banner">{error}</div>}
       <form className="card" onSubmit={handleSubmit}>
+        <div className="panel-title">Lead details</div>
         <div className="form-grid">
           <div>
             <label>Name</label>
@@ -66,10 +70,14 @@ export default function NewLeadPage() {
           </div>
           <div>
             <label>Service / Permit Type</label>
-            <input value={form.service_type} onChange={(e) => set("service_type", e.target.value)} placeholder="e.g. Permit renewal, code violation" />
+            <input
+              value={form.service_type}
+              onChange={(e) => set("service_type", e.target.value)}
+              placeholder="e.g. Permit renewal, code violation"
+            />
           </div>
           <div className="full">
-            <label>Address</label>
+            <label>Where is the work located? (Address)</label>
             <input value={form.address} onChange={(e) => set("address", e.target.value)} />
           </div>
           <div className="full">
