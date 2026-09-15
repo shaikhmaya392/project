@@ -168,6 +168,23 @@ export default function LeadDetailPage() {
               </div>
             </div>
           </div>
+
+          {lead.raw_data && Object.keys(lead.raw_data).length > 0 && (
+            <div className="card">
+              <div className="panel-title">Submitted Form Data</div>
+              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: -8, marginBottom: 12 }}>
+                Every field exactly as the visitor filled it in, unedited.
+              </p>
+              <div className="meta-list">
+                {Object.entries(lead.raw_data).map(([label, value]) => (
+                  <div className="meta-row" key={label}>
+                    <span>{label}</span>
+                    <span>{value || "-"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <form className="card" onSubmit={handleSave}>

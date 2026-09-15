@@ -50,7 +50,17 @@ add_action('frm_after_create_entry', function ($item_id) {
     foreach ($metas as $meta) {
         $label = (string) $meta->field_label;
         $value = is_array($meta->meta_value) ? implode(', ', (array) $meta->meta_value) : (string) $meta->meta_value;
-        $raw[$label] = $value;
+
+        // Keep every field even when two fields share the same label
+        // (e.g. multiple "Email" fields on a form).
+        $rawKey = $label;
+        $dupeIndex = 2;
+        while (array_key_exists($rawKey, $raw)) {
+            $rawKey = $label . ' (' . $dupeIndex . ')';
+            $dupeIndex++;
+        }
+        $raw[$rawKey] = $value;
+
         $lower = strtolower($label);
 
         if ($data['name'] === '' && (strpos($lower, 'name') !== false)) {
