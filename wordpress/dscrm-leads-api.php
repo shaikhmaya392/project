@@ -128,11 +128,27 @@ function dscrm_send_email($request) {
         return new WP_Error('bad_request', 'to, subject and html are required', array('status' => 400));
     }
 
+    $attachments = array();
+    $tmpFile = null;
+    if (!empty($body['attachment_base64']) && !empty($body['attachment_filename'])) {
+        $decoded = base64_decode($body['attachment_base64'], true);
+        if ($decoded !== false) {
+            $filename = sanitize_file_name($body['attachment_filename']);
+            $tmpFile = trailingslashit(get_temp_dir()) . 'dscrm-' . wp_generate_password(8, false) . '-' . $filename;
+            file_put_contents($tmpFile, $decoded);
+            $attachments[] = $tmpFile;
+        }
+    }
+
     add_filter('wp_mail_content_type', function () {
         return 'text/html';
     });
-    $sent = wp_mail($to, $subject, $html);
+    $sent = wp_mail($to, $subject, $html, array(), $attachments);
     remove_filter('wp_mail_content_type', 'wp_mail_content_type');
+
+    if ($tmpFile && file_exists($tmpFile)) {
+        unlink($tmpFile);
+    }
 
     return rest_ensure_response(array('sent' => (bool) $sent));
 }

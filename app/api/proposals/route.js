@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getProposals, createProposal } from "../../../lib/proposalsStore";
 import { proposalEmailHtml } from "../../../lib/proposalEmail";
+import { buildProposalPdf } from "../../../lib/proposalPdf";
 import { sendEmail } from "../../../lib/mailer";
 
 export async function GET() {
@@ -19,10 +20,12 @@ export async function POST(request) {
     const acceptUrl = `${origin}/proposals/${proposal.token}`;
 
     try {
+      const pdfBuffer = await buildProposalPdf(proposal);
       await sendEmail({
         to: proposal.client_email,
         subject: `Proposal ${proposal.number} from DS Permitting Services`,
         html: proposalEmailHtml(proposal, acceptUrl),
+        attachment: { filename: `Proposal-${proposal.number}.pdf`, buffer: pdfBuffer },
       });
     } catch (mailErr) {
       return NextResponse.json(
