@@ -32,9 +32,9 @@
 
 .auth-visual-inner { position: relative; max-width: 400px; color: #fff; }
 .auth-logo-badge {
-  width: 132px; height: 132px; object-fit: contain;
-  background: #fff; border-radius: 50%; padding: 12px; margin-bottom: 28px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  width: 160px; height: 160px; object-fit: contain;
+  mix-blend-mode: screen;
+  margin-bottom: 24px;
 }
 .auth-visual-inner h1 { font-size: 26px; margin: 0 0 12px; }
 .auth-visual-inner p { color: #aab0cc; font-size: 15px; line-height: 1.6; }
