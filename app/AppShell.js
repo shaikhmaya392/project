@@ -8,7 +8,7 @@ const NO_SHELL_PATHS = ["/login", "/signup"];
 
 export default function AppShell({ children }) {
   const pathname = usePathname();
-  const noShell = NO_SHELL_PATHS.includes(pathname) || pathname.startsWith("/permits/");
+  const noShell = NO_SHELL_PATHS.includes(pathname) || /^\/quotations\/[^/]+$/.test(pathname);
 
   if (noShell) return <>{children}</>;
 

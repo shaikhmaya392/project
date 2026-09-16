@@ -54,8 +54,8 @@ const groups = [
         ),
       },
       {
-        href: "/permits",
-        label: "Permits",
+        href: "/quotations",
+        label: "Quotations",
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z" strokeLinecap="round" strokeLinejoin="round" />

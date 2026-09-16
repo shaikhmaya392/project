@@ -17,44 +17,43 @@ export function ToastProvider({ children }) {
   }, []);
 
   const showToast = useCallback(
-    (message, { type = "success", duration = 4500 } = {}) => {
+    (message, { type = "success", title, duration = 5000 } = {}) => {
       const id = ++idSeq;
-      setToasts((prev) => [...prev, { id, message, type }]);
+      const resolvedTitle = title || (type === "success" ? "Success" : "Something went wrong");
+      setToasts((prev) => [...prev, { id, message, type, title: resolvedTitle }]);
       timers.current[id] = setTimeout(() => dismiss(id), duration);
       return id;
     },
     [dismiss]
   );
 
+  const active = toasts[toasts.length - 1];
+
   return (
     <ToastContext.Provider value={{ showToast, dismiss }}>
       {children}
-      <div className="toast-stack">
-        {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type}`}>
-            <span className="toast-icon">
-              {t.type === "success" && (
+      {active && (
+        <div className="toast-backdrop" onClick={() => dismiss(active.id)}>
+          <div className={`toast-modal toast-modal-${active.type}`} onClick={(e) => e.stopPropagation()}>
+            <div className="toast-modal-icon">
+              {active.type === "success" ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" />
                   <path d="M8 12.5l2.5 2.5L16 9.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              )}
-              {t.type === "error" && (
+              ) : (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" />
                   <path d="M12 8v5M12 16.5v.01" strokeLinecap="round" />
                 </svg>
               )}
-            </span>
-            <span className="toast-message">{t.message}</span>
-            <button type="button" className="toast-close" onClick={() => dismiss(t.id)}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
-              </svg>
+            </div>
+            <div className="toast-modal-title">{active.title}</div>
+            <div className="toast-modal-message">{active.message}</div>
+            <button type="button" className="btn toast-modal-ok" onClick={() => dismiss(active.id)}>
+              OK
             </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </ToastContext.Provider>
   );
 }

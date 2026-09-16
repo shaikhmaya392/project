@@ -17,6 +17,7 @@ function initials(name) {
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
+  const [quotationsByLead, setQuotationsByLead] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
@@ -33,6 +34,20 @@ export default function LeadsPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+
+    fetch("/api/quotations")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const map = {};
+        for (const q of data) {
+          if (!q.lead_id) continue;
+          // Keep the most recent quotation per lead (list is newest-first already).
+          if (!map[q.lead_id]) map[q.lead_id] = q;
+        }
+        setQuotationsByLead(map);
+      })
+      .catch(() => {});
   }
 
   useEffect(() => {
@@ -130,7 +145,7 @@ export default function LeadsPage() {
             </colgroup>
             <thead>
               <tr>
-                <th>Lead</th>
+                <th>Name</th>
                 <th>Contact</th>
                 <th>Service</th>
                 <th>Source</th>
@@ -148,6 +163,11 @@ export default function LeadsPage() {
                       <div>
                         <div className="name-primary">{lead.name || "(no name)"}</div>
                         {lead.address && <div className="name-secondary">{lead.address}</div>}
+                        {quotationsByLead[lead.id] && (
+                          <span className={`quote-flag ${quotationsByLead[lead.id].status === "accepted" ? "accepted" : ""}`}>
+                            {quotationsByLead[lead.id].status === "accepted" ? "Quotation accepted" : "Quotation sent"}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -177,9 +197,9 @@ export default function LeadsPage() {
                   <td>
                     <div className="row-actions">
                       <Link
-                        href={`/leads/${lead.id}/permit`}
+                        href={`/leads/${lead.id}/quotation`}
                         className="icon-btn"
-                        title="Send Permit"
+                        title="Send Quotation"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

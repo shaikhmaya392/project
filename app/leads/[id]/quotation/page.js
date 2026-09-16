@@ -20,7 +20,7 @@ function defaultValidUntil() {
   return d.toISOString().slice(0, 10);
 }
 
-export default function NewPermitPage() {
+export default function NewQuotationPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showToast } = useToast();
@@ -85,7 +85,7 @@ export default function NewPermitPage() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/permits", {
+      const res = await fetch("/api/quotations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,11 +100,11 @@ export default function NewPermitPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send permit");
+      if (!res.ok) throw new Error(data.error || "Failed to send quotation");
       if (data.warning) {
         showToast(data.warning, { type: "error", duration: 7000 });
       } else {
-        showToast(`Permit ${data.permit.number} sent to ${clientEmail}`, { type: "success" });
+        showToast(`Quotation ${data.quotation.number} sent to ${clientEmail}`, { type: "success" });
       }
       router.push("/leads");
     } catch (err) {
@@ -119,7 +119,7 @@ export default function NewPermitPage() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Send Permit</h2>
+          <h2>Send Quotation</h2>
           <p className="subtitle">For {lead.name || "this lead"} &middot; emailed with an Accept link</p>
         </div>
         <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
@@ -244,14 +244,14 @@ export default function NewPermitPage() {
 
         <div className="form-grid" style={{ marginBottom: 8 }}>
           <div>
-            <label>Permit Valid Until</label>
+            <label>Quotation Valid Until</label>
             <input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} required />
           </div>
         </div>
 
         <div className="actions-row">
           <button className="btn" type="submit" disabled={saving || services.length === 0}>
-            {saving ? "Sending..." : "Send Permit"}
+            {saving ? "Sending..." : "Send Quotation"}
           </button>
           <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
             Cancel
