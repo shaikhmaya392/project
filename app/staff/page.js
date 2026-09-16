@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
+import { useToast } from "../ToastProvider";
 
 const ROLES = ["admin", "agent", "marketing", "support"];
 
@@ -17,6 +18,7 @@ function initials(name) {
 const emptyForm = { name: "", email: "", password: "", role: "agent", phone: "", address: "" };
 
 export default function StaffPage() {
+  const { showToast } = useToast();
   const [me, setMe] = useState(null);
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,11 +88,12 @@ export default function StaffPage() {
     const data = await res.json();
     setSaving(false);
     if (!res.ok) {
-      alert(data.error);
+      showToast(data.error, { type: "error" });
       return;
     }
     setEditingId(null);
     load();
+    showToast("Staff member updated", { type: "success" });
   }
 
   async function handleRemove(id) {
@@ -98,10 +101,11 @@ export default function StaffPage() {
     const res = await fetch(`/api/staff/${id}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) {
-      alert(data.error);
+      showToast(data.error, { type: "error" });
       return;
     }
     load();
+    showToast("Staff member removed", { type: "success" });
   }
 
   async function handleAdd(e) {
@@ -115,12 +119,13 @@ export default function StaffPage() {
     const data = await res.json();
     setSaving(false);
     if (!res.ok) {
-      alert(data.error);
+      showToast(data.error, { type: "error" });
       return;
     }
     setShowAdd(false);
     setAddForm(emptyForm);
     load();
+    showToast("Staff member added", { type: "success" });
   }
 
   return (
@@ -200,6 +205,13 @@ export default function StaffPage() {
 
           <div className="table-wrap">
             <table>
+              <colgroup>
+                <col style={{ width: "26%" }} />
+                <col style={{ width: "32%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "56px" }} />
+              </colgroup>
               <thead>
                 <tr>
                   <th>Name</th>

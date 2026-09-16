@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useToast } from "../../../ToastProvider";
 
 const COMMON_SERVICES = [
   "Permit research",
@@ -22,6 +23,7 @@ function defaultValidUntil() {
 export default function NewPermitPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { showToast } = useToast();
   const [lead, setLead] = useState(null);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
@@ -100,9 +102,9 @@ export default function NewPermitPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send permit");
       if (data.warning) {
-        alert(data.warning);
+        showToast(data.warning, { type: "error", duration: 7000 });
       } else {
-        alert(`Permit ${data.permit.number} sent to ${clientEmail}`);
+        showToast(`Permit ${data.permit.number} sent to ${clientEmail}`, { type: "success" });
       }
       router.push("/leads");
     } catch (err) {

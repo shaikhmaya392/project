@@ -41,6 +41,14 @@ export default function PermitsPage() {
       ) : (
         <div className="table-wrap">
           <table>
+            <colgroup>
+              <col style={{ width: "12%" }} />
+              <col style={{ width: "24%" }} />
+              <col style={{ width: "24%" }} />
+              <col style={{ width: "12%" }} />
+              <col style={{ width: "13%" }} />
+              <col style={{ width: "15%" }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>Permit</th>

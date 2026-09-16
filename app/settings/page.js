@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useToast } from "../ToastProvider";
 
 export default function SettingsPage() {
+  const { showToast } = useToast();
   const [status, setStatus] = useState(null);
   const [me, setMe] = useState(null);
   const [form, setForm] = useState(null);
@@ -36,12 +38,13 @@ export default function SettingsPage() {
     const data = await res.json();
     setSaving(false);
     if (!res.ok) {
-      alert(data.error);
+      showToast(data.error, { type: "error" });
       return;
     }
     setMe(data);
     setForm((f) => ({ ...f, password: "" }));
     setSaved(true);
+    showToast("Account updated", { type: "success" });
   }
 
   return (
