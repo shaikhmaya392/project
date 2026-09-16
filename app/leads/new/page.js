@@ -8,11 +8,7 @@ const empty = {
   email: "",
   phone: "",
   address: "",
-  service_type: "",
   message: "",
-  status: "new",
-  assigned_to: "",
-  notes: "",
 };
 
 export default function NewLeadPage() {
@@ -70,43 +66,17 @@ export default function NewLeadPage() {
             <label>Phone</label>
             <input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
           </div>
-          <div>
-            <label>Email</label>
+          <div className="full">
+            <label>Email Address</label>
             <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
           </div>
-          <div>
-            <label>Service / Permit Type</label>
-            <input
-              value={form.service_type}
-              onChange={(e) => set("service_type", e.target.value)}
-              placeholder="e.g. Permit renewal, code violation"
-            />
-          </div>
           <div className="full">
-            <label>Where is the work located? (Address)</label>
+            <label>Where is the work located?</label>
             <input value={form.address} onChange={(e) => set("address", e.target.value)} />
           </div>
           <div className="full">
-            <label>Message / Details</label>
+            <label>Message</label>
             <textarea rows={4} value={form.message} onChange={(e) => set("message", e.target.value)} />
-          </div>
-          <div>
-            <label>Status</label>
-            <select value={form.status} onChange={(e) => set("status", e.target.value)}>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="in_progress">In Progress</option>
-              <option value="won">Won</option>
-              <option value="lost">Lost</option>
-            </select>
-          </div>
-          <div>
-            <label>Assigned To</label>
-            <input value={form.assigned_to} onChange={(e) => set("assigned_to", e.target.value)} />
-          </div>
-          <div className="full">
-            <label>Internal Notes</label>
-            <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} />
           </div>
         </div>
         <div className="actions-row">

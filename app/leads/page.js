@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-const STATUSES = ["all", "new", "contacted", "in_progress", "won", "lost"];
-
 function initials(name) {
   if (!name) return "?";
   return name
@@ -21,7 +19,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
+  const [messagePreview, setMessagePreview] = useState(null);
 
   function loadLeads() {
     setLoading(true);
@@ -42,7 +40,6 @@ export default function LeadsPage() {
         const map = {};
         for (const q of data) {
           if (!q.lead_id) continue;
-          // Keep the most recent quotation per lead (list is newest-first already).
           if (!map[q.lead_id]) map[q.lead_id] = q;
         }
         setQuotationsByLead(map);
@@ -62,19 +59,16 @@ export default function LeadsPage() {
   }
 
   const filtered = useMemo(() => {
-    return leads.filter((lead) => {
-      if (status !== "all" && (lead.status || "new") !== status) return false;
-      if (!query.trim()) return true;
-      const q = query.toLowerCase();
-      return (
+    if (!query.trim()) return leads;
+    const q = query.toLowerCase();
+    return leads.filter(
+      (lead) =>
         (lead.name || "").toLowerCase().includes(q) ||
         (lead.email || "").toLowerCase().includes(q) ||
         (lead.phone || "").toLowerCase().includes(q) ||
-        (lead.address || "").toLowerCase().includes(q) ||
-        (lead.service_type || "").toLowerCase().includes(q)
-      );
-    });
-  }, [leads, query, status]);
+        (lead.address || "").toLowerCase().includes(q)
+    );
+  }, [leads, query]);
 
   return (
     <div>
@@ -88,11 +82,7 @@ export default function LeadsPage() {
         </Link>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          Couldn&apos;t load leads: {error}
-        </div>
-      )}
+      {error && <div className="error-banner">Couldn&apos;t load leads: {error}</div>}
 
       <div className="toolbar">
         <div className="search-box">
@@ -106,18 +96,6 @@ export default function LeadsPage() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <div className="filter-pills">
-          {STATUSES.map((s) => (
-            <button
-              key={s}
-              className={`pill${status === s ? " active" : ""}`}
-              onClick={() => setStatus(s)}
-              type="button"
-            >
-              {s === "all" ? "All" : s.replace("_", " ")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {loading ? (
@@ -128,29 +106,29 @@ export default function LeadsPage() {
             <div className="big">No leads found</div>
             {leads.length === 0
               ? 'Waiting on leads from the website, or add one with "+ New Lead".'
-              : "Try clearing your search or filters."}
+              : "Try clearing your search."}
           </div>
         </div>
       ) : (
         <div className="table-wrap">
           <table>
             <colgroup>
-              <col style={{ width: "24%" }} />
-              <col style={{ width: "20%" }} />
-              <col style={{ width: "13%" }} />
-              <col style={{ width: "11%" }} />
-              <col style={{ width: "9%" }} />
+              <col style={{ width: "17%" }} />
               <col style={{ width: "10%" }} />
-              <col style={{ width: "108px" }} />
+              <col style={{ width: "12%" }} />
+              <col style={{ width: "17%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "17%" }} />
+              <col style={{ width: "132px" }} />
             </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Contact</th>
-                <th>Service</th>
-                <th>Source</th>
-                <th>Status</th>
-                <th>Received</th>
+                <th>Date</th>
+                <th>Phone</th>
+                <th>Email Address</th>
+                <th>Where Is The Work Located?</th>
+                <th>Message</th>
                 <th></th>
               </tr>
             </thead>
@@ -162,7 +140,6 @@ export default function LeadsPage() {
                       <div className="avatar">{initials(lead.name)}</div>
                       <div>
                         <div className="name-primary">{lead.name || "(no name)"}</div>
-                        {lead.address && <div className="name-secondary">{lead.address}</div>}
                         {quotationsByLead[lead.id] && (
                           <span className={`quote-flag ${quotationsByLead[lead.id].status === "accepted" ? "accepted" : ""}`}>
                             {quotationsByLead[lead.id].status === "accepted" ? "Quotation accepted" : "Quotation sent"}
@@ -171,31 +148,42 @@ export default function LeadsPage() {
                       </div>
                     </div>
                   </td>
-                  <td>
-                    {lead.phone || "-"}
-                    <br />
-                    <span className="source-tag">{lead.email}</span>
-                  </td>
-                  <td>{lead.service_type || "-"}</td>
-                  <td>
-                    {lead.source === "website_form" ? (
-                      <span className="source-chip website">
-                        <span className="dot" /> {lead.form_name || "Website"}
-                      </span>
-                    ) : (
-                      <span className="source-chip manual">
-                        <span className="dot" /> Manual
-                      </span>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`badge status-${lead.status || "new"}`}>{(lead.status || "new").replace("_", " ")}</span>
-                  </td>
                   <td className="source-tag">
                     {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : "-"}
                   </td>
+                  <td>{lead.phone || "-"}</td>
+                  <td className="source-tag">{lead.email || "-"}</td>
+                  <td>{lead.address || "-"}</td>
+                  <td>
+                    {lead.message ? (
+                      <button
+                        type="button"
+                        className="message-preview-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMessagePreview(lead);
+                        }}
+                      >
+                        {lead.message.length > 28 ? `${lead.message.slice(0, 28)}...` : lead.message}
+                      </button>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
                   <td>
                     <div className="row-actions">
+                      {lead.phone && (
+                        <a
+                          href={`tel:${lead.phone}`}
+                          className="icon-btn"
+                          title={`Call ${lead.phone}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M4 4h4l2 5-2.5 1.5a11 11 0 005 5L14 13l5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z" />
+                          </svg>
+                        </a>
+                      )}
                       <Link
                         href={`/leads/${lead.id}/quotation`}
                         className="icon-btn"
@@ -234,6 +222,22 @@ export default function LeadsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {messagePreview && (
+        <div className="msg-backdrop" onClick={() => setMessagePreview(null)}>
+          <div className="msg-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="panel-title">
+              Message from {messagePreview.name || "lead"}
+              <button type="button" className="icon-btn" onClick={() => setMessagePreview(null)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="message-block">{messagePreview.message}</div>
+          </div>
         </div>
       )}
     </div>
