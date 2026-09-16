@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-const STATUSES = ["new", "contacted", "in_progress", "won", "lost"];
-
 function initials(name) {
   if (!name) return "?";
   return name
@@ -64,11 +62,6 @@ export default function LeadDetailPage() {
     persist(lead);
   }
 
-  function handleStatusChange(s) {
-    set("status", s);
-    persist({ ...lead, status: s });
-  }
-
   async function handleDelete() {
     if (!confirm("Delete this lead permanently?")) return;
     const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
@@ -104,22 +97,6 @@ export default function LeadDetailPage() {
       </div>
 
       {error && <div className="error-banner">{error}</div>}
-
-      <div className="card" style={{ marginBottom: 18 }}>
-        <div className="panel-title">Status</div>
-        <div className="status-picker">
-          {STATUSES.map((s) => (
-            <button
-              key={s}
-              type="button"
-              className={`status-option status-${s}${lead.status === s ? " selected" : ""}`}
-              onClick={() => handleStatusChange(s)}
-            >
-              {s.replace("_", " ")}
-            </button>
-          ))}
-        </div>
-      </div>
 
       <div className="two-col">
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -159,32 +136,11 @@ export default function LeadDetailPage() {
                 <span>{lead.address || "-"}</span>
               </div>
               <div className="meta-row">
-                <span>Assigned to</span>
-                <span>{lead.assigned_to || "Unassigned"}</span>
-              </div>
-              <div className="meta-row">
                 <span>Source</span>
                 <span>{lead.source === "website_form" ? lead.form_name || "Website form" : "Manual"}</span>
               </div>
             </div>
           </div>
-
-          {lead.raw_data && Object.keys(lead.raw_data).length > 0 && (
-            <div className="card">
-              <div className="panel-title">Submitted Form Data</div>
-              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: -8, marginBottom: 12 }}>
-                Every field exactly as the visitor filled it in, unedited.
-              </p>
-              <div className="meta-list">
-                {Object.entries(lead.raw_data).map(([label, value]) => (
-                  <div className="meta-row" key={label}>
-                    <span>{label}</span>
-                    <span>{value || "-"}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <form className="card" onSubmit={handleSave}>
@@ -198,7 +154,7 @@ export default function LeadDetailPage() {
               <label>Phone</label>
               <input value={lead.phone || ""} onChange={(e) => set("phone", e.target.value)} />
             </div>
-            <div>
+            <div className="full">
               <label>Email</label>
               <input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} />
             </div>
@@ -213,14 +169,6 @@ export default function LeadDetailPage() {
             <div className="full">
               <label>Message / Details</label>
               <textarea rows={4} value={lead.message || ""} onChange={(e) => set("message", e.target.value)} />
-            </div>
-            <div>
-              <label>Assigned To</label>
-              <input value={lead.assigned_to || ""} onChange={(e) => set("assigned_to", e.target.value)} />
-            </div>
-            <div className="full">
-              <label>Internal Notes</label>
-              <textarea rows={3} value={lead.notes || ""} onChange={(e) => set("notes", e.target.value)} />
             </div>
           </div>
           <div className="actions-row">
