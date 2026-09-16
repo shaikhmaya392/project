@@ -128,10 +128,6 @@ export default function LeadDetailPage() {
             <div className="panel-title">Details</div>
             <div className="meta-list">
               <div className="meta-row">
-                <span>Service type</span>
-                <span>{lead.service_type || "-"}</span>
-              </div>
-              <div className="meta-row">
                 <span>Address</span>
                 <span>{lead.address || "-"}</span>
               </div>
@@ -157,10 +153,6 @@ export default function LeadDetailPage() {
             <div className="full">
               <label>Email</label>
               <input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} />
-            </div>
-            <div>
-              <label>Service / Permit Type</label>
-              <input value={lead.service_type || ""} onChange={(e) => set("service_type", e.target.value)} />
             </div>
             <div className="full">
               <label>Address</label>
