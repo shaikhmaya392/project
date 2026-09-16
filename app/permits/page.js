@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-export default function ProposalsPage() {
-  const [proposals, setProposals] = useState([]);
+export default function PermitsPage() {
+  const [permits, setPermits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/api/proposals")
+    fetch("/api/permits")
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to load proposals");
-        setProposals(Array.isArray(data) ? data : []);
+        if (!res.ok) throw new Error(data.error || "Failed to load permits");
+        setPermits(Array.isArray(data) ? data : []);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -22,20 +22,20 @@ export default function ProposalsPage() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Proposals</h2>
-          <p className="subtitle">Every proposal sent to a client, and whether it&apos;s been accepted.</p>
+          <h2>Permits</h2>
+          <p className="subtitle">Every permit sent to a client, and whether it&apos;s been accepted.</p>
         </div>
       </div>
 
-      {error && <div className="error-banner">Couldn&apos;t load proposals: {error}</div>}
+      {error && <div className="error-banner">Couldn&apos;t load permits: {error}</div>}
 
       {loading ? (
         <p style={{ color: "var(--muted)" }}>Loading...</p>
-      ) : proposals.length === 0 ? (
+      ) : permits.length === 0 ? (
         <div className="table-wrap">
           <div className="empty-state">
-            <div className="big">No proposals sent yet</div>
-            Open a lead and click &quot;Send Proposal&quot; to create one.
+            <div className="big">No permits sent yet</div>
+            Open a lead and click &quot;Send Permit&quot; to create one.
           </div>
         </div>
       ) : (
@@ -43,7 +43,7 @@ export default function ProposalsPage() {
           <table>
             <thead>
               <tr>
-                <th>Proposal</th>
+                <th>Permit</th>
                 <th>Client</th>
                 <th>Project</th>
                 <th>Total</th>
@@ -52,8 +52,8 @@ export default function ProposalsPage() {
               </tr>
             </thead>
             <tbody>
-              {proposals.map((p) => (
-                <tr key={p.id} onClick={() => window.open(`/proposals/${p.token}`, "_blank")}>
+              {permits.map((p) => (
+                <tr key={p.id} onClick={() => window.open(`/permits/${p.token}`, "_blank")}>
                   <td className="name-primary">{p.number}</td>
                   <td>
                     {p.client_name}

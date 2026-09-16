@@ -23,17 +23,17 @@ function monthLabel(key) {
 
 export default function ReportsPage() {
   const [leads, setLeads] = useState([]);
-  const [proposals, setProposals] = useState([]);
+  const [permits, setPermits] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/leads").then((r) => r.json()),
-      fetch("/api/proposals").then((r) => r.json()),
+      fetch("/api/permits").then((r) => r.json()),
     ])
       .then(([l, p]) => {
         setLeads(Array.isArray(l) ? l : []);
-        setProposals(Array.isArray(p) ? p : []);
+        setPermits(Array.isArray(p) ? p : []);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -56,17 +56,17 @@ export default function ReportsPage() {
   const sortedMonths = Object.keys(months).sort().slice(-6);
   const maxMonth = Math.max(1, ...sortedMonths.map((m) => months[m]));
 
-  const proposalTotal = proposals.reduce((sum, p) => sum + p.total, 0);
-  const acceptedProposals = proposals.filter((p) => p.status === "accepted");
-  const acceptedTotal = acceptedProposals.reduce((sum, p) => sum + p.total, 0);
-  const acceptRate = proposals.length > 0 ? Math.round((acceptedProposals.length / proposals.length) * 100) : 0;
+  const permitTotal = permits.reduce((sum, p) => sum + p.total, 0);
+  const acceptedPermits = permits.filter((p) => p.status === "accepted");
+  const acceptedTotal = acceptedPermits.reduce((sum, p) => sum + p.total, 0);
+  const acceptRate = permits.length > 0 ? Math.round((acceptedPermits.length / permits.length) * 100) : 0;
 
   return (
     <div>
       <div className="page-header">
         <div>
           <h2>Reports</h2>
-          <p className="subtitle">A snapshot of leads and proposal performance.</p>
+          <p className="subtitle">A snapshot of leads and permit performance.</p>
         </div>
       </div>
 
@@ -80,12 +80,12 @@ export default function ReportsPage() {
               <div className="stat-value">{leads.length}</div>
             </div>
             <div className="stat-card">
-              <div className="stat-label">Proposals Sent</div>
-              <div className="stat-value">{proposals.length}</div>
+              <div className="stat-label">Permits Sent</div>
+              <div className="stat-value">{permits.length}</div>
             </div>
             <div className="stat-card">
-              <div className="stat-label">Proposal Value</div>
-              <div className="stat-value">${proposalTotal.toLocaleString()}</div>
+              <div className="stat-label">Permit Value</div>
+              <div className="stat-value">${permitTotal.toLocaleString()}</div>
             </div>
             <div className="stat-card">
               <div className="stat-label">Accept Rate</div>
@@ -145,7 +145,7 @@ export default function ReportsPage() {
 
               <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--border-soft)" }}>
                 <div className="meta-list">
-                  <div className="meta-row"><span>Accepted proposals</span><span>{acceptedProposals.length}</span></div>
+                  <div className="meta-row"><span>Accepted permits</span><span>{acceptedPermits.length}</span></div>
                   <div className="meta-row"><span>Accepted value</span><span>${acceptedTotal.toLocaleString()}</span></div>
                 </div>
               </div>

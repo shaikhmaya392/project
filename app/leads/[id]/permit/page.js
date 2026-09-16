@@ -19,7 +19,7 @@ function defaultValidUntil() {
   return d.toISOString().slice(0, 10);
 }
 
-export default function NewProposalPage() {
+export default function NewPermitPage() {
   const { id } = useParams();
   const router = useRouter();
   const [lead, setLead] = useState(null);
@@ -83,7 +83,7 @@ export default function NewProposalPage() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/proposals", {
+      const res = await fetch("/api/permits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -98,11 +98,11 @@ export default function NewProposalPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send proposal");
+      if (!res.ok) throw new Error(data.error || "Failed to send permit");
       if (data.warning) {
         alert(data.warning);
       } else {
-        alert(`Proposal ${data.proposal.number} sent to ${clientEmail}`);
+        alert(`Permit ${data.permit.number} sent to ${clientEmail}`);
       }
       router.push("/leads");
     } catch (err) {
@@ -117,7 +117,7 @@ export default function NewProposalPage() {
     <div>
       <div className="page-header">
         <div>
-          <h2>Send Proposal</h2>
+          <h2>Send Permit</h2>
           <p className="subtitle">For {lead.name || "this lead"} &middot; emailed with an Accept link</p>
         </div>
         <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
@@ -242,14 +242,14 @@ export default function NewProposalPage() {
 
         <div className="form-grid" style={{ marginBottom: 8 }}>
           <div>
-            <label>Proposal Valid Until</label>
+            <label>Permit Valid Until</label>
             <input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} required />
           </div>
         </div>
 
         <div className="actions-row">
           <button className="btn" type="submit" disabled={saving || services.length === 0}>
-            {saving ? "Sending..." : "Send Proposal"}
+            {saving ? "Sending..." : "Send Permit"}
           </button>
           <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>
             Cancel

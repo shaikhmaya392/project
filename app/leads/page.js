@@ -168,9 +168,9 @@ export default function LeadsPage() {
                   <td>
                     <div className="row-actions">
                       <Link
-                        href={`/leads/${lead.id}/proposal`}
+                        href={`/leads/${lead.id}/permit`}
                         className="icon-btn"
-                        title="Send Proposal"
+                        title="Send Permit"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -21,9 +21,9 @@ export default function InboxPage() {
   useEffect(() => {
     Promise.all([
       fetch("/api/leads").then((r) => r.json()),
-      fetch("/api/proposals").then((r) => r.json()),
+      fetch("/api/permits").then((r) => r.json()),
     ])
-      .then(([leads, proposals]) => {
+      .then(([leads, permits]) => {
         const items = [];
         (leads || []).forEach((l) => {
           items.push({
@@ -43,21 +43,21 @@ export default function InboxPage() {
             });
           }
         });
-        (proposals || []).forEach((p) => {
+        (permits || []).forEach((p) => {
           items.push({
-            type: "proposal_sent",
+            type: "permit_sent",
             time: p.sent_at,
-            title: `Proposal ${p.number} sent to ${p.client_name}`,
+            title: `Permit ${p.number} sent to ${p.client_name}`,
             detail: `$${p.total.toLocaleString()} · valid until ${p.valid_until}`,
-            href: `/proposals`,
+            href: `/permits`,
           });
           if (p.accepted_at) {
             items.push({
-              type: "proposal_accepted",
+              type: "permit_accepted",
               time: p.accepted_at,
-              title: `Proposal ${p.number} accepted`,
+              title: `Permit ${p.number} accepted`,
               detail: `${p.client_name} · $${p.total.toLocaleString()}`,
-              href: `/proposals`,
+              href: `/permits`,
             });
           }
         });
@@ -68,8 +68,8 @@ export default function InboxPage() {
   }, []);
 
   const iconFor = (type) => {
-    if (type === "proposal_accepted") return { bg: "var(--green-soft)", color: "var(--green)" };
-    if (type === "proposal_sent") return { bg: "var(--blue-soft)", color: "var(--blue-dark)" };
+    if (type === "permit_accepted") return { bg: "var(--green-soft)", color: "var(--green)" };
+    if (type === "permit_sent") return { bg: "var(--blue-soft)", color: "var(--blue-dark)" };
     if (type === "lead_updated") return { bg: "var(--amber-soft)", color: "var(--amber)" };
     return { bg: "var(--blue-soft)", color: "var(--blue-dark)" };
   };
@@ -79,7 +79,7 @@ export default function InboxPage() {
       <div className="page-header">
         <div>
           <h2>Inbox</h2>
-          <p className="subtitle">A live feed of everything happening across leads and proposals.</p>
+          <p className="subtitle">A live feed of everything happening across leads and permits.</p>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export default function InboxPage() {
         <div className="table-wrap">
           <div className="empty-state">
             <div className="big">Nothing yet</div>
-            Activity will appear here as leads come in and proposals go out.
+            Activity will appear here as leads come in and permits go out.
           </div>
         </div>
       ) : (

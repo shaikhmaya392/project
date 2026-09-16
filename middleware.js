@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "./lib/session";
 
 const PUBLIC_PATHS = ["/login", "/signup"];
-const PUBLIC_PREFIXES = ["/api/auth", "/proposals/", "/_next", "/logo.png", "/favicon"];
+const PUBLIC_PREFIXES = ["/api/auth", "/permits/", "/_next", "/logo.png", "/favicon"];
 
 function isPublic(pathname) {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   if (pathname === "/api/leads/webhook") return true;
   if (pathname === "/api/admin/seed") return true;
-  // Public proposal view/accept endpoint: /api/proposals/<token> (not /api/proposals itself)
-  if (/^\/api\/proposals\/[^/]+$/.test(pathname)) return true;
+  // Public permit view/accept endpoint: /api/permits/<token> (not /api/permits itself)
+  if (/^\/api\/permits\/[^/]+$/.test(pathname)) return true;
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 }
 

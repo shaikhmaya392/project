@@ -103,7 +103,7 @@ add_action('frm_after_create_entry', function ($item_id) {
 }, 30, 1);
 
 /**
- * Lets the CRM send proposal/notification emails through this site's
+ * Lets the CRM send permit/notification emails through this site's
  * already-configured WP Mail SMTP setup, instead of needing a separate
  * email provider.
  */

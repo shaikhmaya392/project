@@ -39,7 +39,7 @@ function LoginForm() {
         <div className="auth-visual-inner">
           <img src="/logo.png" alt="DS Permitting Services" className="auth-logo" />
           <h1>DS Permitting CRM</h1>
-          <p>Every lead, every permit, every proposal &mdash; in one place.</p>
+          <p>Every lead, every permit, every payment &mdash; in one place.</p>
         </div>
       </div>
       <div className="auth-panel">
