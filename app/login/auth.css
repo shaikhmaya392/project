@@ -31,14 +31,11 @@
 }
 
 .auth-visual-inner { position: relative; max-width: 400px; color: #fff; }
-.auth-emblem {
-  width: 68px; height: 68px; border-radius: 18px; margin-bottom: 26px;
-  border: 2.5px solid rgba(255,255,255,0.92);
-  display: flex; align-items: center; justify-content: center;
+.auth-logo-badge {
+  width: 132px; height: 132px; object-fit: contain;
+  background: #fff; border-radius: 50%; padding: 12px; margin-bottom: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-.auth-emblem svg { width: 38px; height: 38px; color: #fff; }
-.auth-wordmark { font-family: var(--font-poppins), sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 0.02em; margin-bottom: 4px; }
-.auth-wordmark-sub { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #8ea0c8; margin-bottom: 28px; }
 .auth-visual-inner h1 { font-size: 26px; margin: 0 0 12px; }
 .auth-visual-inner p { color: #aab0cc; font-size: 15px; line-height: 1.6; }
 

@@ -39,14 +39,7 @@ export default function SignupPage() {
     <div className="auth-shell">
       <div className="auth-visual">
         <div className="auth-visual-inner">
-          <div className="auth-emblem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-              <path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z" strokeLinejoin="round" />
-              <path d="M8.5 12l2.5 2.5 5-5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="auth-wordmark">DS PERMITTING SERVICES</div>
-          <div className="auth-wordmark-sub">Serving Central &amp; Northeast Florida</div>
+          <img src="/logo.png" alt="DS Permitting Services" className="auth-logo-badge" />
           <h1>Create your account</h1>
           <p>Join your team&apos;s workspace to start tracking leads and permits.</p>
         </div>

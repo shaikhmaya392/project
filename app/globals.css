@@ -80,30 +80,19 @@ a { color: inherit; }
 
 .brand {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 9px;
-  padding: 4px 4px 20px;
+  justify-content: center;
+  padding: 2px 4px 20px;
   border-bottom: 1px solid var(--sidebar-border);
   margin-bottom: 16px;
-  text-align: center;
 }
-.brand-emblem {
-  width: 44px; height: 44px; border-radius: 12px;
-  border: 2px solid rgba(255,255,255,0.9);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+.brand-logo {
+  width: 108px; height: 108px; object-fit: contain;
+  background: #fff; border-radius: 50%; padding: 9px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: width 0.22s ease, height 0.22s ease;
 }
-.brand-emblem svg { width: 26px; height: 26px; color: #fff; }
-.brand-word { line-height: 1.15; }
-.brand-word .brand-name {
-  font-weight: 800; font-size: 15px; color: #fff; letter-spacing: 0.02em;
-  font-family: var(--font-poppins), sans-serif;
-}
-.brand-word .brand-sub {
-  font-size: 9px; color: #8ea0c8; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2px;
-}
-.app.collapsed .brand-word { display: none; }
+.app.collapsed .brand-logo { width: 48px; height: 48px; padding: 5px; }
 .app.collapsed .nav-section-label { display: none; }
 
 .nav-section-label {

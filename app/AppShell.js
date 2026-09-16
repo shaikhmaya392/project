@@ -34,16 +34,7 @@ export default function AppShell({ children }) {
     <div className={`app${collapsed ? " collapsed" : ""}`}>
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-emblem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z" strokeLinejoin="round" />
-              <path d="M8.5 12l2.5 2.5 5-5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="brand-word">
-            <div className="brand-name">DS PERMITTING</div>
-            <div className="brand-sub">Services</div>
-          </div>
+          <img src="/logo.png" alt="DS Permitting Services" className="brand-logo" />
         </div>
         <NavLinks />
       </aside>
