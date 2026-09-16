@@ -59,9 +59,9 @@ export default function NavLinks() {
             {group.links.map((link) => {
               const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
-                <Link key={link.href} href={link.href} className={`nav-link${active ? " active" : ""}`}>
+                <Link key={link.href} href={link.href} className={`nav-link${active ? " active" : ""}`} title={link.label}>
                   {link.icon}
-                  {link.label}
+                  <span className="nav-label">{link.label}</span>
                 </Link>
               );
             })}
