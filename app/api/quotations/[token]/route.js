@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getQuotationByToken, updateQuotation, markAccepted } from "../../../../lib/quotationsStore";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request, { params }) {
   const quotation = await getQuotationByToken(params.token);
   if (!quotation) return NextResponse.json({ error: "Quotation not found" }, { status: 404 });

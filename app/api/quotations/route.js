@@ -4,6 +4,9 @@ import { quotationEmailHtml } from "../../../lib/quotationEmail";
 import { buildQuotationPdf } from "../../../lib/quotationPdf";
 import { sendEmail } from "../../../lib/mailer";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const quotations = await getQuotations();
   return NextResponse.json(quotations);

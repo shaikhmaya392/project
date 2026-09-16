@@ -218,7 +218,7 @@ a { color: inherit; }
 /* Table */
 .table-wrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); overflow-x: auto; box-shadow: var(--shadow); }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--border-soft); font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--border-soft); font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; vertical-align: middle; }
 th { color: var(--muted-soft); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: #fafbfd; }
 tbody tr:last-child td { border-bottom: none; }
 tbody tr { cursor: pointer; transition: background 0.12s; }

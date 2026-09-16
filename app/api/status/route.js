@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getLeads } from "../../../lib/leadsStore";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const leads = await getLeads();
   const websiteLeads = leads.filter((l) => l.source === "website_form");

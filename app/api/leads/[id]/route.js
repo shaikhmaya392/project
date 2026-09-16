@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getLead, updateLead, deleteLead } from "../../../../lib/leadsStore";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request, { params }) {
   const lead = await getLead(params.id);
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
