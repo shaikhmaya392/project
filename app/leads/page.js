@@ -246,11 +246,11 @@ export default function LeadsPage() {
             <table style={{ minWidth: 1100 }}>
               <colgroup>
                 <col style={{ width: 110 }} />
-                <col style={{ width: 150 }} />
-                <col style={{ width: 220 }} />
-                <col style={{ width: 150 }} />
-                <col style={{ width: 190 }} />
-                <col style={{ width: 150 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 200 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 110 }} />
+                <col style={{ width: 110 }} />
                 <col style={{ width: 160 }} />
                 <col style={{ width: 180 }} />
               </colgroup>
