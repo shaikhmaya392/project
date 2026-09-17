@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
+import Select from "../../Select";
 
 const EDIT_FIELDS = [
   { key: "name", label: "Name" },
@@ -73,6 +74,8 @@ export default function LeadDetailPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editPermit, setEditPermit] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [docDeleteId, setDocDeleteId] = useState(null);
+  const menuRef = useRef(null);
   const [newMsg, setNewMsg] = useState("");
   const [noteDraft, setNoteDraft] = useState("");
   const [loading, setLoading] = useState(true);
@@ -93,6 +96,16 @@ export default function LeadDetailPage() {
     fetch("/api/team").then((r) => r.json()).then((d) => setTeam(Array.isArray(d) ? d : [])).catch(() => {});
     fetch("/api/quotations").then((r) => r.json()).then((d) => setQuotes(Array.isArray(d) ? d : [])).catch(() => {});
   }, [id]);
+
+  // Close the ⋯ menu on an outside click, not just its own buttons.
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onDoc(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [menuOpen]);
 
   const leadQuotes = useMemo(() => {
     if (!lead) return [];
@@ -194,6 +207,7 @@ export default function LeadDetailPage() {
   async function deleteDoc(fileId) {
     setLead((l) => ({ ...l, documents: (l.documents || []).filter((f) => f.id !== fileId) }));
     await fetch(`/api/leads/${id}/files?fileId=${fileId}`, { method: "DELETE" });
+    setDocDeleteId(null);
   }
   function saveNote() { patchLead({ notes: noteDraft }, "Notes updated"); }
   async function handleDelete() {
@@ -234,7 +248,7 @@ export default function LeadDetailPage() {
           <button className="ld-round" onClick={() => router.push("/leads")} title="Back to leads">{I.back}</button>
           <span className="ld-nav-title">Leads</span>
           <span style={{ flex: 1 }} />
-          <div className="ld-menu-wrap">
+          <div className="ld-menu-wrap" ref={menuRef}>
             <button className="ld-round" onClick={() => setMenuOpen((v) => !v)} title="More">{I.dots}</button>
             {menuOpen && (
               <div className="ld-menu">
@@ -370,28 +384,40 @@ export default function LeadDetailPage() {
                 <div className="ld-panel ld-manage">
                   <div className="ld-panel-head"><span className="ld-ic navy">{I.gear}</span><h3>Lead Management</h3></div>
                   <label className="ld-field">Status
-                    <select value={lead.status || "new"} onChange={(e) => patchLead({ status: e.target.value }, `Status changed to ${statusText(e.target.value)}`)}>
-                      {STATUSES.map((s) => <option key={s} value={s}>{statusText(s)}</option>)}
-                    </select>
+                    <Select
+                      value={lead.status || "new"}
+                      onChange={(v) => patchLead({ status: v }, `Status changed to ${statusText(v)}`)}
+                      options={STATUSES.map((s) => ({ value: s, label: statusText(s) }))}
+                    />
                   </label>
                   <label className="ld-field">Assigned To
-                    <select value={lead.assigned_to || ""} onChange={(e) => patchLead({ assigned_to: e.target.value }, `Assigned to ${e.target.value || "Unassigned"}`)}>
-                      <option value="">Unassigned</option>
-                      {team.map((t) => <option key={t.id} value={t.name}>{t.name}</option>)}
-                      {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && <option value={lead.assigned_to}>{lead.assigned_to}</option>}
-                    </select>
+                    <Select
+                      value={lead.assigned_to || ""}
+                      onChange={(v) => patchLead({ assigned_to: v }, `Assigned to ${v || "Unassigned"}`)}
+                      options={[
+                        { value: "", label: "Unassigned" },
+                        ...team.map((t) => ({ value: t.name, label: t.name })),
+                        ...(lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) ? [{ value: lead.assigned_to, label: lead.assigned_to }] : []),
+                      ]}
+                    />
                   </label>
                   <label className="ld-field">Priority
-                    <select value={priority} onChange={(e) => patchLead({ priority: e.target.value }, `Priority set to ${e.target.value}`)}>
-                      {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
-                    </select>
+                    <Select
+                      value={priority}
+                      onChange={(v) => patchLead({ priority: v }, `Priority set to ${v}`)}
+                      options={PRIORITIES}
+                    />
                   </label>
                   <label className="ld-field">Next Action
-                    <select value={lead.next_action || ""} onChange={(e) => patchLead({ next_action: e.target.value }, e.target.value ? `Next action: ${e.target.value}` : undefined)}>
-                      <option value="">Select next action…</option>
-                      {NEXT_ACTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
-                      {lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) && <option value={lead.next_action}>{lead.next_action}</option>}
-                    </select>
+                    <Select
+                      value={lead.next_action || ""}
+                      onChange={(v) => patchLead({ next_action: v }, v ? `Next action: ${v}` : undefined)}
+                      placeholder="Select next action…"
+                      options={[
+                        ...NEXT_ACTIONS.map((a) => ({ value: a, label: a })),
+                        ...(lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) ? [{ value: lead.next_action, label: lead.next_action }] : []),
+                      ]}
+                    />
                   </label>
                   <label className="ld-field">Due Date
                     <input type="date" value={dueValue} onChange={(e) => patchLead({ due_date: e.target.value })} />
@@ -429,7 +455,7 @@ export default function LeadDetailPage() {
                         <a href={d.url} target="_blank" rel="noreferrer">{d.name}</a>
                         <span>{d.uploaded_by || "Staff"} · {relTime(d.uploaded_at)}</span>
                       </div>
-                      <button className="ld-del" onClick={() => deleteDoc(d.id)} title="Remove">{I.trash}</button>
+                      <button className="ld-del" onClick={() => setDocDeleteId(d.id)} title="Remove">{I.trash}</button>
                     </div>
                   ))}
                 </div>
@@ -562,6 +588,23 @@ export default function LeadDetailPage() {
             <div className="ld-modal-actions center">
               <button className="btn-outline" onClick={() => setDeleteOpen(false)}>Cancel</button>
               <button className="btn-danger" onClick={handleDelete}>{I.trash} Delete lead</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ DELETE DOCUMENT CONFIRM ============ */}
+      {docDeleteId && (
+        <div className="toast-backdrop" onClick={() => setDocDeleteId(null)}>
+          <div className="ld-modal ld-modal-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-danger-ic">{I.trash}</div>
+            <h3 className="ld-modal-center-title">Delete this document?</h3>
+            <p className="ld-modal-center-text">
+              <b>{docs.find((d) => d.id === docDeleteId)?.name || "This file"}</b> will be permanently removed. This can&apos;t be undone.
+            </p>
+            <div className="ld-modal-actions center">
+              <button className="btn-outline" onClick={() => setDocDeleteId(null)}>Cancel</button>
+              <button className="btn-danger" onClick={() => deleteDoc(docDeleteId)}>{I.trash} Delete document</button>
             </div>
           </div>
         </div>

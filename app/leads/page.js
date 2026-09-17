@@ -92,12 +92,6 @@ export default function LeadsPage() {
       <div className="page-header">
         <div>
           <h2>Leads</h2>
-
-          <p className="subtitle">
-            {loading
-              ? "Loading..."
-              : `${filtered.length} of ${leads.length} leads`}
-          </p>
         </div>
 
         <Link href="/leads/new" className="btn">
