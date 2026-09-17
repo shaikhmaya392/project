@@ -35,6 +35,7 @@ export default function AppShell({ children }) {
       <aside className="sidebar">
         <div className="brand">
           <img src="/logo.png" alt="DS Permitting Services" className="brand-logo" />
+          <span className="brand-name">DS Permitting</span>
         </div>
         <NavLinks />
       </aside>
