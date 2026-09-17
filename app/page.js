@@ -68,16 +68,21 @@ export default function DashboardPage() {
   const total = leads.length;
   const fromWebsite = leads.filter((l) => l.source === "website_form").length;
   const byStatus = (st) => leads.filter((l) => (l.status || "new") === st).length;
+  const byNextAction = (a) => leads.filter((l) => l.next_action === a).length;
 
   // Live pipeline metrics — derived from real CRM data, refreshed on every load.
-  // These will be re-wired to the Permits module as those stages are built out.
+  // Statuses match lib/leadMeta so these agree with the leads list and detail page.
+  // Approved counts leads marked "Quotation Accepted" plus any older accepted
+  // quotes whose lead was never moved to that status.
+  const acceptedLeadIds = new Set(quotes.filter((q) => q.status === "accepted" && q.lead_id).map((q) => q.lead_id));
+  leads.forEach((l) => { if (l.status === "quote_accepted") acceptedLeadIds.add(l.id); });
   const cards = [
     { key: "new", label: "New Requests", value: byStatus("new"), icon: "document", color: "blue" },
-    { key: "pending", label: "Pending Review", value: byStatus("contacted"), icon: "clock", color: "orange" },
-    { key: "approved", label: "Approved", value: quotes.filter((q) => q.status === "accepted").length + byStatus("won"), icon: "check", color: "green" },
+    { key: "pending", label: "Pending Review", value: byStatus("contacted") + byStatus("quote_sent"), icon: "clock", color: "orange" },
+    { key: "approved", label: "Approved", value: acceptedLeadIds.size, icon: "check", color: "green" },
     { key: "ready", label: "Ready to Submit", value: byStatus("in_progress"), icon: "upload", color: "purple" },
-    { key: "corrections", label: "Corrections Required", value: byStatus("lost"), icon: "warning", color: "red" },
-    { key: "inspections", label: "Upcoming Inspections", value: projects.length, icon: "calendar", color: "cyan" },
+    { key: "corrections", label: "Corrections Required", value: byNextAction("Review Corrections"), icon: "warning", color: "red" },
+    { key: "inspections", label: "Upcoming Inspections", value: projects.length + byNextAction("Schedule Inspection"), icon: "calendar", color: "cyan" },
   ];
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });

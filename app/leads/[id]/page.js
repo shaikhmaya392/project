@@ -2,23 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
 
-const STATUS_LABELS = {
-  new: "New",
-  contacted: "Contacted",
-  in_progress: "In Progress",
-  quote_sent: "Quotation Sent",
-  quote_accepted: "Quotation Accepted",
-};
-const STATUSES = Object.keys(STATUS_LABELS);
-const PRIORITIES = ["High", "Medium", "Low"];
-const NEXT_ACTIONS = [
-  "Call client", "Follow up with client", "Send quotation", "Schedule inspection",
-  "Await documents", "Review corrections", "Submit permit application", "Close lead",
-];
-const PROJECT_TYPES = [
-  "Residential Renovation", "Commercial", "Window / Door", "Solar Panels",
-  "Shutters", "Sign Permit", "Office Remodel", "Permit Renewal", "Code Violation",
+const EDIT_FIELDS = [
+  { key: "name", label: "Name" },
+  { key: "phone", label: "Phone" },
+  { key: "email", label: "Email Address", full: true },
+  { key: "address", label: "Work Location", full: true },
+  { key: "service_type", label: "Project Type", list: true },
+  { key: "message", label: "Message / Details", full: true, textarea: true },
 ];
 const TABS = ["Overview", "Documents", "Messages", "Quotes", "Notes", "Activity"];
 
@@ -76,7 +68,9 @@ export default function LeadDetailPage() {
   const [team, setTeam] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [tab, setTab] = useState("Overview");
-  const [editing, setEditing] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [draft, setDraft] = useState({});
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [editPermit, setEditPermit] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [newMsg, setNewMsg] = useState("");
@@ -109,10 +103,13 @@ export default function LeadDetailPage() {
 
   const activityFeed = useMemo(() => {
     const items = [];
+    const logged = (lead?.activity || []).map((a) => a.text || "").join("\n");
     (lead?.activity || []).forEach((a) => items.push({ text: a.text, at: a.at, kind: a.kind || "note" }));
+    // Older quotes were never written to lead.activity; derive those so the
+    // feed stays complete without duplicating ones the API already logged.
     leadQuotes.forEach((q) => {
-      items.push({ text: `Quote ${q.number} sent to client`, at: q.created_at, kind: "quote" });
-      if (q.accepted_at) items.push({ text: `Quote ${q.number} accepted by client`, at: q.accepted_at, kind: "quote" });
+      if (!logged.includes(`${q.number} sent`)) items.push({ text: `Quotation ${q.number} sent to client`, at: q.created_at, kind: "quote" });
+      if (q.accepted_at && !logged.includes(`${q.number} accepted`)) items.push({ text: `Quotation ${q.number} accepted by client`, at: q.accepted_at, kind: "quote" });
     });
     return items.sort((a, b) => new Date(b.at) - new Date(a.at));
   }, [lead, leadQuotes]);
@@ -140,13 +137,25 @@ export default function LeadDetailPage() {
 
   function set(field, value) { setLead((l) => ({ ...l, [field]: value })); }
 
-  function saveCustomer() {
-    patchLead({ name: lead.name, phone: lead.phone, email: lead.email, address: lead.address, service_type: lead.service_type }, "Customer details updated");
-    setEditing(false);
+  function openEdit() {
+    const d = {};
+    EDIT_FIELDS.forEach((f) => { d[f.key] = lead[f.key] || ""; });
+    setDraft(d);
+    setEditOpen(true);
+  }
+  function saveEdit() {
+    patchLead({ ...draft }, "Customer details updated");
+    setEditOpen(false);
   }
   function savePermit() {
     patchLead({ permit_request: lead.permit_request || {} }, "Permit request updated");
     setEditPermit(false);
+  }
+  // Header Save: commit anything still pending (an open permit edit) and
+  // flush the current lead state.
+  function saveAll() {
+    if (editPermit) { savePermit(); return; }
+    patchLead({ ...lead });
   }
   function addTask() {
     const title = (lead.next_action || "").trim();
@@ -188,9 +197,9 @@ export default function LeadDetailPage() {
   }
   function saveNote() { patchLead({ notes: noteDraft }, "Notes updated"); }
   async function handleDelete() {
-    if (!confirm("Delete this lead permanently?")) return;
     const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
     if (res.ok) router.push("/leads");
+    else setDeleteOpen(false);
   }
 
   if (loading) return <p style={{ color: "var(--muted)" }}>Loading…</p>;
@@ -229,8 +238,10 @@ export default function LeadDetailPage() {
             <button className="ld-round" onClick={() => setMenuOpen((v) => !v)} title="More">{I.dots}</button>
             {menuOpen && (
               <div className="ld-menu">
-                <button onClick={() => { setMenuOpen(false); router.push(`/leads/${id}/quotation`); }}>{I.doc} Send Quotation</button>
-                <button className="danger" onClick={() => { setMenuOpen(false); handleDelete(); }}>{I.trash} Delete lead</button>
+                <button className="danger" onClick={() => { setMenuOpen(false); setDeleteOpen(true); }}>
+                  {I.trash}
+                  <span>Delete lead<small>Permanently removes this record</small></span>
+                </button>
               </div>
             )}
           </div>
@@ -247,10 +258,10 @@ export default function LeadDetailPage() {
             <div className="ld-addr"><i className="pi sm">{I.pin}</i>{lead.address || "No address on file"}</div>
           </div>
           <div className="ld-head-actions">
-            <button className={`btn-outline${editing ? " active" : ""}`} onClick={() => setEditing((v) => !v)}>
+            <button className="btn-outline" onClick={openEdit}>
               {I.edit}Edit
             </button>
-            <button className="btn-outline" onClick={saveCustomer}>
+            <button className="btn-outline" onClick={saveAll}>
               {I.save}Save
             </button>
             <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>
@@ -287,31 +298,17 @@ export default function LeadDetailPage() {
                 {/* Customer Information */}
                 <div className="ld-panel">
                   <div className="ld-panel-head"><span className="ld-ic">{I.person}</span><h3>Customer Information</h3></div>
-                  {editing ? (
-                    <div className="ld-fields">
-                      <label>Name<input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} /></label>
-                      <label>Phone<input value={lead.phone || ""} onChange={(e) => set("phone", e.target.value)} /></label>
-                      <label>Email<input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} /></label>
-                    </div>
-                  ) : (
-                    <div className="ld-info">
-                      <div>{I.person}<span>{lead.name || "—"}</span></div>
-                      <div>{I.phone}<span>{lead.phone || "—"}</span></div>
-                      <div>{I.mail}<span>{lead.email || "—"}</span></div>
-                    </div>
-                  )}
+                  <div className="ld-info">
+                    <div>{I.person}<span>{lead.name || "—"}</span></div>
+                    <div>{I.phone}<span>{lead.phone || "—"}</span></div>
+                    <div>{I.mail}<span>{lead.email || "—"}</span></div>
+                  </div>
                 </div>
 
                 {/* Property */}
                 <div className="ld-panel">
                   <div className="ld-panel-head"><span className="ld-ic">{I.home}</span><h3>Property</h3></div>
-                  {editing ? (
-                    <div className="ld-fields">
-                      <label>Work Location<input value={lead.address || ""} onChange={(e) => set("address", e.target.value)} /></label>
-                    </div>
-                  ) : (
-                    <div className="ld-plain">{lead.address || "No address on file"}</div>
-                  )}
+                  <div className="ld-plain">{lead.address || "No address on file"}</div>
                 </div>
 
                 {/* Permit Request (staff editable) */}
@@ -467,12 +464,9 @@ export default function LeadDetailPage() {
           {/* ============ QUOTES ============ */}
           {tab === "Quotes" && (
             <div className="ld-tabpane">
-              <div className="ld-pane-head">
-                <h3>Quotes</h3>
-                <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>{I.plus} Create Quote</button>
-              </div>
+              <div className="ld-pane-head"><h3>Quotes</h3></div>
               {leadQuotes.length === 0 ? (
-                <div className="ld-empty">{I.dollar}<p>No quotations yet.</p><span>Create a quotation to email the customer a PDF they can accept online.</span></div>
+                <div className="ld-empty">{I.dollar}<p>No quotations yet.</p><span>Use &quot;Create Quote&quot; above to email the customer a PDF they can accept online.</span></div>
               ) : (
                 <div className="ld-doclist">
                   {leadQuotes.map((q) => (
@@ -519,6 +513,59 @@ export default function LeadDetailPage() {
           )}
         </div>
       </div>
+
+      {/* ============ EDIT POPUP ============ */}
+      {editOpen && (
+        <div className="toast-backdrop" onClick={() => setEditOpen(false)}>
+          <div className="ld-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-head">
+              <div>
+                <h3>Edit Customer</h3>
+                <p>Changes update everywhere as soon as you save.</p>
+              </div>
+              <button className="ld-modal-x" onClick={() => setEditOpen(false)} title="Close">×</button>
+            </div>
+            <div className="ld-modal-grid">
+              {EDIT_FIELDS.map((f) => (
+                <label key={f.key} className={f.full ? "full" : ""}>
+                  {f.label}
+                  {f.textarea ? (
+                    <textarea rows={4} value={draft[f.key] || ""} onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))} />
+                  ) : (
+                    <input
+                      list={f.list ? "edit-project-types" : undefined}
+                      value={draft[f.key] || ""}
+                      onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))}
+                    />
+                  )}
+                </label>
+              ))}
+              <datalist id="edit-project-types">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
+            </div>
+            <div className="ld-modal-actions">
+              <button className="btn-outline" onClick={() => setEditOpen(false)}>Cancel</button>
+              <button className="btn-navy" onClick={saveEdit}>{I.save} Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ DELETE CONFIRM ============ */}
+      {deleteOpen && (
+        <div className="toast-backdrop" onClick={() => setDeleteOpen(false)}>
+          <div className="ld-modal ld-modal-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-danger-ic">{I.trash}</div>
+            <h3 className="ld-modal-center-title">Delete this lead?</h3>
+            <p className="ld-modal-center-text">
+              <b>{lead.name || "This lead"}</b> and all of its messages, documents and activity will be permanently removed. This can&apos;t be undone.
+            </p>
+            <div className="ld-modal-actions center">
+              <button className="btn-outline" onClick={() => setDeleteOpen(false)}>Cancel</button>
+              <button className="btn-danger" onClick={handleDelete}>{I.trash} Delete lead</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

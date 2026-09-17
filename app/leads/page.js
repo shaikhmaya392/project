@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { STATUSES, PRIORITIES, NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
 
 function fmtDate(s) {
   if (!s) return "-";
@@ -12,20 +13,8 @@ function fmtDate(s) {
   return `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}`;
 }
 
-const NEXT_ACTIONS = [
-  "Follow Up",
-  "Call Back",
-  "Send Email",
-  "Send Quote",
-  "Schedule Meeting",
-  "Waiting for Client",
-  "Check In",
-  "No Action",
-];
-
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
-  const [quoteByLead, setQuoteByLead] = useState({});
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,25 +37,6 @@ export default function LeadsPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
 
-    fetch("/api/quotations")
-      .then((r) => r.json())
-      .then((data) => {
-        if (!Array.isArray(data)) return;
-
-        const map = {};
-
-        for (const q of data) {
-          if (!q.lead_id) continue;
-
-          if (!map[q.lead_id]) {
-            map[q.lead_id] = q;
-          }
-        }
-
-        setQuoteByLead(map);
-      })
-      .catch(() => {});
-
     fetch("/api/team")
       .then((r) => r.json())
       .then((d) => setTeam(Array.isArray(d) ? d : []))
@@ -77,88 +47,28 @@ export default function LeadsPage() {
     load();
   }, []);
 
-  async function assign(e, leadId, name) {
+  // Inline edits on the list write straight through, so the same value shows
+  // on the lead detail page and the dashboard.
+  async function patchField(e, leadId, field, value) {
     e.stopPropagation();
 
     setLeads((prev) =>
-      prev.map((l) =>
-        l.id === leadId
-          ? { ...l, assigned_to: name }
-          : l
-      )
-    );
-
-    try {
-      await fetch(`/api/leads/${leadId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          assigned_to: name,
-        }),
-      });
-    } catch (err) {
-      console.error("Failed to assign lead:", err);
-    }
-  }
-
-  async function updateNextAction(e, leadId, nextAction) {
-    e.stopPropagation();
-
-    setLeads((prev) =>
-      prev.map((l) =>
-        l.id === leadId
-          ? {
-              ...l,
-              next_action: nextAction,
-            }
-          : l
-      )
+      prev.map((l) => (l.id === leadId ? { ...l, [field]: value } : l))
     );
 
     try {
       const res = await fetch(`/api/leads/${leadId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          next_action: nextAction,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: value }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update next action");
+        throw new Error(`Failed to update ${field}`);
       }
     } catch (err) {
-      console.error("Failed to update next action:", err);
+      console.error(err);
     }
-  }
-
-  function statusFor(lead) {
-    const q = quoteByLead[lead.id];
-
-    if (q && q.status === "accepted") {
-      return {
-        label: "Quote Accepted",
-        cls: "status-won",
-      };
-    }
-
-    if (q) {
-      return {
-        label: "Quote Sent",
-        cls: "status-contacted",
-      };
-    }
-
-    const s = lead.status || "new";
-
-    return {
-      label: s.replace("_", " "),
-      cls: `status-${s}`,
-    };
   }
 
   const filtered = useMemo(() => {
@@ -203,17 +113,9 @@ export default function LeadsPage() {
 
       <div className="toolbar">
         <div className="search-box">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" />
-            <path
-              d="M21 21l-4.3-4.3"
-              strokeLinecap="round"
-            />
+            <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
           </svg>
 
           <input
@@ -225,15 +127,11 @@ export default function LeadsPage() {
       </div>
 
       {loading ? (
-        <p style={{ color: "var(--muted)" }}>
-          Loading...
-        </p>
+        <p style={{ color: "var(--muted)" }}>Loading...</p>
       ) : filtered.length === 0 ? (
         <div className="table-wrap">
           <div className="empty-state">
-            <div className="big">
-              No leads found
-            </div>
+            <div className="big">No leads found</div>
 
             {leads.length === 0
               ? 'Waiting on leads from the website, or add one with "+ New Lead".'
@@ -243,15 +141,16 @@ export default function LeadsPage() {
       ) : (
         <div className="table-wrap">
           <div className="table-scroll">
-            <table style={{ minWidth: 1100 }}>
+            <table style={{ minWidth: 1260 }}>
               <colgroup>
                 <col style={{ width: 110 }} />
-                <col style={{ width: 120 }} />
-                <col style={{ width: 180 }} />
-                <col style={{ width: 100 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 190 }} />
                 <col style={{ width: 110 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 170 }} />
+                <col style={{ width: 150 }} />
                 <col style={{ width: 110 }} />
-                <col style={{ width: 160 }} />
                 <col style={{ width: 170 }} />
               </colgroup>
 
@@ -264,165 +163,112 @@ export default function LeadsPage() {
                   <th>Work Location</th>
                   <th>Status</th>
                   <th>Assigned To</th>
+                  <th>Priority</th>
                   <th>Next Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {filtered.map((lead) => {
-                  const st = statusFor(lead);
+                {filtered.map((lead) => (
+                  <tr
+                    key={lead.id}
+                    onClick={() => (window.location.href = `/leads/${lead.id}`)}
+                  >
+                    {/* DATE */}
+                    <td>{fmtDate(lead.created_at)}</td>
 
-                  return (
-                    <tr
-                      key={lead.id}
-                      onClick={() =>
-                        (window.location.href = `/leads/${lead.id}`)
-                      }
-                    >
-                      {/* DATE */}
-                      <td>
-                        {fmtDate(lead.created_at)}
-                      </td>
+                    {/* NAME */}
+                    <td className="name-primary">{lead.name || "(no name)"}</td>
 
-                      {/* NAME */}
-                      <td className="name-primary">
-                        {lead.name || "(no name)"}
-                      </td>
+                    {/* EMAIL */}
+                    <td>
+                      {lead.email ? (
+                        <a
+                          href={`mailto:${lead.email}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="contact-email"
+                        >
+                          {lead.email}
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M7 17L17 7M8 7h9v9" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </a>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
 
-                      {/* EMAIL */}
-                      <td>
-                        {lead.email ? (
-                          <a
-                            href={`mailto:${lead.email}`}
-                            onClick={(e) =>
-                              e.stopPropagation()
-                            }
-                            className="contact-email"
-                          >
-                            {lead.email}
+                    {/* PHONE */}
+                    <td>{lead.phone || "-"}</td>
 
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                d="M7 17L17 7M8 7h9v9"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </a>
-                        ) : (
-                          "-"
+                    {/* WORK LOCATION */}
+                    <td>{lead.address || "-"}</td>
+
+                    {/* STATUS */}
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <select
+                        className={`inline-select status-select status-${lead.status || "new"}`}
+                        value={lead.status || "new"}
+                        onChange={(e) => patchField(e, lead.id, "status", e.target.value)}
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>{statusLabel(s)}</option>
+                        ))}
+                      </select>
+                    </td>
+
+                    {/* ASSIGNED TO */}
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <select
+                        className="inline-select"
+                        value={lead.assigned_to || ""}
+                        onChange={(e) => patchField(e, lead.id, "assigned_to", e.target.value)}
+                      >
+                        <option value="">Unassigned</option>
+
+                        {team.map((t) => (
+                          <option key={t.id} value={t.name}>{t.name}</option>
+                        ))}
+
+                        {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && (
+                          <option value={lead.assigned_to}>{lead.assigned_to}</option>
                         )}
-                      </td>
+                      </select>
+                    </td>
 
-                      {/* PHONE */}
-                      <td>
-                        {lead.phone || "-"}
-                      </td>
-
-                      {/* WORK LOCATION */}
-                      <td>
-                        {lead.address || "-"}
-                      </td>
-
-                      {/* STATUS */}
-                      <td>
-                        <span
-                          className={`badge ${st.cls}`}
-                        >
-                          {st.label}
-                        </span>
-                      </td>
-
-                      {/* ASSIGNED TO */}
-                      <td
-                        onClick={(e) =>
-                          e.stopPropagation()
-                        }
+                    {/* PRIORITY */}
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <select
+                        className="inline-select"
+                        value={lead.priority || "Medium"}
+                        onChange={(e) => patchField(e, lead.id, "priority", e.target.value)}
                       >
-                        <select
-                          className="inline-select"
-                          value={lead.assigned_to || ""}
-                          onChange={(e) =>
-                            assign(
-                              e,
-                              lead.id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="">
-                            Unassigned
-                          </option>
+                        {PRIORITIES.map((p) => (
+                          <option key={p} value={p}>{p}</option>
+                        ))}
+                      </select>
+                    </td>
 
-                          {team.map((t) => (
-                            <option
-                              key={t.id}
-                              value={t.name}
-                            >
-                              {t.name}
-                            </option>
-                          ))}
-
-                          {lead.assigned_to &&
-                            !team.some(
-                              (t) =>
-                                t.name ===
-                                lead.assigned_to
-                            ) && (
-                              <option
-                                value={
-                                  lead.assigned_to
-                                }
-                              >
-                                {lead.assigned_to}
-                              </option>
-                            )}
-                        </select>
-                      </td>
-
-                      {/* NEXT ACTION */}
-                      <td
-                        onClick={(e) =>
-                          e.stopPropagation()
-                        }
+                    {/* NEXT ACTION */}
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <select
+                        className="inline-select"
+                        value={lead.next_action || ""}
+                        onChange={(e) => patchField(e, lead.id, "next_action", e.target.value)}
                       >
-                        <select
-                          className="inline-select"
-                          value={
-                            lead.next_action || ""
-                          }
-                          onChange={(e) =>
-                            updateNextAction(
-                              e,
-                              lead.id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="">
-                            Select Action
-                          </option>
+                        <option value="">Select Action</option>
 
-                          {NEXT_ACTIONS.map(
-                            (action) => (
-                              <option
-                                key={action}
-                                value={action}
-                              >
-                                {action}
-                              </option>
-                            )
-                          )}
-                        </select>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        {NEXT_ACTIONS.map((action) => (
+                          <option key={action} value={action}>{action}</option>
+                        ))}
+
+                        {lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) && (
+                          <option value={lead.next_action}>{lead.next_action}</option>
+                        )}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -3,6 +3,20 @@ import { getQuotations, createQuotation } from "../../../lib/quotationsStore";
 import { quotationEmailHtml } from "../../../lib/quotationEmail";
 import { buildQuotationPdf } from "../../../lib/quotationPdf";
 import { sendEmail } from "../../../lib/mailer";
+import { getLead, updateLead } from "../../../lib/leadsStore";
+
+// Sending a quotation moves the lead to "Quotation Sent" so the status is
+// the same on the leads list, the lead detail page and the dashboard.
+async function syncLeadOnSend(quotation) {
+  if (!quotation.lead_id) return;
+  try {
+    const lead = await getLead(quotation.lead_id);
+    if (!lead) return;
+    const activity = Array.isArray(lead.activity) ? [...lead.activity] : [];
+    activity.push({ text: `Quotation ${quotation.number} sent to client`, at: quotation.created_at, kind: "quote" });
+    await updateLead(lead.id, { status: "quote_sent", activity });
+  } catch {}
+}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -19,6 +33,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Client email is required to send a quotation" }, { status: 400 });
     }
     const quotation = await createQuotation(body);
+    await syncLeadOnSend(quotation);
     const origin = new URL(request.url).origin;
     const acceptUrl = `${origin}/quotations/${quotation.token}`;
 
