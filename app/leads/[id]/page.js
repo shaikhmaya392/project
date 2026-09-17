@@ -34,6 +34,7 @@ const I = {
 };
 
 function statusText(s) { return (s || "new").replace("_", " "); }
+function cap(s) { const t = statusText(s); return t.charAt(0).toUpperCase() + t.slice(1); }
 function money(n) { return `$${Number(n || 0).toLocaleString()}`; }
 function fmtDate(iso) {
   if (!iso) return "";
@@ -237,7 +238,7 @@ export default function LeadDetailPage() {
 
         {/* pills */}
         <div className="ld-pills">
-          <span className="ld-pill"><i className="pi">{I.phone}</i>{statusText(lead.status)}</span>
+          <span className="ld-pill"><i className="pi">{I.phone}</i>{cap(lead.status)}</span>
           <span className="ld-pill"><i className="pi">{I.person}</i>Assigned: {assigned}</span>
           <span className="ld-pill"><i className="pi">{I.globe}</i>Source: {sourceLabel}</span>
           <span className="ld-pill"><i className="pi">{I.flag}</i>Priority: {priority}</span>
