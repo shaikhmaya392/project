@@ -75,7 +75,7 @@ export default function LeadDetailPage() {
   if (!lead) return <div className="error-banner">{error || "Lead not found"}</div>;
 
   return (
-    <div>
+    <div className="lead-editor">
       {/* Brand header strip */}
       <div className="lead-hero">
         <div className="lead-hero-main">
@@ -98,108 +98,74 @@ export default function LeadDetailPage() {
               Email
             </a>
           )}
-          <button type="button" className="btn gold" onClick={() => router.push(`/leads/${id}/quotation`)}>Send Quotation</button>
-          <button type="button" className="btn" onClick={() => router.push(`/projects/new?lead=${id}`)}>Convert to Project</button>
         </div>
       </div>
 
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="two-col">
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="card">
-            <div className="panel-title">Status</div>
-            <div className="status-picker">
-              {STATUSES.map((s) => (
-                <button key={s} type="button" className={`status-option status-${s}${lead.status === s ? " selected" : ""}`} onClick={() => handleStatus(s)}>
-                  {s.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="panel-title">Contact</div>
-            <div className="contact-links">
-              {lead.phone && (
-                <a className="contact-link" href={`tel:${lead.phone}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 005 5L14 13l5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z" /></svg>
-                  {lead.phone}
-                </a>
-              )}
-              {lead.email && (
-                <a className="contact-link" href={`mailto:${lead.email}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
-                  {lead.email}
-                </a>
-              )}
-              {!lead.phone && !lead.email && <p style={{ color: "var(--muted)" }}>No contact info</p>}
-            </div>
-          </div>
-
-          {lead.message && (
-            <div className="card">
-              <div className="panel-title">Message</div>
-              <div className="message-block">{lead.message}</div>
-            </div>
-          )}
+      <form className="card lead-form" onSubmit={handleSave}>
+        <div className="panel-title" style={{ marginBottom: 6 }}>Status</div>
+        <div className="status-picker" style={{ marginBottom: 18 }}>
+          {STATUSES.map((s) => (
+            <button key={s} type="button" className={`status-option status-${s}${lead.status === s ? " selected" : ""}`} onClick={() => handleStatus(s)}>
+              {s.replace("_", " ")}
+            </button>
+          ))}
         </div>
 
-        <form className="card" onSubmit={handleSave}>
-          <div className="panel-title">Lead details</div>
-          <div className="form-grid">
-            <div>
-              <label>Name</label>
-              <input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} />
-            </div>
-            <div>
-              <label>Phone</label>
-              <input value={lead.phone || ""} onChange={(e) => set("phone", e.target.value)} />
-            </div>
-            <div className="full">
-              <label>Email Address</label>
-              <input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} />
-            </div>
-            <div className="full">
-              <label>Work Location</label>
-              <input value={lead.address || ""} onChange={(e) => set("address", e.target.value)} />
-            </div>
-            <div>
-              <label>Project Type</label>
-              <input list="project-types" value={lead.service_type || ""} onChange={(e) => set("service_type", e.target.value)} placeholder="e.g. Residential Renovation" />
-              <datalist id="project-types">
-                {PROJECT_TYPES.map((p) => <option key={p} value={p} />)}
-              </datalist>
-            </div>
-            <div>
-              <label>Assigned To</label>
-              <select value={lead.assigned_to || ""} onChange={(e) => set("assigned_to", e.target.value)}>
-                <option value="">Unassigned</option>
-                {team.map((t) => <option key={t.id} value={t.name}>{t.name} ({t.role})</option>)}
-                {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && <option value={lead.assigned_to}>{lead.assigned_to}</option>}
-              </select>
-            </div>
-            <div className="full">
-              <label>Next Action</label>
-              <input value={lead.next_action || ""} onChange={(e) => set("next_action", e.target.value)} placeholder="e.g. Contact client, Follow up Friday" />
-            </div>
-            <div className="full">
-              <label>Message / Details</label>
-              <textarea rows={4} value={lead.message || ""} onChange={(e) => set("message", e.target.value)} />
-            </div>
-            <div className="full">
-              <label>Internal Notes</label>
-              <textarea rows={3} value={lead.notes || ""} onChange={(e) => set("notes", e.target.value)} placeholder="Staff-only notes" />
-            </div>
+        <div className="panel-title">Lead details</div>
+        <div className="form-grid">
+          <div>
+            <label>Name</label>
+            <input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} />
           </div>
-          <div className="actions-row">
-            <button className="btn" type="submit" disabled={saving}>{saving ? "Saving..." : "Save Changes"}</button>
-            <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>Close</button>
-            <button type="button" className="btn danger" onClick={handleDelete} style={{ marginLeft: "auto" }}>Delete</button>
-            {savedAt && !saving && <span style={{ color: "var(--success)", fontSize: 12.5, alignSelf: "center" }}>Saved</span>}
+          <div>
+            <label>Phone</label>
+            <input value={lead.phone || ""} onChange={(e) => set("phone", e.target.value)} />
           </div>
-        </form>
-      </div>
+          <div className="full">
+            <label>Email Address</label>
+            <input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} />
+          </div>
+          <div className="full">
+            <label>Work Location</label>
+            <input value={lead.address || ""} onChange={(e) => set("address", e.target.value)} />
+          </div>
+          <div>
+            <label>Project Type</label>
+            <input list="project-types" value={lead.service_type || ""} onChange={(e) => set("service_type", e.target.value)} placeholder="e.g. Residential Renovation" />
+            <datalist id="project-types">
+              {PROJECT_TYPES.map((p) => <option key={p} value={p} />)}
+            </datalist>
+          </div>
+          <div>
+            <label>Assigned To</label>
+            <select value={lead.assigned_to || ""} onChange={(e) => set("assigned_to", e.target.value)}>
+              <option value="">Unassigned</option>
+              {team.map((t) => <option key={t.id} value={t.name}>{t.name} ({t.role})</option>)}
+              {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && <option value={lead.assigned_to}>{lead.assigned_to}</option>}
+            </select>
+          </div>
+          <div className="full">
+            <label>Next Action</label>
+            <input value={lead.next_action || ""} onChange={(e) => set("next_action", e.target.value)} placeholder="e.g. Contact client, Follow up Friday" />
+          </div>
+          <div className="full">
+            <label>Message / Details</label>
+            <textarea rows={4} value={lead.message || ""} onChange={(e) => set("message", e.target.value)} />
+          </div>
+          <div className="full">
+            <label>Internal Notes</label>
+            <textarea rows={3} value={lead.notes || ""} onChange={(e) => set("notes", e.target.value)} placeholder="Staff-only notes" />
+          </div>
+        </div>
+        <div className="actions-row">
+          <button className="btn" type="submit" disabled={saving}>{saving ? "Saving..." : "Save Changes"}</button>
+          <button type="button" className="btn secondary" onClick={() => router.push("/leads")}>Close</button>
+          <button type="button" className="btn danger" onClick={handleDelete} style={{ marginLeft: "auto" }}>Delete</button>
+          {savedAt && !saving && <span style={{ color: "var(--success)", fontSize: 12.5, alignSelf: "center" }}>Saved</span>}
+        </div>
+      </form>
     </div>
   );
 }

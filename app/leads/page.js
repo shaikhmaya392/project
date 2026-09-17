@@ -3,20 +3,20 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-const STATUS_FILTERS = ["all", "new", "contacted", "in_progress", "won", "lost"];
-
 function fmtDate(s) {
   if (!s) return "-";
-  return new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const d = new Date(s);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}`;
 }
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
   const [quoteByLead, setQuoteByLead] = useState({});
+  const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
 
   function load() {
     setLoading(true);
@@ -41,11 +41,23 @@ export default function LeadsPage() {
         setQuoteByLead(map);
       })
       .catch(() => {});
+
+    fetch("/api/team").then((r) => r.json()).then((d) => setTeam(Array.isArray(d) ? d : [])).catch(() => {});
   }
 
   useEffect(() => {
     load();
   }, []);
+
+  async function assign(e, leadId, name) {
+    e.stopPropagation();
+    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, assigned_to: name } : l)));
+    await fetch(`/api/leads/${leadId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assigned_to: name }),
+    });
+  }
 
   function statusFor(lead) {
     const q = quoteByLead[lead.id];
@@ -56,19 +68,17 @@ export default function LeadsPage() {
   }
 
   const filtered = useMemo(() => {
-    return leads.filter((lead) => {
-      if (status !== "all" && (lead.status || "new") !== status) return false;
-      if (!query.trim()) return true;
-      const q = query.toLowerCase();
-      return (
+    if (!query.trim()) return leads;
+    const q = query.toLowerCase();
+    return leads.filter(
+      (lead) =>
         (lead.name || "").toLowerCase().includes(q) ||
         (lead.email || "").toLowerCase().includes(q) ||
         (lead.phone || "").toLowerCase().includes(q) ||
         (lead.address || "").toLowerCase().includes(q) ||
         (lead.service_type || "").toLowerCase().includes(q)
-      );
-    });
-  }, [leads, query, status]);
+    );
+  }, [leads, query]);
 
   return (
     <div>
@@ -90,13 +100,6 @@ export default function LeadsPage() {
           </svg>
           <input placeholder="Search business, person, email or phone..." value={query} onChange={(e) => setQuery(e.target.value)} />
         </div>
-        <div className="filter-pills">
-          {STATUS_FILTERS.map((s) => (
-            <button key={s} type="button" className={`pill${status === s ? " active" : ""}`} onClick={() => setStatus(s)}>
-              {s === "all" ? "All" : s.replace("_", " ")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {loading ? (
@@ -111,15 +114,15 @@ export default function LeadsPage() {
       ) : (
         <div className="table-wrap">
           <div className="table-scroll">
-            <table style={{ minWidth: 1040 }}>
+            <table style={{ minWidth: 1080 }}>
               <colgroup>
-                <col style={{ width: 92 }} />
-                <col style={{ width: 168 }} />
-                <col style={{ width: 190 }} />
+                <col style={{ width: 108 }} />
+                <col style={{ width: 128 }} />
+                <col style={{ width: 200 }} />
                 <col style={{ width: 150 }} />
                 <col style={{ width: 130 }} />
                 <col style={{ width: 96 }} />
-                <col style={{ width: 110 }} />
+                <col style={{ width: 150 }} />
                 <col style={{ width: 118 }} />
                 <col style={{ width: 130 }} />
               </colgroup>
@@ -159,7 +162,19 @@ export default function LeadsPage() {
                           <span className="dot" /> {lead.source === "website_form" ? "Website" : "Manual"}
                         </span>
                       </td>
-                      <td>{lead.assigned_to || <span className="source-tag">Unassigned</span>}</td>
+                      <td onClick={(e) => e.stopPropagation()}>
+                        <select
+                          className="inline-select"
+                          value={lead.assigned_to || ""}
+                          onChange={(e) => assign(e, lead.id, e.target.value)}
+                        >
+                          <option value="">Unassigned</option>
+                          {team.map((t) => <option key={t.id} value={t.name}>{t.name}</option>)}
+                          {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && (
+                            <option value={lead.assigned_to}>{lead.assigned_to}</option>
+                          )}
+                        </select>
+                      </td>
                       <td><span className={`badge ${st.cls}`}>{st.label}</span></td>
                       <td>{lead.next_action ? lead.next_action : <span className="source-tag">—</span>}</td>
                     </tr>

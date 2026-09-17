@@ -37,6 +37,8 @@ function titleFor(pathname) {
   return "";
 }
 
+const TOP_LEVEL = ["/", "/leads", "/quotations", "/projects", "/staff", "/settings", "/reports", "/inbox", "/pipeline", "/workflows"];
+
 export default function Topbar({ onToggle }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -84,6 +86,8 @@ export default function Topbar({ onToggle }) {
     router.refresh();
   }
 
+  const showBack = !TOP_LEVEL.includes(pathname);
+
   return (
     <header className="topbar" ref={wrapRef}>
       <button type="button" className="topbar-toggle" onClick={onToggle} title="Toggle sidebar">
@@ -91,6 +95,14 @@ export default function Topbar({ onToggle }) {
           <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
         </svg>
       </button>
+      {showBack && (
+        <button type="button" className="topbar-back" onClick={() => router.back()} title="Go back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Back
+        </button>
+      )}
       <span className="topbar-title">{titleFor(pathname)}</span>
 
       <span className="topbar-spacer" />
