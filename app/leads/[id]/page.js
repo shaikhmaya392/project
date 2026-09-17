@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { STATUS_LABELS, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
+import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
 import Select from "../../Select";
 
 const EDIT_FIELDS = [
@@ -40,19 +40,6 @@ const I = {
 
 function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
 function cap(s) { return statusText(s); }
-
-// Status is no longer a manual dropdown — it follows what has actually
-// happened on the lead, in this order: an accepted quote beats a sent
-// quote beats work underway (a task/next action set) beats first contact
-// (assigned to someone) beats brand new.
-function computeAutoStatus(lead, hasAcceptedQuote, hasSentQuote) {
-  if (hasAcceptedQuote) return "quote_accepted";
-  if (hasSentQuote) return "quote_sent";
-  const hasTask = (lead.tasks && lead.tasks.length > 0) || !!(lead.next_action && lead.next_action.trim());
-  if (hasTask) return "in_progress";
-  if (lead.assigned_to && lead.assigned_to.trim()) return "contacted";
-  return "new";
-}
 function money(n) { return `$${Number(n || 0).toLocaleString()}`; }
 function fmtDate(iso) {
   if (!iso) return "";
@@ -150,17 +137,6 @@ export default function LeadDetailPage() {
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }, [quotes, lead]);
 
-  // Keep status in sync with what actually happened — never a manual pick.
-  useEffect(() => {
-    if (!lead) return;
-    const hasAccepted = leadQuotes.some((q) => q.status === "accepted");
-    const hasSent = leadQuotes.length > 0;
-    const auto = computeAutoStatus(lead, hasAccepted, hasSent);
-    if (auto !== (lead.status || "new")) {
-      patchLead({ status: auto }, `Status changed to ${statusText(auto)}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lead?.id, lead?.assigned_to, lead?.next_action, lead?.tasks, leadQuotes]);
 
   const activityFeed = useMemo(() => {
     const items = [];
@@ -432,12 +408,13 @@ export default function LeadDetailPage() {
               <div className="ld-col ld-side">
                 <div className="ld-panel ld-manage">
                   <div className="ld-panel-head"><span className="ld-ic navy">{I.gear}</span><h3>Lead Management</h3></div>
-                  <div className="ld-field">Status
-                    <div className={`ld-status-auto status-${lead.status || "new"}`}>
-                      <span className="dot" />{statusText(lead.status)}
-                    </div>
-                    <span className="ld-auto-note">Updates automatically as the lead moves forward</span>
-                  </div>
+                  <label className="ld-field">Status
+                    <Select
+                      value={lead.status || "new"}
+                      onChange={(v) => patchLead({ status: v }, `Status changed to ${statusText(v)}`)}
+                      options={STATUSES.map((s) => ({ value: s, label: statusText(s) }))}
+                    />
+                  </label>
                   <label className="ld-field">Assigned To
                     <Select
                       value={lead.assigned_to || ""}

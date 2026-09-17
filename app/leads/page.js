@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { STATUSES, PRIORITIES, NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
+import { PRIORITIES, NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
 import Select from "../Select";
 
 function fmtDate(s) {
@@ -197,14 +197,9 @@ export default function LeadsPage() {
                     {/* WORK LOCATION */}
                     <td>{lead.address || "-"}</td>
 
-                    {/* STATUS */}
+                    {/* STATUS — read-only here; changed from the lead's own page */}
                     <td onClick={(e) => e.stopPropagation()}>
-                      <Select
-                        className={`compact status-${lead.status || "new"}`}
-                        value={lead.status || "new"}
-                        onChange={(v) => patchField(lead.id, "status", v)}
-                        options={STATUSES.map((s) => ({ value: s, label: statusLabel(s) }))}
-                      />
+                      <span className={`badge status-${lead.status || "new"}`}>{statusLabel(lead.status || "new")}</span>
                     </td>
 
                     {/* ASSIGNED TO */}
