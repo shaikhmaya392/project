@@ -140,8 +140,6 @@ export default function NewQuotationPage() {
         <div className="ld-nav">
           <button type="button" className="ld-round" onClick={goBack} title="Back to lead">{I.back}</button>
           <span className="ld-nav-title">Send Quotation</span>
-          <span style={{ flex: 1 }} />
-          <button type="button" className="btn-outline" onClick={goBack}>Close</button>
         </div>
 
         {/* hero */}
