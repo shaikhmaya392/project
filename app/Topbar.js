@@ -118,7 +118,7 @@ export default function Topbar({ onToggle }) {
           setNotifOpen(false);
         }}
       >
-        <div className="avatar" style={{ background: "linear-gradient(135deg,#2f6bff,#1d4ed8)" }}>
+        <div className="avatar" style={{ background: "linear-gradient(135deg,#16296e,#0a1650)" }}>
           {initials(user?.name)}
         </div>
         <span className="topbar-user-name">{user?.name || "…"}</span>

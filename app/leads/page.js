@@ -3,27 +3,23 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-function initials(name) {
-  if (!name) return "?";
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("");
+const STATUS_FILTERS = ["all", "new", "contacted", "in_progress", "won", "lost"];
+
+function fmtDate(s) {
+  if (!s) return "-";
+  return new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
-  const [quotationsByLead, setQuotationsByLead] = useState({});
+  const [quoteByLead, setQuoteByLead] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-  const [messagePreview, setMessagePreview] = useState(null);
+  const [status, setStatus] = useState("all");
 
-  function loadLeads() {
+  function load() {
     setLoading(true);
-    setError(null);
     fetch("/api/leads")
       .then(async (res) => {
         const data = await res.json();
@@ -34,7 +30,7 @@ export default function LeadsPage() {
       .finally(() => setLoading(false));
 
     fetch("/api/quotations")
-      .then((res) => res.json())
+      .then((r) => r.json())
       .then((data) => {
         if (!Array.isArray(data)) return;
         const map = {};
@@ -42,33 +38,37 @@ export default function LeadsPage() {
           if (!q.lead_id) continue;
           if (!map[q.lead_id]) map[q.lead_id] = q;
         }
-        setQuotationsByLead(map);
+        setQuoteByLead(map);
       })
       .catch(() => {});
   }
 
   useEffect(() => {
-    loadLeads();
+    load();
   }, []);
 
-  async function handleDelete(e, id) {
-    e.stopPropagation();
-    if (!confirm("Delete this lead permanently?")) return;
-    const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
-    if (res.ok) setLeads((prev) => prev.filter((l) => l.id !== id));
+  function statusFor(lead) {
+    const q = quoteByLead[lead.id];
+    if (q && q.status === "accepted") return { label: "Quote Accepted", cls: "status-won" };
+    if (q) return { label: "Quote Sent", cls: "status-contacted" };
+    const s = lead.status || "new";
+    return { label: s.replace("_", " "), cls: `status-${s}` };
   }
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return leads;
-    const q = query.toLowerCase();
-    return leads.filter(
-      (lead) =>
+    return leads.filter((lead) => {
+      if (status !== "all" && (lead.status || "new") !== status) return false;
+      if (!query.trim()) return true;
+      const q = query.toLowerCase();
+      return (
         (lead.name || "").toLowerCase().includes(q) ||
         (lead.email || "").toLowerCase().includes(q) ||
         (lead.phone || "").toLowerCase().includes(q) ||
-        (lead.address || "").toLowerCase().includes(q)
-    );
-  }, [leads, query]);
+        (lead.address || "").toLowerCase().includes(q) ||
+        (lead.service_type || "").toLowerCase().includes(q)
+      );
+    });
+  }, [leads, query, status]);
 
   return (
     <div>
@@ -77,9 +77,7 @@ export default function LeadsPage() {
           <h2>Leads</h2>
           <p className="subtitle">{loading ? "Loading..." : `${filtered.length} of ${leads.length} leads`}</p>
         </div>
-        <Link href="/leads/new" className="btn">
-          + New Lead
-        </Link>
+        <Link href="/leads/new" className="btn">+ New Lead</Link>
       </div>
 
       {error && <div className="error-banner">Couldn&apos;t load leads: {error}</div>}
@@ -90,11 +88,14 @@ export default function LeadsPage() {
             <circle cx="11" cy="11" r="7" />
             <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
           </svg>
-          <input
-            placeholder="Search by name, phone, email, or address..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+          <input placeholder="Search business, person, email or phone..." value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+        <div className="filter-pills">
+          {STATUS_FILTERS.map((s) => (
+            <button key={s} type="button" className={`pill${status === s ? " active" : ""}`} onClick={() => setStatus(s)}>
+              {s === "all" ? "All" : s.replace("_", " ")}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -104,139 +105,68 @@ export default function LeadsPage() {
         <div className="table-wrap">
           <div className="empty-state">
             <div className="big">No leads found</div>
-            {leads.length === 0
-              ? 'Waiting on leads from the website, or add one with "+ New Lead".'
-              : "Try clearing your search."}
+            {leads.length === 0 ? 'Waiting on leads from the website, or add one with "+ New Lead".' : "Try clearing your search."}
           </div>
         </div>
       ) : (
         <div className="table-wrap">
-          <table>
-            <colgroup>
-              <col style={{ width: "17%" }} />
-              <col style={{ width: "10%" }} />
-              <col style={{ width: "12%" }} />
-              <col style={{ width: "17%" }} />
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "17%" }} />
-              <col style={{ width: "132px" }} />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Phone</th>
-                <th>Email Address</th>
-                <th>Where Is The Work Located?</th>
-                <th>Message</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((lead) => (
-                <tr key={lead.id} onClick={() => (window.location.href = `/leads/${lead.id}`)}>
-                  <td>
-                    <div className="name-cell">
-                      <div className="avatar">{initials(lead.name)}</div>
-                      <div>
-                        <div className="name-primary">{lead.name || "(no name)"}</div>
-                        {quotationsByLead[lead.id] && (
-                          <span className={`quote-flag ${quotationsByLead[lead.id].status === "accepted" ? "accepted" : ""}`}>
-                            {quotationsByLead[lead.id].status === "accepted" ? "Quotation accepted" : "Quotation sent"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="source-tag">
-                    {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : "-"}
-                  </td>
-                  <td>{lead.phone || "-"}</td>
-                  <td className="source-tag">{lead.email || "-"}</td>
-                  <td>{lead.address || "-"}</td>
-                  <td>
-                    {lead.message ? (
-                      <button
-                        type="button"
-                        className="message-preview-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMessagePreview(lead);
-                        }}
-                      >
-                        {lead.message.length > 28 ? `${lead.message.slice(0, 28)}...` : lead.message}
-                      </button>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td>
-                    <div className="row-actions">
-                      {lead.phone && (
-                        <a
-                          href={`tel:${lead.phone}`}
-                          className="icon-btn"
-                          title={`Call ${lead.phone}`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M4 4h4l2 5-2.5 1.5a11 11 0 005 5L14 13l5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z" />
-                          </svg>
-                        </a>
-                      )}
-                      <Link
-                        href={`/leads/${lead.id}/quotation`}
-                        className="icon-btn"
-                        title="Send Quotation"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M14 3v6h6M9 13h6M9 17h6" strokeLinecap="round" />
-                        </svg>
-                      </Link>
-                      <Link
-                        href={`/leads/${lead.id}`}
-                        className="icon-btn"
-                        title="Edit"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 20h9" strokeLinecap="round" />
-                          <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </Link>
-                      <button
-                        type="button"
-                        className="icon-btn danger"
-                        title="Delete"
-                        onClick={(e) => handleDelete(e, lead.id)}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
+          <div className="table-scroll">
+            <table style={{ minWidth: 1040 }}>
+              <colgroup>
+                <col style={{ width: 92 }} />
+                <col style={{ width: 168 }} />
+                <col style={{ width: 190 }} />
+                <col style={{ width: 150 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 96 }} />
+                <col style={{ width: 110 }} />
+                <col style={{ width: 118 }} />
+                <col style={{ width: 130 }} />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Lead</th>
+                  <th>Contact</th>
+                  <th>Work Location</th>
+                  <th>Project Type</th>
+                  <th>Source</th>
+                  <th>Assigned To</th>
+                  <th>Status</th>
+                  <th>Next Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {messagePreview && (
-        <div className="msg-backdrop" onClick={() => setMessagePreview(null)}>
-          <div className="msg-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="panel-title">
-              Message from {messagePreview.name || "lead"}
-              <button type="button" className="icon-btn" onClick={() => setMessagePreview(null)}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
-                </svg>
-              </button>
-            </div>
-            <div className="message-block">{messagePreview.message}</div>
+              </thead>
+              <tbody>
+                {filtered.map((lead) => {
+                  const st = statusFor(lead);
+                  return (
+                    <tr key={lead.id} onClick={() => (window.location.href = `/leads/${lead.id}`)}>
+                      <td className="source-tag">{fmtDate(lead.created_at)}</td>
+                      <td className="name-primary">{lead.name || "(no name)"}</td>
+                      <td>
+                        <div>{lead.phone || "-"}</div>
+                        {lead.email && (
+                          <a href={`mailto:${lead.email}`} onClick={(e) => e.stopPropagation()} className="contact-email">
+                            {lead.email}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17L17 7M8 7h9v9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                          </a>
+                        )}
+                      </td>
+                      <td>{lead.address || "-"}</td>
+                      <td>{lead.service_type || "-"}</td>
+                      <td>
+                        <span className={`source-chip ${lead.source === "website_form" ? "website" : "manual"}`}>
+                          <span className="dot" /> {lead.source === "website_form" ? "Website" : "Manual"}
+                        </span>
+                      </td>
+                      <td>{lead.assigned_to || <span className="source-tag">Unassigned</span>}</td>
+                      <td><span className={`badge ${st.cls}`}>{st.label}</span></td>
+                      <td>{lead.next_action ? lead.next_action : <span className="source-tag">—</span>}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
