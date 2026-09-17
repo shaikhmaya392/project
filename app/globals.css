@@ -824,20 +824,14 @@ textarea { resize: vertical; }
 .btn-outline:hover { border-color: var(--navy); background: #f7f9ff; }
 .btn-outline svg { width: 16px; height: 16px; }
 
-/* header action buttons (Edit / Save / Create Quote): pill shape + icon badge */
+/* header action buttons (Edit / Save / Create Quote): pill shape, bare icon (no badge) */
 .ld-head-actions .btn-outline,
 .ld-head-actions .btn-navy {
-  border-radius: 999px; height: 42px; padding: 4px 18px 4px 4px; gap: 10px; font-weight: 700;
+  border-radius: 999px; height: 42px; padding: 0 18px; gap: 8px; font-weight: 700;
 }
-.ld-head-actions .bi {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: #eef1f8; color: #16296e;
-}
-.ld-head-actions .bi svg { width: 14px; height: 14px; }
-.ld-head-actions .btn-navy .bi { background: rgba(255,255,255,0.2); color: #fff; }
+.ld-head-actions .btn-outline svg,
+.ld-head-actions .btn-navy svg { width: 16px; height: 16px; }
 .ld-head-actions .btn-outline.active { border-color: #16296e; background: #eef1f8; }
-.ld-head-actions .btn-outline.active .bi { background: #16296e; color: #fff; }
 .btn-navy {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 16px;
   border-radius: 11px; border: none; background: linear-gradient(135deg, #16296e, #0a1650); color: #fff;
@@ -860,8 +854,8 @@ textarea { resize: vertical; }
   border-right: 1px solid rgba(255,255,255,0.7);
 }
 .ld-pill:last-child { border-right: none; }
-.ld-pill .pi { width: 32px; height: 32px; }
-.ld-pill .pi svg { width: 17px; height: 17px; }
+.ld-pill .pi { width: 36px; height: 36px; }
+.ld-pill .pi svg { width: 19px; height: 19px; }
 .ld-pill span, .ld-pill { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* tabs */
