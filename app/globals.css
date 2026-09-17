@@ -474,7 +474,7 @@ a { color: inherit; }
 .table-wrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
 /* Constrained to the viewport so the horizontal scrollbar sits right below
    the visible rows, reachable without scrolling past a long lead list first. */
-.table-scroll { overflow: auto; max-height: calc(100vh - 300px); min-height: 220px; scrollbar-gutter: stable; }
+.table-scroll { overflow: auto; max-height: calc(100vh - 300px); scrollbar-gutter: stable; }
 .table-scroll::-webkit-scrollbar { height: 11px; width: 11px; }
 .table-scroll::-webkit-scrollbar-track { background: #eef1f7; }
 .table-scroll::-webkit-scrollbar-thumb { background: #b9c2d8; border-radius: 999px; border: 3px solid #eef1f7; }
@@ -599,6 +599,15 @@ td.name-primary, td.name-secondary, td.source-tag { display: table-cell; }
   width: 100%; height: 34px; padding: 0 30px 0 10px; font-size: 12.5px; font-weight: 600; border-radius: 9px;
   background-position: right 9px center; background-size: 13px;
 }
+/* compact variant of the custom Select (Select.js) used inside table rows */
+.cs.compact .cs-trigger { height: 34px; padding: 0 26px 0 10px; font-size: 12.5px; font-weight: 600; border-radius: 9px; }
+.cs.compact .cs-trigger svg { width: 13px; height: 13px; right: 9px; }
+.cs.compact.status-new .cs-trigger { background-color: #e9edf7; color: #3454b4; border-color: #dbe2f0; }
+.cs.compact.status-contacted .cs-trigger { background-color: #fdf1e0; color: #c77706; border-color: #f5e3c2; }
+.cs.compact.status-in_progress .cs-trigger { background-color: #f1eaff; color: #7c3aed; border-color: #e4d6fb; }
+.cs.compact.status-quote_sent .cs-trigger { background-color: #e9edf7; color: #2563eb; border-color: #d6def5; }
+.cs.compact.status-quote_accepted .cs-trigger { background-color: #e8f8ee; color: #16a34a; border-color: #cdeedb; }
+
 /* status dropdown is tinted like its badge so the list reads at a glance */
 .app select.status-select.status-new { background-color: #e9edf7; color: #3454b4; border-color: #dbe2f0; }
 .app select.status-select.status-contacted { background-color: #fdf1e0; color: #c77706; border-color: #f5e3c2; }
@@ -1035,8 +1044,10 @@ textarea { resize: vertical; }
 .cs-trigger:hover { border-color: #c3ceea; }
 .cs.open .cs-trigger { border-color: #16296e; box-shadow: 0 0 0 3px rgba(22,41,110,0.12); background: #fff; }
 .cs.open .cs-trigger svg { transform: rotate(180deg); }
+/* position is set inline (fixed, from the trigger's rect) since this
+   renders through a portal — see app/Select.js */
 .cs-menu {
-  position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 60;
+  z-index: 500;
   background: #fff; border: 1px solid var(--border); border-radius: 12px;
   box-shadow: 0 16px 40px rgba(16,24,40,0.16); padding: 6px;
   max-height: 260px; overflow-y: auto;
@@ -1050,6 +1061,7 @@ textarea { resize: vertical; }
 }
 .cs-opt:hover { background: #f4f6fb; }
 .cs-opt.active { background: #eef1f8; color: #16296e; font-weight: 700; }
+.ld-task-hint { font-size: 12.5px; font-weight: 600; color: var(--red); margin-top: 8px; text-align: center; }
 .ld-tasks { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 9px; }
 .ld-tasks li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #24314e; }
 .ld-tasks .td { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }

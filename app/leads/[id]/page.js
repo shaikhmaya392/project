@@ -77,6 +77,7 @@ export default function LeadDetailPage() {
   const [docDeleteId, setDocDeleteId] = useState(null);
   const menuRef = useRef(null);
   const [newMsg, setNewMsg] = useState("");
+  const [taskHint, setTaskHint] = useState("");
   const [noteDraft, setNoteDraft] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -84,17 +85,39 @@ export default function LeadDetailPage() {
   const fileRef = useRef(null);
 
   useEffect(() => {
-    fetch(`/api/leads/${id}`)
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to load lead");
-        setLead(data);
-        setNoteDraft(data.notes || "");
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    // A lead opened right after being created can 404 for a moment — the
+    // blob store's write hasn't propagated to every edge yet. Retry a few
+    // times before showing "not found" instead of failing on the first try.
+    async function loadWithRetry() {
+      for (let attempt = 0; attempt < 6; attempt++) {
+        try {
+          const res = await fetch(`/api/leads/${id}`, { cache: "no-store" });
+          const data = await res.json();
+          if (res.ok) {
+            if (cancelled) return;
+            setLead(data);
+            setNoteDraft(data.notes || "");
+            setLoading(false);
+            return;
+          }
+          if (res.status !== 404 || attempt === 5) throw new Error(data.error || "Failed to load lead");
+        } catch (err) {
+          if (attempt === 5) {
+            if (!cancelled) { setError(err.message); setLoading(false); }
+            return;
+          }
+        }
+        await sleep(600 * (attempt + 1));
+      }
+    }
+    loadWithRetry();
+
     fetch("/api/team").then((r) => r.json()).then((d) => setTeam(Array.isArray(d) ? d : [])).catch(() => {});
     fetch("/api/quotations").then((r) => r.json()).then((d) => setQuotes(Array.isArray(d) ? d : [])).catch(() => {});
+    return () => { cancelled = true; };
   }, [id]);
 
   // Close the ⋯ menu on an outside click, not just its own buttons.
@@ -172,7 +195,8 @@ export default function LeadDetailPage() {
   }
   function addTask() {
     const title = (lead.next_action || "").trim();
-    if (!title) return;
+    if (!title) { setTaskHint("Pick a Next Action above first"); return; }
+    setTaskHint("");
     const tasks = Array.isArray(lead.tasks) ? [...lead.tasks] : [];
     tasks.push({ id: `t-${Date.now()}`, title, due_date: lead.due_date || "", done: false, at: new Date().toISOString() });
     patchLead({ tasks }, `Task added: ${title}${lead.due_date ? ` (due ${fmtDate(lead.due_date)})` : ""}`);
@@ -423,6 +447,7 @@ export default function LeadDetailPage() {
                     <input type="date" value={dueValue} onChange={(e) => patchLead({ due_date: e.target.value })} />
                   </label>
                   <button className="btn-navy full" onClick={addTask}>{I.plus} Add Task</button>
+                  {taskHint && <div className="ld-task-hint">{taskHint}</div>}
 
                   {Array.isArray(lead.tasks) && lead.tasks.length > 0 && (
                     <ul className="ld-tasks">

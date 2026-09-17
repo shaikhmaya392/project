@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { STATUSES, PRIORITIES, NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
+import Select from "../Select";
 
 function fmtDate(s) {
   if (!s) return "-";
@@ -49,9 +50,7 @@ export default function LeadsPage() {
 
   // Inline edits on the list write straight through, so the same value shows
   // on the lead detail page and the dashboard.
-  async function patchField(e, leadId, field, value) {
-    e.stopPropagation();
-
+  async function patchField(leadId, field, value) {
     setLeads((prev) =>
       prev.map((l) => (l.id === leadId ? { ...l, [field]: value } : l))
     );
@@ -200,66 +199,50 @@ export default function LeadsPage() {
 
                     {/* STATUS */}
                     <td onClick={(e) => e.stopPropagation()}>
-                      <select
-                        className={`inline-select status-select status-${lead.status || "new"}`}
+                      <Select
+                        className={`compact status-${lead.status || "new"}`}
                         value={lead.status || "new"}
-                        onChange={(e) => patchField(e, lead.id, "status", e.target.value)}
-                      >
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>{statusLabel(s)}</option>
-                        ))}
-                      </select>
+                        onChange={(v) => patchField(lead.id, "status", v)}
+                        options={STATUSES.map((s) => ({ value: s, label: statusLabel(s) }))}
+                      />
                     </td>
 
                     {/* ASSIGNED TO */}
                     <td onClick={(e) => e.stopPropagation()}>
-                      <select
-                        className="inline-select"
+                      <Select
+                        className="compact"
                         value={lead.assigned_to || ""}
-                        onChange={(e) => patchField(e, lead.id, "assigned_to", e.target.value)}
-                      >
-                        <option value="">Unassigned</option>
-
-                        {team.map((t) => (
-                          <option key={t.id} value={t.name}>{t.name}</option>
-                        ))}
-
-                        {lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) && (
-                          <option value={lead.assigned_to}>{lead.assigned_to}</option>
-                        )}
-                      </select>
+                        onChange={(v) => patchField(lead.id, "assigned_to", v)}
+                        options={[
+                          { value: "", label: "Unassigned" },
+                          ...team.map((t) => ({ value: t.name, label: t.name })),
+                          ...(lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) ? [{ value: lead.assigned_to, label: lead.assigned_to }] : []),
+                        ]}
+                      />
                     </td>
 
                     {/* PRIORITY */}
                     <td onClick={(e) => e.stopPropagation()}>
-                      <select
-                        className="inline-select"
+                      <Select
+                        className="compact"
                         value={lead.priority || "Medium"}
-                        onChange={(e) => patchField(e, lead.id, "priority", e.target.value)}
-                      >
-                        {PRIORITIES.map((p) => (
-                          <option key={p} value={p}>{p}</option>
-                        ))}
-                      </select>
+                        onChange={(v) => patchField(lead.id, "priority", v)}
+                        options={PRIORITIES}
+                      />
                     </td>
 
                     {/* NEXT ACTION */}
                     <td onClick={(e) => e.stopPropagation()}>
-                      <select
-                        className="inline-select"
+                      <Select
+                        className="compact"
                         value={lead.next_action || ""}
-                        onChange={(e) => patchField(e, lead.id, "next_action", e.target.value)}
-                      >
-                        <option value="">Select Action</option>
-
-                        {NEXT_ACTIONS.map((action) => (
-                          <option key={action} value={action}>{action}</option>
-                        ))}
-
-                        {lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) && (
-                          <option value={lead.next_action}>{lead.next_action}</option>
-                        )}
-                      </select>
+                        onChange={(v) => patchField(lead.id, "next_action", v)}
+                        placeholder="Select Action"
+                        options={[
+                          ...NEXT_ACTIONS.map((a) => ({ value: a, label: a })),
+                          ...(lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) ? [{ value: lead.next_action, label: lead.next_action }] : []),
+                        ]}
+                      />
                     </td>
                   </tr>
                 ))}
