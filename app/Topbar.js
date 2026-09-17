@@ -86,7 +86,9 @@ export default function Topbar({ onToggle }) {
     router.refresh();
   }
 
-  const showBack = !TOP_LEVEL.includes(pathname);
+  // Lead detail renders its own back/nav row, so keep the topbar clean there.
+  const isLeadDetail = /^\/leads\/[^/]+$/.test(pathname) && pathname !== "/leads/new";
+  const showBack = !TOP_LEVEL.includes(pathname) && !isLeadDetail;
 
   return (
     <header className="topbar" ref={wrapRef}>
@@ -103,7 +105,7 @@ export default function Topbar({ onToggle }) {
           Back
         </button>
       )}
-      <span className="topbar-title">{titleFor(pathname)}</span>
+      <span className="topbar-title">{isLeadDetail ? "" : titleFor(pathname)}</span>
 
       <span className="topbar-spacer" />
 
