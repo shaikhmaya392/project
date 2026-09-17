@@ -129,7 +129,7 @@ export default function LeadsPage() {
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>Lead</th>
+                  <th>Name</th>
                   <th>Contact</th>
                   <th>Work Location</th>
                   <th>Project Type</th>
