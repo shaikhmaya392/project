@@ -42,6 +42,7 @@ const I = {
   upload: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 15V4M8 8l4-4 4 4" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 15v3a2 2 0 002 2h10a2 2 0 002-2v-3" strokeLinecap="round" /></svg>,
   trash: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   cal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>,
+  save: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12.5l4.3 4.3L19 7.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
 };
 
 function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
@@ -246,15 +247,15 @@ export default function LeadDetailPage() {
             <div className="ld-addr"><i className="pi sm">{I.pin}</i>{lead.address || "No address on file"}</div>
           </div>
           <div className="ld-head-actions">
-            {editing ? (
-              <>
-                <button className="btn-outline" onClick={saveCustomer}>Save</button>
-                <button className="btn-ghost" onClick={() => setEditing(false)}>Cancel</button>
-              </>
-            ) : (
-              <button className="btn-outline" onClick={() => setEditing(true)}>{I.edit} Edit</button>
-            )}
-            <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>{I.plus} Create Quote</button>
+            <button className={`btn-outline${editing ? " active" : ""}`} onClick={() => setEditing((v) => !v)}>
+              <i className="bi">{I.edit}</i>Edit
+            </button>
+            <button className="btn-outline" onClick={saveCustomer}>
+              <i className="bi">{I.save}</i>Save
+            </button>
+            <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>
+              <i className="bi">{I.plus}</i>Create Quote
+            </button>
           </div>
         </div>
 
