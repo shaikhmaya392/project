@@ -431,6 +431,9 @@ tbody tr:hover { background: #f6f8fd; }
 }
 .name-primary { font-weight: 600; color: var(--text); }
 .name-secondary { font-size: 12px; color: var(--muted-soft); }
+/* When these helper classes are placed directly on a <td>, keep the cell a
+   table-cell (the display:block above is for use inside divs/flex). */
+td.name-primary, td.name-secondary, td.source-tag { display: table-cell; }
 
 .quote-flag {
   display: inline-block;
