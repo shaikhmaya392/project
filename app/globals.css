@@ -300,6 +300,44 @@ a { color: inherit; }
 .card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
 .panel-title { font-size: 14px; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; justify-content: space-between; color: var(--text); }
 
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  overflow-x: auto;
+}
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.tab-count {
+  background: var(--blue-soft); color: var(--blue-dark);
+  font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; min-width: 18px; text-align: center;
+}
+
+.doc-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
+.doc-row:last-child { border-bottom: none; }
+.doc-check {
+  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+  background: var(--surface); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; padding: 0;
+}
+.doc-check.on { background: var(--green); border-color: var(--green); }
+.doc-check svg { width: 13px; height: 13px; }
+
 .two-col { display: grid; grid-template-columns: 1.1fr 1.6fr; gap: 16px; align-items: start; }
 @media (max-width: 900px) {
   .two-col { grid-template-columns: 1fr; }
