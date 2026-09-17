@@ -216,25 +216,25 @@ export default function LeadDetailPage() {
 
   return (
     <div className="lead-detail">
-      {/* nav row (below topbar) */}
-      <div className="ld-nav">
-        <button className="ld-round" onClick={() => router.push("/leads")} title="Back to leads">{I.back}</button>
-        <span className="ld-nav-title">Leads</span>
-        <span style={{ flex: 1 }} />
-        <div className="ld-menu-wrap">
-          <button className="ld-round" onClick={() => setMenuOpen((v) => !v)} title="More">{I.dots}</button>
-          {menuOpen && (
-            <div className="ld-menu">
-              <button onClick={() => { setMenuOpen(false); router.push(`/leads/${id}/quotation`); }}>{I.doc} Send Quotation</button>
-              <button className="danger" onClick={() => { setMenuOpen(false); handleDelete(); }}>{I.trash} Delete lead</button>
-            </div>
-          )}
-        </div>
-      </div>
-
       {error && <div className="error-banner">{error}</div>}
 
       <div className="ld-card">
+        {/* nav row (inside the card) */}
+        <div className="ld-nav">
+          <button className="ld-round" onClick={() => router.push("/leads")} title="Back to leads">{I.back}</button>
+          <span className="ld-nav-title">Leads</span>
+          <span style={{ flex: 1 }} />
+          <div className="ld-menu-wrap">
+            <button className="ld-round" onClick={() => setMenuOpen((v) => !v)} title="More">{I.dots}</button>
+            {menuOpen && (
+              <div className="ld-menu">
+                <button onClick={() => { setMenuOpen(false); router.push(`/leads/${id}/quotation`); }}>{I.doc} Send Quotation</button>
+                <button className="danger" onClick={() => { setMenuOpen(false); handleDelete(); }}>{I.trash} Delete lead</button>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* header */}
         <div className="ld-head">
           <div className="ld-avatar">{I.person}</div>
@@ -243,7 +243,7 @@ export default function LeadDetailPage() {
               <h1>{lead.name || "(no name)"}</h1>
               <span className={`ld-name-badge status-${lead.status || "new"}`}><span className="dot" />{statusText(lead.status)}</span>
             </div>
-            <div className="ld-addr">{I.pin}{lead.address || "No address on file"}</div>
+            <div className="ld-addr"><i className="pi sm">{I.pin}</i>{lead.address || "No address on file"}</div>
           </div>
           <div className="ld-head-actions">
             {editing ? (
@@ -258,9 +258,9 @@ export default function LeadDetailPage() {
           </div>
         </div>
 
-        {/* pills */}
+        {/* summary bar */}
         <div className="ld-pills">
-          <span className="ld-pill"><i className="pi">{I.phone}</i>{cap(lead.status)}</span>
+          <span className="ld-pill"><i className="pi">{I.phone}</i>Contacted</span>
           <span className="ld-pill"><i className="pi">{I.person}</i>Assigned: {assigned}</span>
           <span className="ld-pill"><i className="pi">{I.globe}</i>Source: {sourceLabel}</span>
           <span className="ld-pill"><i className="pi">{I.flag}</i>Priority: {priority}</span>
