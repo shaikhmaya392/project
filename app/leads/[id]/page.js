@@ -3,8 +3,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-const STATUSES = ["new", "contacted", "in_progress", "won", "lost"];
+const STATUS_LABELS = {
+  new: "New",
+  contacted: "Contacted",
+  in_progress: "In Progress",
+  quote_sent: "Quotation Sent",
+  quote_accepted: "Quotation Accepted",
+};
+const STATUSES = Object.keys(STATUS_LABELS);
 const PRIORITIES = ["High", "Medium", "Low"];
+const NEXT_ACTIONS = [
+  "Call client", "Follow up with client", "Send quotation", "Schedule inspection",
+  "Await documents", "Review corrections", "Submit permit application", "Close lead",
+];
 const PROJECT_TYPES = [
   "Residential Renovation", "Commercial", "Window / Door", "Solar Panels",
   "Shutters", "Sign Permit", "Office Remodel", "Permit Renewal", "Code Violation",
@@ -33,8 +44,8 @@ const I = {
   cal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>,
 };
 
-function statusText(s) { return (s || "new").replace("_", " "); }
-function cap(s) { const t = statusText(s); return t.charAt(0).toUpperCase() + t.slice(1); }
+function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
+function cap(s) { return statusText(s); }
 function money(n) { return `$${Number(n || 0).toLocaleString()}`; }
 function fmtDate(iso) {
   if (!iso) return "";
@@ -192,6 +203,17 @@ export default function LeadDetailPage() {
   const docs = lead.documents || [];
   const msgs = lead.messages || [];
 
+  // Due Date pulls from the linked quotation (its valid-until / issue date) until staff overrides it.
+  const quoteDate = primaryQuote ? (primaryQuote.valid_until || primaryQuote.created_at || "") : "";
+  const dueValue = lead.due_date || (quoteDate ? String(quoteDate).slice(0, 10) : "");
+
+  // Messages thread starts with what the customer submitted through the website form.
+  const thread = [];
+  if (lead.message && lead.message.trim()) {
+    thread.push({ id: "form-msg", from: "client", author: lead.name || "Customer", text: lead.message, at: lead.created_at });
+  }
+  msgs.forEach((m) => thread.push(m));
+
   return (
     <div className="lead-detail">
       {/* nav row (below topbar) */}
@@ -219,7 +241,7 @@ export default function LeadDetailPage() {
           <div className="ld-head-main">
             <div className="ld-name-row">
               <h1>{lead.name || "(no name)"}</h1>
-              <span className={`ld-badge status-${lead.status || "new"}`}><span className="dot" />{statusText(lead.status)}</span>
+              <span className={`ld-name-badge status-${lead.status || "new"}`}><span className="dot" />{statusText(lead.status)}</span>
             </div>
             <div className="ld-addr">{I.pin}{lead.address || "No address on file"}</div>
           </div>
@@ -367,10 +389,14 @@ export default function LeadDetailPage() {
                     </select>
                   </label>
                   <label className="ld-field">Next Action
-                    <input value={lead.next_action || ""} onChange={(e) => set("next_action", e.target.value)} onBlur={(e) => patchLead({ next_action: e.target.value })} placeholder="e.g. Call client" />
+                    <select value={lead.next_action || ""} onChange={(e) => patchLead({ next_action: e.target.value }, e.target.value ? `Next action: ${e.target.value}` : undefined)}>
+                      <option value="">Select next action…</option>
+                      {NEXT_ACTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
+                      {lead.next_action && !NEXT_ACTIONS.includes(lead.next_action) && <option value={lead.next_action}>{lead.next_action}</option>}
+                    </select>
                   </label>
                   <label className="ld-field">Due Date
-                    <input type="date" value={lead.due_date || ""} onChange={(e) => patchLead({ due_date: e.target.value })} />
+                    <input type="date" value={dueValue} onChange={(e) => patchLead({ due_date: e.target.value })} />
                   </label>
                   <button className="btn-navy full" onClick={addTask}>{I.plus} Add Task</button>
 
@@ -417,11 +443,11 @@ export default function LeadDetailPage() {
           {tab === "Messages" && (
             <div className="ld-tabpane">
               <div className="ld-pane-head"><h3>Messages</h3></div>
-              {msgs.length === 0 ? (
-                <div className="ld-empty">{I.msg}<p>No messages yet.</p><span>Start the conversation with the customer below.</span></div>
+              {thread.length === 0 ? (
+                <div className="ld-empty">{I.msg}<p>No messages yet.</p><span>The customer&apos;s form message appears here, and you can reply below.</span></div>
               ) : (
                 <div className="ld-thread">
-                  {msgs.map((m) => (
+                  {thread.map((m) => (
                     <div className={`ld-bubble ${m.from === "staff" ? "out" : "in"}`} key={m.id}>
                       <div className="mb-author">{m.author || (m.from === "staff" ? "Staff" : lead.name)}</div>
                       <div className="mb-text">{m.text}</div>
