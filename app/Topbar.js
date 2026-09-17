@@ -87,7 +87,9 @@ export default function Topbar({ onToggle }) {
   }
 
   // Lead detail renders its own back/nav row, so keep the topbar clean there.
-  const isLeadDetail = /^\/leads\/[^/]+$/.test(pathname) && pathname !== "/leads/new";
+  // Lead detail and the quotation builder render their own nav/back row,
+  // so keep the topbar clean there.
+  const isLeadDetail = (/^\/leads\/[^/]+$/.test(pathname) && pathname !== "/leads/new") || /^\/leads\/[^/]+\/quotation/.test(pathname);
   const showBack = !TOP_LEVEL.includes(pathname) && !isLeadDetail;
 
   return (
