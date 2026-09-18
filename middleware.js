@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "./lib/session";
 
 const PUBLIC_PATHS = ["/login", "/signup"];
-const PUBLIC_PREFIXES = ["/api/auth", "/quotations/", "/_next", "/logo.png", "/favicon"];
+const PUBLIC_PREFIXES = ["/api/auth", "/quotations/", "/_next", "/logo.png", "/logo-color.png", "/favicon"];
 
 function isPublic(pathname, method) {
   if (PUBLIC_PATHS.includes(pathname)) return true;
@@ -37,5 +37,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|logo.png|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|logo.png|logo-color.png|favicon.ico).*)"],
 };
