@@ -42,7 +42,7 @@ export async function POST(request) {
       await sendEmail({
         to: quotation.client_email,
         subject: `Quotation ${quotation.number} from DS Permitting Services`,
-        html: quotationEmailHtml(quotation, acceptUrl),
+        html: quotationEmailHtml(quotation, acceptUrl, origin),
         attachment: { filename: `Quotation-${quotation.number}.pdf`, buffer: pdfBuffer },
       });
     } catch (mailErr) {

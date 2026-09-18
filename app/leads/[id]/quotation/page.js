@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useToast } from "../../../ToastProvider";
+import QuoteCard from "../../../QuoteCard";
 
 const COMMON_SERVICES = [
   "Permit research",
@@ -295,48 +296,6 @@ export default function NewQuotationPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// The branded card shared between the live preview popup and (visually) the
-// emailed quotation / accept page, so what staff previews is what gets sent.
-function QuoteCard({ number, clientName, projectDescription, address, services, fees, total, validUntil }) {
-  return (
-    <div className="qc-card">
-      <div className="qc-brand">
-        <img src="/logo.png" alt="DS Permitting Services" className="qc-logo" />
-        <div>
-          <div className="qc-brand-name">DS Permitting Services</div>
-          <div className="qc-brand-sub">Fort McCoy, FL</div>
-        </div>
-      </div>
-      <div className="qc-tag">Quotation {number}</div>
-      <div className="qc-meta">
-        <div><span>Client</span><b>{clientName}</b></div>
-        <div><span>Project</span><b>{projectDescription}</b></div>
-        <div><span>Location</span><b>{address}</b></div>
-      </div>
-      <div className="qc-section">Services</div>
-      {services.length === 0 ? (
-        <div className="qc-empty">No services selected yet</div>
-      ) : (
-        <ul className="qc-services">{services.map((s) => <li key={s}>{s}</li>)}</ul>
-      )}
-      <div className="qc-section">Fees</div>
-      {fees.length === 0 ? (
-        <div className="qc-empty">No fees added yet</div>
-      ) : (
-        <div className="qc-fees">
-          {fees.map((f, i) => (
-            <div className="qc-fee-row" key={i}><span>{f.label}</span><b>${Number(f.amount || 0).toLocaleString()}</b></div>
-          ))}
-        </div>
-      )}
-      <div className="qc-total-row"><span>Total</span><b>${Number(total || 0).toLocaleString()}</b></div>
-      <div className="qc-valid">Quotation valid until <b>{validUntil}</b></div>
-      <div className="qc-accept-btn">Accept Quotation</div>
-      <div className="qc-footer">DS Permitting Services · Fort McCoy, FL · (352) 809-1717 · dspermitting.com</div>
     </div>
   );
 }

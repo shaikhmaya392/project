@@ -1325,7 +1325,10 @@ textarea { resize: vertical; }
 .qc-logo { width: 40px; height: 40px; object-fit: contain; mix-blend-mode: screen; flex-shrink: 0; }
 .qc-brand-name { color: #fff; font-weight: 800; font-size: 15px; }
 .qc-brand-sub { color: #aab6dd; font-size: 12px; margin-top: 1px; }
-.qc-tag { padding: 16px 24px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 700; }
+.qc-tag-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px 0; gap: 10px; }
+.qc-tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 700; }
+.qc-status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #fdf1e0; color: #c77706; }
+.qc-status.accepted { background: var(--green-soft); color: var(--green); }
 .qc-meta { padding: 8px 24px 16px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid var(--border-soft); margin-bottom: 16px; }
 .qc-meta div { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; }
 .qc-meta span { color: var(--muted); flex-shrink: 0; }
@@ -1340,8 +1343,20 @@ textarea { resize: vertical; }
 .qc-total-row { display: flex; justify-content: space-between; padding: 13px 24px; margin-top: 8px; background: #f7f9fc; font-size: 15.5px; font-weight: 800; color: #0f1b33; }
 .qc-valid { padding: 13px 24px 0; font-size: 12px; color: var(--muted); }
 .qc-accept-btn {
-  margin: 18px 24px 0; text-align: center; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: block; width: calc(100% - 48px); margin: 18px 24px 0; text-align: center;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #16130a; font-weight: 700; padding: 13px; border-radius: 11px; font-size: 13.5px;
-  box-shadow: 0 6px 16px rgba(224,168,46,0.3);
+  box-shadow: 0 6px 16px rgba(224,168,46,0.3); border: none; cursor: pointer; font-family: inherit;
+}
+.qc-accept-btn:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+.qc-accept-btn:disabled { opacity: 0.6; cursor: default; }
+.qc-accept-btn.qc-accept-btn-static { cursor: default; }
+.qc-accepted-note {
+  margin: 18px 24px 0; padding: 13px 16px; border-radius: 11px; background: var(--green-soft);
+  color: var(--green); font-size: 13px; font-weight: 600; line-height: 1.5; text-align: center;
 }
 .qc-footer { padding: 16px 24px 22px; text-align: center; font-size: 11px; color: var(--muted-soft); border-top: 1px solid var(--border-soft); margin-top: 18px; }
+
+/* Public quotation accept page shell */
+.qc-page { min-height: 100vh; background: var(--bg); padding: 48px 16px; }
+.qc-page-inner { max-width: 480px; margin: 0 auto; }
