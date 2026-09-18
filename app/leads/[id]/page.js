@@ -278,7 +278,7 @@ export default function LeadDetailPage() {
             {menuOpen && (
               <div className="ld-menu">
                 <button className="danger" onClick={() => { setMenuOpen(false); setDeleteOpen(true); }}>
-                  {I.trash}
+                  <i className="ld-menu-ic">{I.trash}</i>
                   <span>Delete lead<small>Permanently removes this record</small></span>
                 </button>
               </div>

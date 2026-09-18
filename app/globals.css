@@ -316,8 +316,8 @@ a { color: inherit; }
 .btn.danger { background: var(--red); color: #fff; }
 .btn.ghost { background: transparent; color: var(--muted); padding: 9px 12px; box-shadow: none; }
 .btn.ghost:hover { color: var(--text); }
-.btn.gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #16130a; }
-.btn.gold:hover { filter: brightness(1.05); }
+.btn.gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #16130a; box-shadow: 0 6px 16px rgba(224,168,46,0.3); }
+.btn.gold:hover { background: linear-gradient(135deg, #eebb42, var(--gold)); box-shadow: 0 10px 24px rgba(224,168,46,0.4); transform: translateY(-1px); }
 
 /* Lead hero header */
 .lead-hero {
@@ -808,15 +808,21 @@ textarea { resize: vertical; }
 }
 .ld-menu button {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
-  background: none; border: none; cursor: pointer; padding: 11px 12px; border-radius: 10px;
-  font-size: 14px; font-weight: 600; color: var(--text);
+  background: none; border: none; cursor: pointer; padding: 9px; border-radius: 12px;
+  font-size: 14px; font-weight: 700; color: var(--text); transition: background 0.15s;
 }
 .ld-menu button:hover { background: #f4f6fb; }
-.ld-menu button svg { width: 18px; height: 18px; flex-shrink: 0; }
 .ld-menu button span { display: flex; flex-direction: column; gap: 1px; }
 .ld-menu button small { font-size: 12px; font-weight: 500; color: var(--muted); }
+.ld-menu-ic {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ld-menu-ic svg { width: 18px; height: 18px; }
+.ld-menu button.danger .ld-menu-ic { background: var(--red-soft); color: var(--red); }
 .ld-menu button.danger { color: var(--red); }
 .ld-menu button.danger:hover { background: var(--red-soft); }
+.ld-menu button.danger:hover .ld-menu-ic { background: #fff; }
 
 /* Edit popup + delete confirm */
 .ld-modal {
@@ -824,7 +830,7 @@ textarea { resize: vertical; }
   padding: 26px 28px 24px; box-shadow: 0 24px 60px rgba(16,24,40,0.28);
   animation: toast-pop-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.ld-modal.ld-modal-sm { max-width: 420px; text-align: center; padding: 32px 28px 26px; }
+.ld-modal.ld-modal-sm { max-width: 400px; text-align: center; padding: 34px 30px 28px; }
 .ld-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .ld-modal-head h3 { font-family: var(--font-poppins), sans-serif; font-size: 20px; font-weight: 800; color: #1a1a1a; margin: 0 0 4px; }
 .ld-modal-head p { margin: 0; font-size: 13.5px; color: var(--muted); }
@@ -846,17 +852,19 @@ textarea { resize: vertical; }
 .ld-modal-actions.center { justify-content: center; }
 .ld-modal-actions .btn-outline, .ld-modal-actions .btn-navy, .ld-modal-actions .btn-danger { border-radius: 12px; height: 42px; padding: 0 18px; font-weight: 700; }
 .ld-modal-danger-ic {
-  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px;
-  background: var(--red-soft); color: var(--red); display: flex; align-items: center; justify-content: center;
+  width: 68px; height: 68px; border-radius: 50%; margin: 0 auto 18px;
+  background: radial-gradient(circle at 35% 30%, #fde3e3, var(--red-soft));
+  color: var(--red); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 8px rgba(220,38,38,0.06);
 }
-.ld-modal-danger-ic svg { width: 28px; height: 28px; }
-.ld-modal-center-title { font-family: var(--font-poppins), sans-serif; font-size: 20px; font-weight: 800; color: #1a1a1a; margin: 0 0 8px; }
-.ld-modal-center-text { font-size: 14px; color: var(--muted); line-height: 1.55; margin: 0; }
+.ld-modal-danger-ic svg { width: 30px; height: 30px; }
+.ld-modal-center-title { font-family: var(--font-poppins), sans-serif; font-size: 21px; font-weight: 800; color: #1a1a1a; margin: 0 0 9px; }
+.ld-modal-center-text { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0; }
 .ld-modal-center-text b { color: #1a1a1a; }
 .btn-danger {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 16px;
-  border-radius: 11px; border: none; background: var(--red); color: #fff;
-  font-size: 13.5px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 18px rgba(220,38,38,0.22);
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 44px; padding: 0 20px;
+  border-radius: 12px; border: none; background: linear-gradient(135deg, #ef4444, var(--red)); color: #fff;
+  font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 22px rgba(220,38,38,0.3);
 }
 .btn-danger:hover { filter: brightness(1.08); }
 .btn-danger svg { width: 16px; height: 16px; }
