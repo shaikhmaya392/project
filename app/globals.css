@@ -71,7 +71,7 @@ a { color: inherit; }
 
 /* Sidebar */
 .sidebar {
-  width: 264px;
+  width: 270px;
   flex-shrink: 0;
   background: linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg2));
   border-right: 1px solid var(--sidebar-border);
@@ -97,7 +97,7 @@ a { color: inherit; }
 }
 .app.collapsed .brand { justify-content: center; gap: 0; }
 .brand-logo {
-  width: 46px; height: 46px; object-fit: contain;
+  width: 76px; height: 76px; object-fit: contain;
   mix-blend-mode: screen;
   flex-shrink: 0;
   transition: width 0.22s ease, height 0.22s ease;

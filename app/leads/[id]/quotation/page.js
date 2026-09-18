@@ -150,7 +150,7 @@ export default function NewQuotationPage() {
           <div className="ld-avatar qb-avatar">{I.doc}</div>
           <div className="ld-head-main">
             <div className="ld-name-row"><h1>Quotation for {lead.name || "this lead"}</h1></div>
-            <div className="ld-addr"><i className="pi sm">{I.mail}</i>Emailed to the client with a PDF and an Accept link</div>
+            <div className="ld-addr">Emailed to the client with a PDF and an Accept link</div>
           </div>
         </div>
 
