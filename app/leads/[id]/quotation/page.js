@@ -25,6 +25,7 @@ const I = {
   mail: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   send: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M22 2L11 13" strokeLinecap="round" strokeLinejoin="round" /><path d="M22 2l-7 20-4-9-9-4 20-7z" strokeLinejoin="round" /></svg>,
   cal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>,
+  eye: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="12" r="3" /></svg>,
 };
 
 function defaultValidUntil() {
@@ -51,6 +52,7 @@ export default function NewQuotationPage() {
   const [validUntil, setValidUntil] = useState(defaultValidUntil());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     fetch(`/api/leads/${id}`)
@@ -225,13 +227,35 @@ export default function NewQuotationPage() {
                 <span className="qb-total-value">${total.toLocaleString()}</span>
               </div>
 
-              <div className="qb-summary-row"><span>Services</span><b>{services.length}</b></div>
-              <div className="qb-summary-row"><span>Fee lines</span><b>{fees.filter((f) => f.label).length}</b></div>
+              <div className="qb-summary-block">
+                <div className="qb-summary-head">Services <b>{services.length}</b></div>
+                {services.length === 0 ? (
+                  <div className="qb-summary-empty">None selected yet</div>
+                ) : (
+                  <ul className="qb-summary-list">
+                    {services.map((s) => <li key={s}>{s}</li>)}
+                  </ul>
+                )}
+              </div>
+
+              <div className="qb-summary-block">
+                <div className="qb-summary-head">Fee lines <b>{fees.filter((f) => f.label).length}</b></div>
+                {fees.filter((f) => f.label).length === 0 ? (
+                  <div className="qb-summary-empty">None added yet</div>
+                ) : (
+                  <ul className="qb-summary-list qb-summary-fees">
+                    {fees.filter((f) => f.label).map((f, i) => (
+                      <li key={i}><span>{f.label}</span><b>${Number(f.amount || 0).toLocaleString()}</b></li>
+                    ))}
+                  </ul>
+                )}
+              </div>
 
               <label className="ld-field">Quotation Valid Until
                 <input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} required />
               </label>
 
+              <button type="button" className="btn-outline full" onClick={() => setPreviewOpen(true)}>{I.eye} Preview</button>
               <button className="btn-navy full qb-send" type="submit" disabled={saving || services.length === 0}>
                 {I.send}{saving ? "Sending…" : "Send Quotation"}
               </button>
@@ -241,6 +265,78 @@ export default function NewQuotationPage() {
           </div>
         </div>
       </form>
+
+      {/* ============ PREVIEW ============ */}
+      {previewOpen && (
+        <div className="toast-backdrop" onClick={() => setPreviewOpen(false)}>
+          <div className="qp-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="qp-modal-head">
+              <span>Preview — this is what the client will see</span>
+              <button type="button" className="ld-modal-x" onClick={() => setPreviewOpen(false)} title="Close">×</button>
+            </div>
+            <div className="qp-scroll">
+              <QuoteCard
+                number="DRAFT"
+                clientName={clientName || "—"}
+                projectDescription={projectDescription || "—"}
+                address={address || "—"}
+                services={services}
+                fees={fees.filter((f) => f.label)}
+                total={total}
+                validUntil={validUntil}
+              />
+            </div>
+            <div className="qp-modal-actions">
+              <button type="button" className="btn-outline" onClick={() => setPreviewOpen(false)}>Close preview</button>
+              <button className="btn-navy" onClick={() => { setPreviewOpen(false); document.querySelector(".quote-builder form")?.requestSubmit(); }} disabled={services.length === 0}>
+                {I.send} Send Quotation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// The branded card shared between the live preview popup and (visually) the
+// emailed quotation / accept page, so what staff previews is what gets sent.
+function QuoteCard({ number, clientName, projectDescription, address, services, fees, total, validUntil }) {
+  return (
+    <div className="qc-card">
+      <div className="qc-brand">
+        <img src="/logo.png" alt="DS Permitting Services" className="qc-logo" />
+        <div>
+          <div className="qc-brand-name">DS Permitting Services</div>
+          <div className="qc-brand-sub">Fort McCoy, FL</div>
+        </div>
+      </div>
+      <div className="qc-tag">Quotation {number}</div>
+      <div className="qc-meta">
+        <div><span>Client</span><b>{clientName}</b></div>
+        <div><span>Project</span><b>{projectDescription}</b></div>
+        <div><span>Location</span><b>{address}</b></div>
+      </div>
+      <div className="qc-section">Services</div>
+      {services.length === 0 ? (
+        <div className="qc-empty">No services selected yet</div>
+      ) : (
+        <ul className="qc-services">{services.map((s) => <li key={s}>{s}</li>)}</ul>
+      )}
+      <div className="qc-section">Fees</div>
+      {fees.length === 0 ? (
+        <div className="qc-empty">No fees added yet</div>
+      ) : (
+        <div className="qc-fees">
+          {fees.map((f, i) => (
+            <div className="qc-fee-row" key={i}><span>{f.label}</span><b>${Number(f.amount || 0).toLocaleString()}</b></div>
+          ))}
+        </div>
+      )}
+      <div className="qc-total-row"><span>Total</span><b>${Number(total || 0).toLocaleString()}</b></div>
+      <div className="qc-valid">Quotation valid until <b>{validUntil}</b></div>
+      <div className="qc-accept-btn">Accept Quotation</div>
+      <div className="qc-footer">DS Permitting Services · Fort McCoy, FL · (352) 809-1717 · dspermitting.com</div>
     </div>
   );
 }
