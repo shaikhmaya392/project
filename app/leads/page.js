@@ -89,9 +89,7 @@ export default function LeadsPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h2>Leads</h2>
-        </div>
+        
 
         <Link href="/leads/new" className="btn gold">
           + New Lead
