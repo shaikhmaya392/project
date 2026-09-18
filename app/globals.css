@@ -835,9 +835,9 @@ textarea { resize: vertical; }
 }
 .ld-round {
   width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, #16296e, #0a1650); color: #fff;
+  background: linear-gradient(135deg, #5c6680, #3a4258); color: #fff;
   border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 16px rgba(10,22,80,0.25);
+  box-shadow: 0 6px 16px rgba(50,58,80,0.2);
 }
 .ld-round:hover { filter: brightness(1.12); }
 .ld-round svg { width: 18px; height: 18px; }
@@ -960,12 +960,12 @@ textarea { resize: vertical; }
 .ld-name-badge.status-quote_accepted .dot { background: #16a34a; }
 .ld-addr { display: flex; align-items: center; gap: 8px; color: #1a1a1a; font-size: 14px; font-weight: 500; margin-top: 7px; }
 
-/* generic icon badge: navy circle, white glyph — used inline (address) and inside pills */
+/* generic icon badge: soft slate circle, white glyph — used inline (address) and inside pills */
 .pi {
   width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg,#16296e,#0a1650);
+  background: linear-gradient(135deg,#5c6680,#3a4258);
   display: inline-flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 10px rgba(10,22,80,0.22);
+  box-shadow: 0 4px 10px rgba(50,58,80,0.18);
 }
 .pi svg { width: 14px; height: 14px; color: #fff; }
 .pi.sm { width: 22px; height: 22px; }
