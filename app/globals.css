@@ -478,6 +478,40 @@ a { color: inherit; }
 
 /* Table */
 .table-wrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+
+/* ---- Pagination bar (brand navy/gold, not the generic teal default) ---- */
+.pg-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 18px; border-top: 1px solid var(--border-soft);
+}
+.pg-count { font-size: 13px; color: var(--muted); }
+.pg-count b { color: var(--text); font-weight: 700; }
+
+.pg-pages { display: flex; align-items: center; gap: 6px; }
+.pg-arrow {
+  width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border);
+  background: #fff; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.pg-arrow svg { width: 15px; height: 15px; }
+.pg-arrow:hover:not(:disabled) { border-color: #16296e; color: #16296e; }
+.pg-arrow:disabled { opacity: 0.4; cursor: default; }
+.pg-num {
+  width: 32px; height: 32px; border-radius: 9px; border: 1px solid transparent;
+  background: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.pg-num:hover { background: #eef1f8; color: var(--text); }
+.pg-num.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #16130a;
+  font-weight: 800; box-shadow: 0 4px 12px rgba(224,168,46,0.35);
+}
+.pg-ellipsis { color: var(--muted-soft); padding: 0 2px; font-size: 13px; }
+
+.pg-size { display: flex; align-items: center; gap: 10px; }
+.pg-size span { font-size: 13px; font-weight: 600; color: var(--text); }
+.pg-size-select { width: 84px; }
+.pg-size-select .cs-trigger { justify-content: space-between; }
+
+@media (max-width: 720px) { .pg-bar { justify-content: center; text-align: center; } }
 /* Constrained to the viewport so the horizontal scrollbar sits right below
    the visible rows, reachable without scrolling past a long lead list first. */
 .table-scroll { overflow: auto; max-height: calc(100vh - 300px); scrollbar-gutter: stable; }

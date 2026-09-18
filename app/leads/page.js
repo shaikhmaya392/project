@@ -14,12 +14,16 @@ function fmtDate(s) {
   return `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}`;
 }
 
+const PAGE_SIZES = [10, 25, 50, 100];
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   function load() {
     setLoading(true);
@@ -85,6 +89,30 @@ export default function LeadsPage() {
         (lead.address || "").toLowerCase().includes(q)
     );
   }, [leads, query]);
+
+  // Reset back to page 1 whenever the search or page size changes, so we
+  // never land on an out-of-range page with nothing to show.
+  useEffect(() => { setPage(1); }, [query, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pageStart = filtered.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const pageEnd = Math.min(safePage * pageSize, filtered.length);
+  const paginated = useMemo(
+    () => filtered.slice((safePage - 1) * pageSize, safePage * pageSize),
+    [filtered, safePage, pageSize]
+  );
+
+  // A short window of page numbers around the current page, capped at 5.
+  const pageWindow = useMemo(() => {
+    const span = 5;
+    let start = Math.max(1, safePage - Math.floor(span / 2));
+    let end = Math.min(totalPages, start + span - 1);
+    start = Math.max(1, end - span + 1);
+    const nums = [];
+    for (let i = start; i <= end; i++) nums.push(i);
+    return nums;
+  }, [safePage, totalPages]);
 
   return (
     <div>
@@ -162,7 +190,7 @@ export default function LeadsPage() {
               </thead>
 
               <tbody>
-                {filtered.map((lead) => (
+                {paginated.map((lead) => (
                   <tr
                     key={lead.id}
                     onClick={() => (window.location.href = `/leads/${lead.id}`)}
@@ -243,6 +271,36 @@ export default function LeadsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="pg-bar">
+            <span className="pg-count">
+              Showing <b>{pageStart}-{pageEnd}</b> of <b>{filtered.length}</b> leads
+            </span>
+
+            <div className="pg-pages">
+              <button type="button" className="pg-arrow" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={safePage === 1} title="Previous page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+              {pageWindow[0] > 1 && <span className="pg-ellipsis">…</span>}
+              {pageWindow.map((n) => (
+                <button type="button" key={n} className={`pg-num${n === safePage ? " active" : ""}`} onClick={() => setPage(n)}>{n}</button>
+              ))}
+              {pageWindow[pageWindow.length - 1] < totalPages && <span className="pg-ellipsis">…</span>}
+              <button type="button" className="pg-arrow" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} title="Next page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+            </div>
+
+            <div className="pg-size">
+              <span>Go to Page</span>
+              <Select
+                className="compact pg-size-select"
+                value={pageSize}
+                onChange={(v) => setPageSize(Number(v))}
+                options={PAGE_SIZES.map((n) => ({ value: n, label: String(n) }))}
+              />
+            </div>
           </div>
         </div>
       )}
