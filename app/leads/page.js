@@ -94,7 +94,7 @@ export default function LeadsPage() {
         </div>
 
         <Link href="/leads/new" className="btn gold">
-          + New
+          + New Lead
         </Link>
       </div>
 
@@ -127,7 +127,7 @@ export default function LeadsPage() {
             <div className="big">No leads found</div>
 
             {leads.length === 0
-              ? 'Waiting on leads from the website, or add one with "+ New".'
+              ? 'Waiting on leads from the website, or add one with "+ New Lead".'
               : "Try clearing your search."}
           </div>
         </div>

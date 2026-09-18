@@ -36,6 +36,7 @@ const I = {
   trash: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   cal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>,
   save: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" strokeLinejoin="round" /><path d="M17 21v-8H7v8M7 3v5h8" strokeLinecap="round" strokeLinejoin="round" /></svg>,
+  warn: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3.2L2 20.5h20L12 3.2z" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 10v4.2M12 17.6v.01" strokeLinecap="round" strokeLinejoin="round" /></svg>,
 };
 
 function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
@@ -605,15 +606,16 @@ export default function LeadDetailPage() {
       {/* ============ DELETE CONFIRM ============ */}
       {deleteOpen && (
         <div className="toast-backdrop" onClick={() => setDeleteOpen(false)}>
-          <div className="ld-modal ld-modal-sm" onClick={(e) => e.stopPropagation()}>
-            <div className="ld-modal-danger-ic">{I.trash}</div>
+          <div className="ld-modal ld-modal-sm ld-modal-warn" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-warn-bar" />
+            <div className="ld-modal-danger-ic">{I.warn}</div>
             <h3 className="ld-modal-center-title">Delete this lead?</h3>
             <p className="ld-modal-center-text">
               <b>{lead.name || "This lead"}</b> and all of its messages, documents and activity will be permanently removed. This can&apos;t be undone.
             </p>
-            <div className="ld-modal-actions center">
-              <button className="btn-outline" onClick={() => setDeleteOpen(false)}>Cancel</button>
-              <button className="btn-danger" onClick={handleDelete}>{I.trash} Delete lead</button>
+            <div className="ld-modal-actions stacked">
+              <button className="btn-danger full" onClick={handleDelete}>{I.trash} Yes, delete this lead</button>
+              <button className="ld-modal-link" onClick={() => setDeleteOpen(false)}>Keep this lead</button>
             </div>
           </div>
         </div>
@@ -622,15 +624,16 @@ export default function LeadDetailPage() {
       {/* ============ DELETE DOCUMENT CONFIRM ============ */}
       {docDeleteId && (
         <div className="toast-backdrop" onClick={() => setDocDeleteId(null)}>
-          <div className="ld-modal ld-modal-sm" onClick={(e) => e.stopPropagation()}>
-            <div className="ld-modal-danger-ic">{I.trash}</div>
+          <div className="ld-modal ld-modal-sm ld-modal-warn" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-warn-bar" />
+            <div className="ld-modal-danger-ic">{I.warn}</div>
             <h3 className="ld-modal-center-title">Delete this document?</h3>
             <p className="ld-modal-center-text">
               <b>{docs.find((d) => d.id === docDeleteId)?.name || "This file"}</b> will be permanently removed. This can&apos;t be undone.
             </p>
-            <div className="ld-modal-actions center">
-              <button className="btn-outline" onClick={() => setDocDeleteId(null)}>Cancel</button>
-              <button className="btn-danger" onClick={() => deleteDoc(docDeleteId)}>{I.trash} Delete document</button>
+            <div className="ld-modal-actions stacked">
+              <button className="btn-danger full" onClick={() => deleteDoc(docDeleteId)}>{I.trash} Yes, delete this document</button>
+              <button className="ld-modal-link" onClick={() => setDocDeleteId(null)}>Keep this document</button>
             </div>
           </div>
         </div>
