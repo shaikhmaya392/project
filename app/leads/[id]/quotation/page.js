@@ -256,7 +256,7 @@ export default function NewQuotationPage() {
                 <input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} required />
               </label>
 
-              <button type="button" className="btn-outline full" onClick={() => setPreviewOpen(true)}>{I.eye} Preview</button>
+              <button type="button" className="btn-outline full" onClick={() => setPreviewOpen(true)}>{I.eye} View</button>
               <button className="btn-navy full qb-send" type="submit" disabled={saving || services.length === 0}>
                 {I.send}{saving ? "Sending…" : "Send Quotation"}
               </button>
@@ -272,23 +272,25 @@ export default function NewQuotationPage() {
         <div className="toast-backdrop" onClick={() => setPreviewOpen(false)}>
           <div className="qp-modal" onClick={(e) => e.stopPropagation()}>
             <div className="qp-modal-head">
-              <span>Preview — this is what the client will see</span>
+              <span>View — this is what the client will see</span>
               <button type="button" className="ld-modal-x" onClick={() => setPreviewOpen(false)} title="Close">×</button>
             </div>
             <div className="qp-scroll">
               <QuoteCard
                 number="DRAFT"
                 clientName={clientName || "—"}
+                clientEmail={clientEmail}
                 projectDescription={projectDescription || "—"}
                 address={address || "—"}
                 services={services}
                 fees={fees.filter((f) => f.label)}
                 total={total}
                 validUntil={validUntil}
+                createdAt={new Date().toISOString()}
               />
             </div>
             <div className="qp-modal-actions">
-              <button type="button" className="btn-outline" onClick={() => setPreviewOpen(false)}>Close preview</button>
+              <button type="button" className="btn-outline" onClick={() => setPreviewOpen(false)}>Close View</button>
               <button className="btn-navy" onClick={() => { setPreviewOpen(false); document.querySelector(".quote-builder form")?.requestSubmit(); }} disabled={services.length === 0}>
                 {I.send} Send Quotation
               </button>

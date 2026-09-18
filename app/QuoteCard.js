@@ -1,18 +1,27 @@
 "use client";
 
-// The branded quotation card — shared by the "Preview" popup in the
+function fmtDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+// The branded quotation card — shared by the "View" popup in the
 // quotation builder and the public accept page, so what staff previews
 // before sending is exactly what the client sees.
 export default function QuoteCard({
   number,
   status,
   clientName,
+  clientEmail,
   projectDescription,
   address,
   services,
   fees,
   total,
   validUntil,
+  createdAt,
   acceptedAt,
   onAccept,
   accepting,
@@ -35,8 +44,10 @@ export default function QuoteCard({
 
       <div className="qc-meta">
         <div><span>Client</span><b>{clientName || "—"}</b></div>
+        {clientEmail && <div><span>Email</span><b>{clientEmail}</b></div>}
         <div><span>Project</span><b>{projectDescription || "—"}</b></div>
         <div><span>Location</span><b>{address || "—"}</b></div>
+        {createdAt && <div><span>Date</span><b>{fmtDate(createdAt)}</b></div>}
       </div>
 
       <div className="qc-section">Services</div>
@@ -58,7 +69,11 @@ export default function QuoteCard({
       )}
 
       <div className="qc-total-row"><span>Total</span><b>${Number(total || 0).toLocaleString()}</b></div>
-      <div className="qc-valid">Quotation valid until <b>{validUntil}</b></div>
+
+      <div className="qc-valid-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>
+        <span>Quotation valid until <b>{validUntil}</b></span>
+      </div>
 
       {onAccept !== undefined && (
         accepted ? (
@@ -73,7 +88,15 @@ export default function QuoteCard({
       )}
       {onAccept === undefined && <div className="qc-accept-btn qc-accept-btn-static">Accept Quotation</div>}
 
-      <div className="qc-footer">DS Permitting Services · Fort McCoy, FL · (352) 809-1717 · dspermitting.com</div>
+      <div className="qc-footer">
+        <img src="/logo.png" alt="" className="qc-footer-logo" />
+        <div className="qc-footer-text">
+          <div className="qc-footer-name">DS Permitting Services</div>
+          <div className="qc-footer-line">Fort McCoy, FL &middot; (352) 809-1717</div>
+          <div className="qc-footer-line">dspermitting.com &middot; info@dspermitting.com</div>
+          <div className="qc-footer-tag">Licensed &amp; insured permit expediting for Central &amp; North Florida</div>
+        </div>
+      </div>
     </div>
   );
 }

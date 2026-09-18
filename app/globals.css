@@ -378,10 +378,10 @@ a { color: inherit; }
 .dashboard { max-width: 1180px; }
 .dash-greeting {
   font-family: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
-  color: #0f1b33; margin: 2px 0 3px;
+  font-size: 23px; font-weight: 700; letter-spacing: -0.01em;
+  color: #0f1b33; margin: 2px 0 8px;
 }
-.dash-sub { font-size: 12.5px; color: var(--muted); font-weight: 400; margin: 0 0 18px; }
+.dash-sub { font-size: 12.5px; color: var(--muted); font-weight: 400; margin: 0 0 22px; }
 
 .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .dash-card {
@@ -393,11 +393,11 @@ a { color: inherit; }
 .dash-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .dash-card-label { font-size: 12.5px; font-weight: 600; color: #4a5677; line-height: 1.3; }
 .dash-icon {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 10px rgba(16,24,40,0.12);
 }
-.dash-icon svg { width: 16px; height: 16px; color: #ffffff; }
+.dash-icon svg { width: 21px; height: 21px; color: #ffffff; }
 .dash-icon.blue { background: #2563eb; }
 .dash-icon.orange { background: #f59e0b; }
 .dash-icon.green { background: #16a34a; }
@@ -406,7 +406,7 @@ a { color: inherit; }
 .dash-icon.cyan { background: #06b6d4; }
 .dash-card-value {
   font-family: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 23px; font-weight: 800; color: #0f1b33; line-height: 1; margin-top: 9px;
+  font-size: 23px; font-weight: 800; color: #0f1b33; line-height: 1; margin-top: 4px;
 }
 .dash-card-sub { font-size: 11.5px; color: var(--muted-soft); margin-top: 4px; }
 @media (max-width: 1100px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -1322,7 +1322,7 @@ textarea { resize: vertical; }
 /* ---- Branded quotation card (preview popup, matches accept page/email) ---- */
 .qc-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(16,24,40,0.08); border: 1px solid var(--border-soft); }
 .qc-brand { display: flex; align-items: center; gap: 12px; padding: 20px 24px; background: linear-gradient(135deg, #16296e, #0a1650); }
-.qc-logo { width: 40px; height: 40px; object-fit: contain; mix-blend-mode: screen; flex-shrink: 0; }
+.qc-logo { width: 52px; height: 52px; object-fit: contain; mix-blend-mode: screen; flex-shrink: 0; }
 .qc-brand-name { color: #fff; font-weight: 800; font-size: 15px; }
 .qc-brand-sub { color: #aab6dd; font-size: 12px; margin-top: 1px; }
 .qc-tag-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px 0; gap: 10px; }
@@ -1341,7 +1341,13 @@ textarea { resize: vertical; }
 .qc-fee-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; padding: 7px 0; border-bottom: 1px dashed var(--border-soft); }
 .qc-fee-row b { color: var(--text); flex-shrink: 0; }
 .qc-total-row { display: flex; justify-content: space-between; padding: 13px 24px; margin-top: 8px; background: #f7f9fc; font-size: 15.5px; font-weight: 800; color: #0f1b33; }
-.qc-valid { padding: 13px 24px 0; font-size: 12px; color: var(--muted); }
+.qc-valid-banner {
+  display: flex; align-items: center; gap: 9px; margin: 14px 24px 0; padding: 11px 14px;
+  border-radius: 10px; background: var(--gold-soft); border: 1px solid #f0dca8;
+  color: #7a5a10; font-size: 12.5px; font-weight: 600;
+}
+.qc-valid-banner svg { width: 17px; height: 17px; flex-shrink: 0; color: #b9821c; }
+.qc-valid-banner b { color: #5c4308; font-weight: 800; }
 .qc-accept-btn {
   display: block; width: calc(100% - 48px); margin: 18px 24px 0; text-align: center;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
@@ -1355,7 +1361,15 @@ textarea { resize: vertical; }
   margin: 18px 24px 0; padding: 13px 16px; border-radius: 11px; background: var(--green-soft);
   color: var(--green); font-size: 13px; font-weight: 600; line-height: 1.5; text-align: center;
 }
-.qc-footer { padding: 16px 24px 22px; text-align: center; font-size: 11px; color: var(--muted-soft); border-top: 1px solid var(--border-soft); margin-top: 18px; }
+.qc-footer {
+  display: flex; align-items: center; gap: 12px; padding: 18px 24px 22px;
+  border-top: 1px solid var(--border-soft); margin-top: 18px; background: #f7f9fc;
+}
+.qc-footer-logo { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; opacity: 0.85; }
+.qc-footer-text { display: flex; flex-direction: column; gap: 2px; }
+.qc-footer-name { font-size: 12px; font-weight: 700; color: #4a5677; }
+.qc-footer-line { font-size: 11px; color: var(--muted-soft); }
+.qc-footer-tag { font-size: 10.5px; color: var(--muted-soft); font-style: italic; margin-top: 3px; }
 
 /* Public quotation accept page shell */
 .qc-page { min-height: 100vh; background: var(--bg); padding: 48px 16px; }

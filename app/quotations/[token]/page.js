@@ -39,12 +39,14 @@ export default function QuotationAcceptPage() {
             number={quotation.number}
             status={quotation.status}
             clientName={quotation.client_name}
+            clientEmail={quotation.client_email}
             projectDescription={quotation.project_description}
             address={quotation.address}
             services={quotation.services}
             fees={quotation.fees}
             total={quotation.total}
             validUntil={quotation.valid_until}
+            createdAt={quotation.created_at}
             acceptedAt={quotation.accepted_at}
             accepting={accepting}
             onAccept={handleAccept}
