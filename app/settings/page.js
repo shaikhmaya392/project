@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useToast } from "../ToastProvider";
+import { formatPhone } from "../../lib/formatPhone";
 
 export default function SettingsPage() {
   const { showToast } = useToast();
@@ -79,7 +80,7 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <label>Phone</label>
-                    <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                    <input value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} placeholder="+1 (123) 456-7890" />
                   </div>
                   <div className="full">
                     <label>Address</label>

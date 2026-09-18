@@ -46,10 +46,12 @@ export default function DashboardPage() {
   const [leads, setLeads] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => setUser(d.user)).catch(() => {});
     Promise.all([
       fetch("/api/leads").then((r) => r.json()).catch(() => []),
       fetch("/api/quotations").then((r) => r.json()).catch(() => []),
@@ -65,8 +67,6 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const total = leads.length;
-  const fromWebsite = leads.filter((l) => l.source === "website_form").length;
   const byStatus = (st) => leads.filter((l) => (l.status || "new") === st).length;
   const byNextAction = (a) => leads.filter((l) => l.next_action === a).length;
 
@@ -77,22 +77,18 @@ export default function DashboardPage() {
   const acceptedLeadIds = new Set(quotes.filter((q) => q.status === "accepted" && q.lead_id).map((q) => q.lead_id));
   leads.forEach((l) => { if (l.status === "quote_accepted") acceptedLeadIds.add(l.id); });
   const cards = [
-    { key: "new", label: "New Requests", value: byStatus("new"), icon: "document", color: "blue" },
-    { key: "pending", label: "Pending Review", value: byStatus("contacted") + byStatus("quote_sent"), icon: "clock", color: "orange" },
-    { key: "approved", label: "Approved", value: acceptedLeadIds.size, icon: "check", color: "green" },
-    { key: "ready", label: "Ready to Submit", value: byStatus("in_progress"), icon: "upload", color: "purple" },
-    { key: "corrections", label: "Corrections Required", value: byNextAction("Review Corrections"), icon: "warning", color: "red" },
-    { key: "inspections", label: "Upcoming Inspections", value: projects.length + byNextAction("Schedule Inspection"), icon: "calendar", color: "cyan" },
+    { key: "new", label: "New Requests", value: byStatus("new"), sub: "awaiting first contact", icon: "document", color: "blue" },
+    { key: "pending", label: "Pending Review", value: byStatus("contacted") + byStatus("quote_sent"), sub: "quotes & follow-ups", icon: "clock", color: "orange" },
+    { key: "approved", label: "Approved", value: acceptedLeadIds.size, sub: "quotations accepted", icon: "check", color: "green" },
+    { key: "ready", label: "Ready to Submit", value: byStatus("in_progress"), sub: "leads in progress", icon: "upload", color: "purple" },
+    { key: "corrections", label: "Corrections Required", value: byNextAction("Review Corrections"), sub: "flagged for review", icon: "warning", color: "red" },
+    { key: "inspections", label: "Upcoming Inspections", value: projects.length + byNextAction("Schedule Inspection"), sub: "projects & scheduled", icon: "calendar", color: "cyan" },
   ];
-
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
   return (
     <div className="dashboard">
-      <h1 className="dash-greeting">{today}</h1>
-      <p className="dash-sub">
-        {loading ? "Loading your workspace…" : `${total} total leads · ${fromWebsite} from the website`}
-      </p>
+      <h1 className="dash-greeting">Welcome back, {user?.name || "…"}</h1>
+      <p className="dash-sub">Here&apos;s how the business looks today.</p>
 
       {error && <div className="error-banner">Couldn&apos;t load data: {error}</div>}
 
@@ -104,6 +100,7 @@ export default function DashboardPage() {
               <span className={`dash-icon ${c.color}`}>{ICONS[c.icon]}</span>
             </div>
             <div className="dash-card-value">{loading ? "—" : c.value}</div>
+            <div className="dash-card-sub">{c.sub}</div>
           </div>
         ))}
       </div>

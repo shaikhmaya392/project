@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { formatPhone } from "../../../lib/formatPhone";
 
 const STATUS_BADGE = {
   active: "status-new",
@@ -403,13 +404,13 @@ export default function ProjectDetailPage() {
               </select>
             </div>
             <div><label>Client Name</label><input value={project.client_name || ""} onChange={(e) => set("client_name", e.target.value)} /></div>
-            <div><label>Client Phone</label><input value={project.client_phone || ""} onChange={(e) => set("client_phone", e.target.value)} /></div>
+            <div><label>Client Phone</label><input value={project.client_phone || ""} onChange={(e) => set("client_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" /></div>
             <div className="full"><label>Client Email</label><input value={project.client_email || ""} onChange={(e) => set("client_email", e.target.value)} /></div>
             <div><label>Homeowner Name</label><input value={project.homeowner_name || ""} onChange={(e) => set("homeowner_name", e.target.value)} /></div>
-            <div><label>Homeowner Phone</label><input value={project.homeowner_phone || ""} onChange={(e) => set("homeowner_phone", e.target.value)} /></div>
+            <div><label>Homeowner Phone</label><input value={project.homeowner_phone || ""} onChange={(e) => set("homeowner_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" /></div>
             <div><label>Contractor Name</label><input value={project.contractor_name || ""} onChange={(e) => set("contractor_name", e.target.value)} /></div>
             <div><label>Contractor License #</label><input value={project.contractor_license || ""} onChange={(e) => set("contractor_license", e.target.value)} /></div>
-            <div className="full"><label>Contractor Phone</label><input value={project.contractor_phone || ""} onChange={(e) => set("contractor_phone", e.target.value)} /></div>
+            <div className="full"><label>Contractor Phone</label><input value={project.contractor_phone || ""} onChange={(e) => set("contractor_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" /></div>
             <div className="full"><label>Internal Notes</label><textarea rows={3} value={project.notes || ""} onChange={(e) => set("notes", e.target.value)} /></div>
           </div>
           <div className="actions-row">

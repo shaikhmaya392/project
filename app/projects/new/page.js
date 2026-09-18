@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { formatPhone } from "../../../lib/formatPhone";
 
 const empty = {
   project_name: "",
@@ -136,7 +137,7 @@ function NewProjectForm() {
           </div>
           <div>
             <label>Client Phone</label>
-            <input value={form.client_phone} onChange={(e) => set("client_phone", e.target.value)} />
+            <input value={form.client_phone} onChange={(e) => set("client_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" />
           </div>
           <div className="full">
             <label>Client Email</label>
@@ -152,7 +153,7 @@ function NewProjectForm() {
           </div>
           <div>
             <label>Homeowner Phone</label>
-            <input value={form.homeowner_phone} onChange={(e) => set("homeowner_phone", e.target.value)} />
+            <input value={form.homeowner_phone} onChange={(e) => set("homeowner_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" />
           </div>
         </div>
 
@@ -168,7 +169,7 @@ function NewProjectForm() {
           </div>
           <div>
             <label>Contractor Phone</label>
-            <input value={form.contractor_phone} onChange={(e) => set("contractor_phone", e.target.value)} />
+            <input value={form.contractor_phone} onChange={(e) => set("contractor_phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" />
           </div>
         </div>
 

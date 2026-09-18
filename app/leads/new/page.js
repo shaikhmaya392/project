@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatPhone } from "../../../lib/formatPhone";
 
 const empty = {
   name: "",
@@ -64,7 +65,7 @@ export default function NewLeadPage() {
           </div>
           <div>
             <label>Phone</label>
-            <input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+            <input value={form.phone} onChange={(e) => set("phone", formatPhone(e.target.value))} placeholder="+1 (123) 456-7890" />
           </div>
           <div className="full">
             <label>Email Address</label>
