@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { useToast } from "../ToastProvider";
-import { formatPhone } from "../../lib/formatPhone";
+import { onPhoneChange } from "../../lib/formatPhone";
 
 const ROLES = ["admin", "agent", "marketing", "support"];
 
@@ -186,7 +186,7 @@ export default function StaffPage() {
                 </div>
                 <div>
                   <label>Phone</label>
-                  <input value={addForm.phone} onChange={(e) => setAddForm({ ...addForm, phone: formatPhone(e.target.value) })} placeholder="+1 (123) 456-7890" />
+                  <input value={addForm.phone} onChange={(e) => onPhoneChange(e, (v) => setAddForm({ ...addForm, phone: v }))} placeholder="+1 (123) 456-7890" />
                 </div>
                 <div>
                   <label>Address</label>
@@ -287,7 +287,7 @@ export default function StaffPage() {
                             </div>
                             <div>
                               <label>Phone</label>
-                              <input value={editForm.phone || ""} onChange={(e) => setEditForm({ ...editForm, phone: formatPhone(e.target.value) })} placeholder="+1 (123) 456-7890" />
+                              <input value={editForm.phone || ""} onChange={(e) => onPhoneChange(e, (v) => setEditForm({ ...editForm, phone: v }))} placeholder="+1 (123) 456-7890" />
                             </div>
                             <div>
                               <label>Address</label>

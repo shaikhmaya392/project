@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
-import { formatPhone } from "../../../lib/formatPhone";
+import { onPhoneChange } from "../../../lib/formatPhone";
 import Select from "../../Select";
 
 const EDIT_FIELDS = [
@@ -589,7 +589,11 @@ export default function LeadDetailPage() {
                     <input
                       list={f.list ? "edit-project-types" : undefined}
                       value={draft[f.key] || ""}
-                      onChange={(e) => setDraft((d) => ({ ...d, [f.key]: f.key === "phone" ? formatPhone(e.target.value) : e.target.value }))}
+                      onChange={(e) =>
+                        f.key === "phone"
+                          ? onPhoneChange(e, (v) => setDraft((d) => ({ ...d, phone: v })))
+                          : setDraft((d) => ({ ...d, [f.key]: e.target.value }))
+                      }
                     />
                   )}
                 </label>
