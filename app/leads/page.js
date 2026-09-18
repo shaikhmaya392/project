@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { PRIORITIES, NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
+import { NEXT_ACTIONS, statusLabel } from "../../lib/leadMeta";
 import Select from "../Select";
 
 function fmtDate(s) {
@@ -18,7 +18,6 @@ const PAGE_SIZES = [10, 25, 50, 100];
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
-  const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
@@ -41,11 +40,6 @@ export default function LeadsPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-
-    fetch("/api/team")
-      .then((r) => r.json())
-      .then((d) => setTeam(Array.isArray(d) ? d : []))
-      .catch(() => {});
   }
 
   useEffect(() => {
@@ -162,7 +156,7 @@ export default function LeadsPage() {
       ) : (
         <div className="table-wrap">
           <div className="table-scroll">
-            <table style={{ minWidth: 1260 }}>
+            <table style={{ minWidth: 1010 }}>
               <colgroup>
                 <col style={{ width: 110 }} />
                 <col style={{ width: 130 }} />
@@ -170,8 +164,6 @@ export default function LeadsPage() {
                 <col style={{ width: 110 }} />
                 <col style={{ width: 130 }} />
                 <col style={{ width: 170 }} />
-                <col style={{ width: 150 }} />
-                <col style={{ width: 110 }} />
                 <col style={{ width: 170 }} />
               </colgroup>
 
@@ -183,8 +175,6 @@ export default function LeadsPage() {
                   <th>Phone</th>
                   <th>Work Location</th>
                   <th>Status</th>
-                  <th>Assigned To</th>
-                  <th>Priority</th>
                   <th>Next Action</th>
                 </tr>
               </thead>
@@ -228,30 +218,6 @@ export default function LeadsPage() {
                     {/* STATUS — read-only here; changed from the lead's own page */}
                     <td onClick={(e) => e.stopPropagation()}>
                       <span className={`badge status-${lead.status || "new"}`}>{statusLabel(lead.status || "new")}</span>
-                    </td>
-
-                    {/* ASSIGNED TO */}
-                    <td onClick={(e) => e.stopPropagation()}>
-                      <Select
-                        className="compact"
-                        value={lead.assigned_to || ""}
-                        onChange={(v) => patchField(lead.id, "assigned_to", v)}
-                        options={[
-                          { value: "", label: "Unassigned" },
-                          ...team.map((t) => ({ value: t.name, label: t.name })),
-                          ...(lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) ? [{ value: lead.assigned_to, label: lead.assigned_to }] : []),
-                        ]}
-                      />
-                    </td>
-
-                    {/* PRIORITY */}
-                    <td onClick={(e) => e.stopPropagation()}>
-                      <Select
-                        className="compact"
-                        value={lead.priority || "Medium"}
-                        onChange={(v) => patchField(lead.id, "priority", v)}
-                        options={PRIORITIES}
-                      />
                     </td>
 
                     {/* NEXT ACTION */}

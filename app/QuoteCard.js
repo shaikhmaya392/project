@@ -30,7 +30,7 @@ export default function QuoteCard({
   return (
     <div className="qc-card">
       <div className="qc-brand">
-        <img src="/logo.png" alt="DS Permitting Services" className="qc-logo" />
+        <img src="/logo-color.png" alt="DS Permitting Services" className="qc-logo" />
         <div>
           <div className="qc-brand-name">DS Permitting Services</div>
           <div className="qc-brand-sub">Fort McCoy, FL</div>
@@ -89,7 +89,7 @@ export default function QuoteCard({
       {onAccept === undefined && <div className="qc-accept-btn qc-accept-btn-static">Accept Quotation</div>}
 
       <div className="qc-footer">
-        <img src="/logo.png" alt="" className="qc-footer-logo" />
+        <img src="/logo-color.png" alt="" className="qc-footer-logo" />
         <div className="qc-footer-text">
           <div className="qc-footer-name">DS Permitting Services</div>
           <div className="qc-footer-line">Fort McCoy, FL &middot; (352) 809-1717</div>
