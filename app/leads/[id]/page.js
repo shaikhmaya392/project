@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
+import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES, DOCUMENT_CATEGORIES } from "../../../lib/leadMeta";
 import { onPhoneChange } from "../../../lib/formatPhone";
 import Select from "../../Select";
 
@@ -271,6 +271,15 @@ export default function LeadDetailPage() {
   const permit = lead.permit_request || {};
   const primaryQuote = leadQuotes[0];
   const docs = lead.documents || [];
+  // Grouped by category so it's obvious at a glance which requested
+  // document is which, instead of one flat list with the category as a
+  // small inline label. Anything without a category (old staff uploads
+  // from before the client link existed) falls into its own group.
+  const uncategorized = docs.filter((d) => !d.category);
+  const docGroups = [
+    ...DOCUMENT_CATEGORIES.map((cat) => ({ cat, files: docs.filter((d) => d.category === cat) })),
+    ...(uncategorized.length > 0 ? [{ cat: "Other", files: uncategorized }] : []),
+  ];
   const msgs = lead.messages || [];
 
   // Due Date pulls from the linked quotation (its valid-until / issue date) until staff overrides it.
@@ -507,18 +516,32 @@ export default function LeadDetailPage() {
               {docs.length === 0 ? (
                 <div className="ld-empty">{I.doc}<p>No documents yet.</p><span>Files the customer uploads through their link will appear in this list automatically.</span></div>
               ) : (
-                <div className="ld-doclist">
-                  {docs.map((d) => (
-                    <div className="ld-docitem" key={d.id}>
-                      <span className="ld-ic">{I.doc}</span>
-                      <div className="dm">
-                        <a href={d.url} target="_blank" rel="noreferrer">{d.name}</a>
-                        <span>{d.category ? `${d.category} · ` : ""}{d.uploaded_by || "Client"} · {relTime(d.uploaded_at)}</span>
+                <div className="ld-docgroups">
+                  {docGroups.map(({ cat, files }) => (
+                    <div className="ld-docgroup" key={cat}>
+                      <div className="ld-docgroup-head">
+                        <span>{cat}</span>
+                        <span className={`ld-docgroup-count${files.length ? " has" : ""}`}>{files.length || "None"}</span>
                       </div>
-                      <a className="ld-del" href={d.url} download title="Download" target="_blank" rel="noreferrer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12M7 10l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 21h14" strokeLinecap="round" /></svg>
-                      </a>
-                      <button className="ld-del" onClick={() => setDocDeleteId(d.id)} title="Remove">{I.trash}</button>
+                      {files.length === 0 ? (
+                        <div className="ld-docgroup-empty">No file uploaded yet</div>
+                      ) : (
+                        <div className="ld-doclist">
+                          {files.map((d) => (
+                            <div className="ld-docitem" key={d.id}>
+                              <span className="ld-ic">{I.doc}</span>
+                              <div className="dm">
+                                <a href={d.url} target="_blank" rel="noreferrer">{d.name}</a>
+                                <span>{d.uploaded_by || "Client"} · {relTime(d.uploaded_at)}</span>
+                              </div>
+                              <a className="ld-del" href={d.url} download title="Download" target="_blank" rel="noreferrer">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12M7 10l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 21h14" strokeLinecap="round" /></svg>
+                              </a>
+                              <button className="ld-del" onClick={() => setDocDeleteId(d.id)} title="Remove">{I.trash}</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

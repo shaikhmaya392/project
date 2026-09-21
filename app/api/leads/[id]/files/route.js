@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { put, del } from "@vercel/blob";
-import { getLead, updateLead } from "../../../../../lib/leadsStore";
+import { getLead, updateLead, updateLeadSafely } from "../../../../../lib/leadsStore";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -51,14 +51,19 @@ export async function DELETE(request, { params }) {
   const lead = await getLead(params.id);
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const fileId = new URL(request.url).searchParams.get("fileId");
-  const documents = Array.isArray(lead.documents) ? lead.documents : [];
-  const target = documents.find((f) => f.id === fileId);
-  const remaining = documents.filter((f) => f.id !== fileId);
+  const target = (lead.documents || []).find((f) => f.id === fileId);
   if (target) {
     try {
       await del(target.url);
     } catch {}
   }
-  await updateLead(params.id, { documents: remaining });
+  // Removing a document after the client submitted means the "submitted"
+  // status is no longer accurate, so clear it here too (mirrors the
+  // client's own delete on the public page).
+  await updateLeadSafely(
+    params.id,
+    (current) => ({ documents: (current.documents || []).filter((f) => f.id !== fileId), documents_submitted_at: null }),
+    (finalLead) => !(finalLead.documents || []).some((d) => d.id === fileId)
+  );
   return NextResponse.json({ deleted: true });
 }

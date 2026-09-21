@@ -8,8 +8,9 @@ export default function DocumentUploadPage() {
   const { token } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [uploadingCat, setUploadingCat] = useState(null);
+  const [uploadingFiles, setUploadingFiles] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [missing, setMissing] = useState([]);
 
@@ -31,11 +32,17 @@ export default function DocumentUploadPage() {
     return () => clearInterval(t);
   }, [token]);
 
+  // Multiple files — even in the same category — can upload at once: each
+  // pick gets its own key and runs independently, so starting a second
+  // upload never has to wait for (or get blocked by) the first one.
   async function handleUpload(category, e) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
-    setUploadingCat(category);
+    const key = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setUploadingFiles((u) => [...u, { key, category, name: file.name }]);
     setMissing([]);
+    setUploadError(null);
     const fd = new FormData();
     fd.append("file", file);
     fd.append("category", category);
@@ -43,9 +50,11 @@ export default function DocumentUploadPage() {
       const res = await fetch(`/api/documents/${token}`, { method: "POST", body: fd });
       const d = await res.json();
       if (res.ok) setData(d);
-    } catch {}
-    setUploadingCat(null);
-    e.target.value = "";
+      else setUploadError(d.error || "Upload failed, please try again");
+    } catch {
+      setUploadError("Upload failed, please try again");
+    }
+    setUploadingFiles((u) => u.filter((x) => x.key !== key));
   }
 
   async function handleDelete(fileId) {
@@ -77,6 +86,7 @@ export default function DocumentUploadPage() {
     <div className="qc-page">
       <div className="qc-page-inner">
         {error && <div className="error-banner">{error}</div>}
+        {uploadError && <div className="error-banner">{uploadError}</div>}
         {!data ? (
           !error && <p style={{ color: "var(--muted)" }}>Loading…</p>
         ) : (
@@ -106,7 +116,7 @@ export default function DocumentUploadPage() {
             <div className="dc-categories">
               {DOCUMENT_CATEGORIES.map((cat) => {
                 const files = filesFor(cat);
-                const uploading = uploadingCat === cat;
+                const pending = uploadingFiles.filter((u) => u.category === cat);
                 const isMissing = missing.includes(cat);
                 return (
                   <div className={`dc-cat${isMissing ? " missing" : ""}`} key={cat}>
@@ -117,7 +127,7 @@ export default function DocumentUploadPage() {
                       </span>
                     </div>
                     {isMissing && <div className="dc-cat-warn">Please upload this document before submitting.</div>}
-                    {files.length > 0 && (
+                    {(files.length > 0 || pending.length > 0) && (
                       <div className="dc-file-list">
                         {files.map((f) => (
                           <div className="dc-file" key={f.id}>
@@ -136,16 +146,18 @@ export default function DocumentUploadPage() {
                             </button>
                           </div>
                         ))}
+                        {pending.map((u) => (
+                          <div className="dc-file dc-file-pending" key={u.key}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" strokeLinejoin="round" /><path d="M14 3v5h5" strokeLinejoin="round" /></svg>
+                            <span className="dc-file-name">{u.name}</span>
+                            <span className="dc-file-uploading">Uploading…</span>
+                          </div>
+                        ))}
                       </div>
                     )}
                     <label className="dc-upload-btn">
-                      <input
-                        type="file"
-                        hidden
-                        disabled={uploading}
-                        onChange={(e) => handleUpload(cat, e)}
-                      />
-                      {uploading ? "Uploading…" : "+ Add File"}
+                      <input type="file" hidden onChange={(e) => handleUpload(cat, e)} />
+                      + Add File
                     </label>
                   </div>
                 );

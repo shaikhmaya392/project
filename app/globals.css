@@ -1156,6 +1156,12 @@ textarea { resize: vertical; }
 .ld-empty p { font-size: 15px; font-weight: 700; color: #24314e; margin: 0 0 4px; }
 .ld-empty span { font-size: 13px; }
 
+.ld-docgroups { display: flex; flex-direction: column; gap: 18px; }
+.ld-docgroup-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.ld-docgroup-head span:first-child { font-size: 13px; font-weight: 700; color: #16296e; text-transform: uppercase; letter-spacing: 0.03em; }
+.ld-docgroup-count { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--border-soft); color: var(--muted); }
+.ld-docgroup-count.has { background: var(--green-soft); color: var(--green); }
+.ld-docgroup-empty { font-size: 13px; color: var(--muted-soft); font-style: italic; padding: 10px 2px; }
 .ld-doclist { display: flex; flex-direction: column; gap: 10px; }
 .ld-docitem, .ld-quoteitem { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--border-soft); border-radius: 12px; background: #fafbfe; }
 .ld-quoteitem { cursor: pointer; }
@@ -1446,6 +1452,9 @@ textarea { resize: vertical; }
 .dc-file-del { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; color: var(--muted-soft); cursor: pointer; padding: 4px; border-radius: 7px; flex-shrink: 0; }
 .dc-file-del:hover { color: var(--red); background: #fce8e8; }
 .dc-file-del svg { width: 14px; height: 14px; }
+.dc-file-pending { opacity: 0.7; }
+.dc-file-pending svg { color: var(--amber); }
+.dc-file-uploading { font-size: 10.5px; font-weight: 700; color: var(--amber); flex-shrink: 0; }
 .dc-upload-btn {
   display: inline-flex; align-items: center; justify-content: center; margin-top: 12px;
   padding: 9px 16px; border-radius: 9px; border: 1px dashed #c7d0e0; background: #fff;
