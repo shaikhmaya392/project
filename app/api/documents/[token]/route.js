@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
+import { put, del } from "@vercel/blob";
 import { getLeadByDocToken, updateLead } from "../../../../lib/leadsStore";
 import { DOCUMENT_CATEGORIES } from "../../../../lib/leadMeta";
 
@@ -15,6 +15,7 @@ function publicView(lead) {
     client_name: lead.name || "",
     client_email: lead.email || "",
     client_phone: lead.phone || "",
+    documents_submitted_at: lead.documents_submitted_at || null,
     documents: (lead.documents || []).map((d) => ({ id: d.id, name: d.name, category: d.category || null, uploaded_at: d.uploaded_at })),
   };
 }
@@ -68,4 +69,26 @@ export async function POST(request, { params }) {
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
+}
+
+// Public: the client can remove one of their own uploads (a wrong file
+// picked by mistake) right from their own page, without needing staff.
+export async function DELETE(request, { params }) {
+  const lead = await getLeadByDocToken(params.token);
+  if (!lead) return NextResponse.json({ error: "Link not found" }, { status: 404 });
+
+  const fileId = new URL(request.url).searchParams.get("fileId");
+  const documents = Array.isArray(lead.documents) ? lead.documents : [];
+  const target = documents.find((f) => f.id === fileId);
+  if (!target) return NextResponse.json({ error: "File not found" }, { status: 404 });
+
+  const remaining = documents.filter((f) => f.id !== fileId);
+  const activity = Array.isArray(lead.activity) ? [...lead.activity] : [];
+  activity.push({ text: `Client removed ${target.category || "document"}: ${target.name}`, at: new Date().toISOString(), kind: "document" });
+
+  try {
+    await del(target.url);
+  } catch {}
+  const updated = await updateLead(lead.id, { documents: remaining, activity });
+  return NextResponse.json(publicView(updated));
 }

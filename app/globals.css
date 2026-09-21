@@ -1432,16 +1432,36 @@ textarea { resize: vertical; }
 
 .dc-categories { padding: 18px 22px 4px; display: flex; flex-direction: column; gap: 12px; }
 .dc-cat { border: 1px solid var(--border-soft); border-radius: 12px; padding: 14px 16px; background: #fafbfd; }
+.dc-cat.missing { border-color: var(--red); background: var(--red-soft); }
 .dc-cat-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .dc-cat-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.dc-cat-req { font-size: 9.5px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.04em; margin-left: 4px; }
 .dc-cat-status { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); white-space: nowrap; }
 .dc-cat-status.done { background: var(--green-soft); color: var(--green); }
+.dc-cat-warn { font-size: 11.5px; color: var(--red); font-weight: 600; margin-top: 8px; }
 .dc-file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
 .dc-file { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
 .dc-file svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+.dc-file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dc-file-del { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; color: var(--muted-soft); cursor: pointer; padding: 4px; border-radius: 7px; flex-shrink: 0; }
+.dc-file-del:hover { color: var(--red); background: #fce8e8; }
+.dc-file-del svg { width: 14px; height: 14px; }
 .dc-upload-btn {
   display: inline-flex; align-items: center; justify-content: center; margin-top: 12px;
   padding: 9px 16px; border-radius: 9px; border: 1px dashed #c7d0e0; background: #fff;
   color: #16296e; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s;
 }
 .dc-upload-btn:hover { background: #f4f6fb; border-color: #16296e; }
+
+.dc-submit-wrap { padding: 20px 22px 4px; }
+.dc-submit-btn {
+  display: block; width: 100%; text-align: center; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #16130a; font-weight: 700; padding: 13px; border-radius: 11px; font-size: 13.5px;
+  box-shadow: 0 6px 16px rgba(224,168,46,0.3); border: none; cursor: pointer; font-family: inherit;
+}
+.dc-submit-btn:hover:not(:disabled) { filter: brightness(1.05); }
+.dc-submit-btn:disabled { opacity: 0.6; cursor: default; }
+.dc-submitted-note {
+  text-align: center; padding: 13px 16px; border-radius: 11px; background: var(--green-soft);
+  color: var(--green); font-size: 13px; font-weight: 600; line-height: 1.5;
+}

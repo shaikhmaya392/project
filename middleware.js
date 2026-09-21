@@ -13,11 +13,15 @@ function isPublic(pathname, method) {
   if (/^\/api\/quotations\/[^/]+$/.test(pathname)) {
     return method === "GET" || method === "POST";
   }
-  // Public document-upload endpoint: GET/POST /api/documents/<token> — the
-  // client submits files here with no login, the random token is the access
-  // control (same pattern as the quotation accept link above).
+  // Public document-upload endpoint: GET/POST/DELETE /api/documents/<token>
+  // and POST /api/documents/<token>/submit — the client manages their own
+  // files here with no login, the random token is the access control
+  // (same pattern as the quotation accept link above).
   if (/^\/api\/documents\/[^/]+$/.test(pathname)) {
-    return method === "GET" || method === "POST";
+    return method === "GET" || method === "POST" || method === "DELETE";
+  }
+  if (/^\/api\/documents\/[^/]+\/submit$/.test(pathname)) {
+    return method === "POST";
   }
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DOCUMENT_CATEGORIES } from "../../../lib/leadMeta";
 
@@ -9,7 +9,9 @@ export default function DocumentUploadPage() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [uploadingCat, setUploadingCat] = useState(null);
-  const fileRefs = useRef({});
+  const [deletingId, setDeletingId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [missing, setMissing] = useState([]);
 
   function load() {
     fetch(`/api/documents/${token}`)
@@ -33,6 +35,7 @@ export default function DocumentUploadPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingCat(category);
+    setMissing([]);
     const fd = new FormData();
     fd.append("file", file);
     fd.append("category", category);
@@ -45,7 +48,30 @@ export default function DocumentUploadPage() {
     e.target.value = "";
   }
 
+  async function handleDelete(fileId) {
+    setDeletingId(fileId);
+    try {
+      const res = await fetch(`/api/documents/${token}?fileId=${fileId}`, { method: "DELETE" });
+      const d = await res.json();
+      if (res.ok) setData(d);
+    } catch {}
+    setDeletingId(null);
+  }
+
+  async function handleSubmit() {
+    setSubmitting(true);
+    setMissing([]);
+    try {
+      const res = await fetch(`/api/documents/${token}/submit`, { method: "POST" });
+      const d = await res.json();
+      if (res.ok) setData(d);
+      else if (d.missing) setMissing(d.missing);
+    } catch {}
+    setSubmitting(false);
+  }
+
   const filesFor = (cat) => (data?.documents || []).filter((d) => d.category === cat);
+  const submitted = !!data?.documents_submitted_at;
 
   return (
     <div className="qc-page">
@@ -74,34 +100,46 @@ export default function DocumentUploadPage() {
             </div>
 
             <div className="dc-intro">
-              Please upload the following documents so we can continue processing your permit. You can come back to this page any time to add more.
+              Please upload all four documents below, then press Submit. You can come back to this page any time to add, remove or replace a file.
             </div>
 
             <div className="dc-categories">
               {DOCUMENT_CATEGORIES.map((cat) => {
                 const files = filesFor(cat);
                 const uploading = uploadingCat === cat;
+                const isMissing = missing.includes(cat);
                 return (
-                  <div className="dc-cat" key={cat}>
+                  <div className={`dc-cat${isMissing ? " missing" : ""}`} key={cat}>
                     <div className="dc-cat-head">
-                      <span className="dc-cat-name">{cat}</span>
+                      <span className="dc-cat-name">{cat} <span className="dc-cat-req">Required</span></span>
                       <span className={`dc-cat-status${files.length ? " done" : ""}`}>
                         {files.length ? `${files.length} uploaded` : "Not uploaded"}
                       </span>
                     </div>
+                    {isMissing && <div className="dc-cat-warn">Please upload this document before submitting.</div>}
                     {files.length > 0 && (
                       <div className="dc-file-list">
                         {files.map((f) => (
                           <div className="dc-file" key={f.id}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" strokeLinejoin="round" /><path d="M14 3v5h5" strokeLinejoin="round" /></svg>
-                            {f.name}
+                            <span className="dc-file-name">{f.name}</span>
+                            <button
+                              type="button"
+                              className="dc-file-del"
+                              onClick={() => handleDelete(f.id)}
+                              disabled={deletingId === f.id}
+                              title="Remove this file"
+                            >
+                              {deletingId === f.id ? "…" : (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                              )}
+                            </button>
                           </div>
                         ))}
                       </div>
                     )}
                     <label className="dc-upload-btn">
                       <input
-                        ref={(el) => (fileRefs.current[cat] = el)}
                         type="file"
                         hidden
                         disabled={uploading}
@@ -112,6 +150,18 @@ export default function DocumentUploadPage() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="dc-submit-wrap">
+              {submitted ? (
+                <div className="dc-submitted-note">
+                  ✓ Submitted on {new Date(data.documents_submitted_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}. You can still add or remove files any time.
+                </div>
+              ) : (
+                <button type="button" className="dc-submit-btn" onClick={handleSubmit} disabled={submitting}>
+                  {submitting ? "Submitting…" : "Submit Documents"}
+                </button>
+              )}
             </div>
 
             <div className="qc-footer">

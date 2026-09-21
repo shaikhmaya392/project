@@ -154,7 +154,7 @@ export default function LeadDetailPage() {
         .then((r) => r.json())
         .then((d) => {
           if (cancelled || !d || d.error) return;
-          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity } : l));
+          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity, documents_submitted_at: d.documents_submitted_at } : l));
         })
         .catch(() => {});
     }
@@ -488,6 +488,9 @@ export default function LeadDetailPage() {
             <div className="ld-tabpane">
               <div className="ld-pane-head">
                 <h3>Documents</h3>
+                {lead.documents_submitted_at && (
+                  <span className="badge status-quote_accepted">Client submitted {relTime(lead.documents_submitted_at)}</span>
+                )}
               </div>
 
               <div className="ld-doclink">
