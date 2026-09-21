@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "./lib/session";
 
 const PUBLIC_PATHS = ["/login", "/signup"];
-const PUBLIC_PREFIXES = ["/api/auth", "/quotations/", "/_next", "/logo.png", "/logo-color.png", "/favicon"];
+const PUBLIC_PREFIXES = ["/api/auth", "/quotations/", "/documents/", "/_next", "/logo.png", "/logo-color.png", "/favicon"];
 
 function isPublic(pathname, method) {
   if (PUBLIC_PATHS.includes(pathname)) return true;
@@ -11,6 +11,12 @@ function isPublic(pathname, method) {
   // Public quotation view/accept endpoint: GET/POST /api/quotations/<token>
   // (not /api/quotations itself, and not PATCH - editing needs staff auth).
   if (/^\/api\/quotations\/[^/]+$/.test(pathname)) {
+    return method === "GET" || method === "POST";
+  }
+  // Public document-upload endpoint: GET/POST /api/documents/<token> — the
+  // client submits files here with no login, the random token is the access
+  // control (same pattern as the quotation accept link above).
+  if (/^\/api\/documents\/[^/]+$/.test(pathname)) {
     return method === "GET" || method === "POST";
   }
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));

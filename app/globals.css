@@ -1164,9 +1164,15 @@ textarea { resize: vertical; }
 .ld-docitem .dm a { font-size: 14px; font-weight: 600; color: #16296e; text-decoration: none; }
 .ld-docitem .dm span, .ld-quoteitem .dm span { font-size: 12.5px; color: var(--muted); }
 .ld-quoteitem .dm b { font-size: 14px; color: #0f1b33; }
-.ld-del { background: none; border: none; color: var(--muted-soft); cursor: pointer; padding: 6px; border-radius: 8px; }
+.ld-del { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; color: var(--muted-soft); cursor: pointer; padding: 6px; border-radius: 8px; text-decoration: none; flex-shrink: 0; }
 .ld-del:hover { color: var(--red); background: #fce8e8; }
 .ld-del svg { width: 17px; height: 17px; }
+
+.ld-doclink { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--border-soft); border-radius: 14px; background: #fafbfe; margin-bottom: 16px; }
+.ld-doclink-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ld-doclink-text b { font-size: 13.5px; color: #0f1b33; }
+.ld-doclink-text span { font-size: 12px; color: var(--muted); }
+.ld-doclink .btn-outline { flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 10px; font-size: 13px; font-weight: 700; }
 
 .ld-thread { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
 .ld-bubble { max-width: 78%; padding: 10px 14px; border-radius: 14px; }
@@ -1404,3 +1410,38 @@ textarea { resize: vertical; }
 /* Public quotation accept page shell */
 .qc-page { min-height: 100vh; background: var(--bg); padding: 48px 16px; }
 .qc-page-inner { max-width: 560px; margin: 0 auto; }
+
+/* ---- Public document-request page — shares the same shell/footer as the
+   quotation card so both client-facing pages read as one product. ---- */
+.dc-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(16,24,40,0.08); border: 1px solid var(--border-soft); }
+.dc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 22px 22px 0; }
+.dc-logo { width: 100px; height: 100px; object-fit: contain; flex-shrink: 0; }
+.dc-head-right { text-align: right; }
+.dc-title { font-size: 18px; font-weight: 800; color: #16296e; letter-spacing: 0.03em; }
+.dc-company-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 9px; }
+.dc-company-line { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.dc-rule { height: 3px; background: var(--gold); margin: 16px 22px 0; border-radius: 2px; }
+
+.dc-client { padding: 18px 22px 0; }
+.dc-client-label { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: #16296e; }
+.dc-client-name { font-size: 15px; font-weight: 700; color: var(--text); margin-top: 5px; }
+.dc-client-line { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+.dc-intro { padding: 16px 22px 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+.dc-categories { padding: 18px 22px 4px; display: flex; flex-direction: column; gap: 12px; }
+.dc-cat { border: 1px solid var(--border-soft); border-radius: 12px; padding: 14px 16px; background: #fafbfd; }
+.dc-cat-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dc-cat-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.dc-cat-status { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); white-space: nowrap; }
+.dc-cat-status.done { background: var(--green-soft); color: var(--green); }
+.dc-file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.dc-file { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
+.dc-file svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+.dc-upload-btn {
+  display: inline-flex; align-items: center; justify-content: center; margin-top: 12px;
+  padding: 9px 16px; border-radius: 9px; border: 1px dashed #c7d0e0; background: #fff;
+  color: #16296e; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+}
+.dc-upload-btn:hover { background: #f4f6fb; border-color: #16296e; }

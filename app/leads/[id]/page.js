@@ -84,7 +84,8 @@ export default function LeadDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [savedAt, setSavedAt] = useState(null);
-  const fileRef = useRef(null);
+  const [docLink, setDocLink] = useState(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,6 +132,35 @@ export default function LeadDetailPage() {
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, [menuOpen]);
+
+  // Document upload link + live sync: the client uploads through a public
+  // page with no login, so while staff has this tab open we poll for new
+  // files rather than requiring a manual refresh to see them land.
+  useEffect(() => {
+    if (tab !== "Documents" || !id) return;
+    let cancelled = false;
+
+    if (!docLink) {
+      fetch(`/api/leads/${id}/doc-token`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (!cancelled && d.token) setDocLink(`${window.location.origin}/documents/${d.token}`);
+        })
+        .catch(() => {});
+    }
+
+    function poll() {
+      fetch(`/api/leads/${id}`, { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => {
+          if (cancelled || !d || d.error) return;
+          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity } : l));
+        })
+        .catch(() => {});
+    }
+    const t = setInterval(poll, 6000);
+    return () => { cancelled = true; clearInterval(t); };
+  }, [tab, id, docLink]);
 
   const leadQuotes = useMemo(() => {
     if (!lead) return [];
@@ -212,29 +242,18 @@ export default function LeadDetailPage() {
     patchLead({ messages }, "Message sent to client");
     setNewMsg("");
   }
-  async function uploadDoc(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("uploaded_by", "Staff");
-    try {
-      const res = await fetch(`/api/leads/${id}/files`, { method: "POST", body: fd });
-      const entry = await res.json();
-      if (res.ok) {
-        setLead((l) => ({
-          ...l,
-          documents: [...(l.documents || []), entry],
-          activity: [...(l.activity || []), { text: `Staff uploaded document: ${entry.name}`, at: entry.uploaded_at, kind: "document" }],
-        }));
-      }
-    } catch {}
-    e.target.value = "";
-  }
   async function deleteDoc(fileId) {
     setLead((l) => ({ ...l, documents: (l.documents || []).filter((f) => f.id !== fileId) }));
     await fetch(`/api/leads/${id}/files?fileId=${fileId}`, { method: "DELETE" });
     setDocDeleteId(null);
+  }
+  async function copyDocLink() {
+    if (!docLink) return;
+    try {
+      await navigator.clipboard.writeText(docLink);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {}
   }
   function saveNote() { patchLead({ notes: noteDraft }, "Notes updated"); }
   async function handleDelete() {
@@ -469,11 +488,21 @@ export default function LeadDetailPage() {
             <div className="ld-tabpane">
               <div className="ld-pane-head">
                 <h3>Documents</h3>
-                <button className="btn-navy" onClick={() => fileRef.current?.click()}>{I.upload} Upload</button>
-                <input ref={fileRef} type="file" hidden onChange={uploadDoc} />
               </div>
+
+              <div className="ld-doclink">
+                <span className="ld-ic">{I.upload}</span>
+                <div className="ld-doclink-text">
+                  <b>Client upload link</b>
+                  <span>Send this to the customer so they can upload their own documents — it updates here automatically.</span>
+                </div>
+                <button type="button" className="btn-outline" onClick={copyDocLink} disabled={!docLink}>
+                  {linkCopied ? "Copied!" : "Copy Link"}
+                </button>
+              </div>
+
               {docs.length === 0 ? (
-                <div className="ld-empty">{I.doc}<p>No documents yet.</p><span>Files the customer uploads, or that you add here, will appear in this list.</span></div>
+                <div className="ld-empty">{I.doc}<p>No documents yet.</p><span>Files the customer uploads through their link will appear in this list automatically.</span></div>
               ) : (
                 <div className="ld-doclist">
                   {docs.map((d) => (
@@ -481,8 +510,11 @@ export default function LeadDetailPage() {
                       <span className="ld-ic">{I.doc}</span>
                       <div className="dm">
                         <a href={d.url} target="_blank" rel="noreferrer">{d.name}</a>
-                        <span>{d.uploaded_by || "Staff"} · {relTime(d.uploaded_at)}</span>
+                        <span>{d.category ? `${d.category} · ` : ""}{d.uploaded_by || "Client"} · {relTime(d.uploaded_at)}</span>
                       </div>
+                      <a className="ld-del" href={d.url} download title="Download" target="_blank" rel="noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12M7 10l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" /><path d="M5 21h14" strokeLinecap="round" /></svg>
+                      </a>
                       <button className="ld-del" onClick={() => setDocDeleteId(d.id)} title="Remove">{I.trash}</button>
                     </div>
                   ))}
