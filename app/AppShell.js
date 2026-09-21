@@ -27,7 +27,7 @@ export default function AppShell({ children }) {
     });
   }
 
-  const noShell = NO_SHELL_PATHS.includes(pathname) || /^\/quotations\/[^/]+$/.test(pathname);
+  const noShell = NO_SHELL_PATHS.includes(pathname) || /^\/quotations\/[^/]+$/.test(pathname) || /^\/documents\/[^/]+$/.test(pathname);
   if (noShell) return <>{children}</>;
 
   return (
