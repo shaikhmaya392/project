@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { DOCUMENT_CATEGORIES } from "../../../lib/leadMeta";
 
@@ -13,6 +13,13 @@ export default function DocumentUploadPage() {
   const [uploadError, setUploadError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [missing, setMissing] = useState([]);
+  // Picking a second (or third...) file never has to wait visually — it
+  // shows as "Uploading…" right away — but the actual network requests run
+  // one at a time. The JSON blob store has no atomic write, so two uploads
+  // landing at the exact same moment can silently clobber each other;
+  // queueing avoids ever creating that situation in the first place.
+  const uploadQueueRef = useRef([]);
+  const uploadingRef = useRef(false);
 
   function load() {
     fetch(`/api/documents/${token}`)
@@ -32,10 +39,10 @@ export default function DocumentUploadPage() {
     return () => clearInterval(t);
   }, [token]);
 
-  // Multiple files — even in the same category — can upload at once: each
-  // pick gets its own key and runs independently, so starting a second
-  // upload never has to wait for (or get blocked by) the first one.
-  async function handleUpload(category, e) {
+  // Picking a file never blocks on a previous upload finishing — it's
+  // queued and shown as "Uploading…" immediately — but the queue is
+  // processed one file at a time under the hood (see uploadQueueRef above).
+  function handleUpload(category, e) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -43,18 +50,29 @@ export default function DocumentUploadPage() {
     setUploadingFiles((u) => [...u, { key, category, name: file.name }]);
     setMissing([]);
     setUploadError(null);
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("category", category);
-    try {
-      const res = await fetch(`/api/documents/${token}`, { method: "POST", body: fd });
-      const d = await res.json();
-      if (res.ok) setData(d);
-      else setUploadError(d.error || "Upload failed, please try again");
-    } catch {
-      setUploadError("Upload failed, please try again");
+    uploadQueueRef.current.push({ key, category, file });
+    processQueue();
+  }
+
+  async function processQueue() {
+    if (uploadingRef.current) return;
+    uploadingRef.current = true;
+    while (uploadQueueRef.current.length > 0) {
+      const { key, category, file } = uploadQueueRef.current.shift();
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("category", category);
+      try {
+        const res = await fetch(`/api/documents/${token}`, { method: "POST", body: fd });
+        const d = await res.json();
+        if (res.ok) setData(d);
+        else setUploadError(d.error || "Upload failed, please try again");
+      } catch {
+        setUploadError("Upload failed, please try again");
+      }
+      setUploadingFiles((u) => u.filter((x) => x.key !== key));
     }
-    setUploadingFiles((u) => u.filter((x) => x.key !== key));
+    uploadingRef.current = false;
   }
 
   async function handleDelete(fileId) {
