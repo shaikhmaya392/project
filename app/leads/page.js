@@ -156,12 +156,12 @@ export default function LeadsPage() {
       ) : (
         <div className="table-wrap">
           <div className="table-scroll">
-            <table style={{ minWidth: 1010 }}>
+            <table style={{ minWidth: 1050 }}>
               <colgroup>
                 <col style={{ width: 110 }} />
                 <col style={{ width: 130 }} />
                 <col style={{ width: 190 }} />
-                <col style={{ width: 110 }} />
+                <col style={{ width: 150 }} />
                 <col style={{ width: 130 }} />
                 <col style={{ width: 170 }} />
                 <col style={{ width: 170 }} />
