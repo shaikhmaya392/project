@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES, DOCUMENT_CATEGORIES } from "../../../lib/leadMeta";
+import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
 import { onPhoneChange } from "../../../lib/formatPhone";
 import Select from "../../Select";
 
@@ -255,7 +255,7 @@ export default function LeadDetailPage() {
   // the standard starting list for a brand-new link.
   function openFieldModal() {
     const existing = lead.document_fields;
-    setFieldDraft(existing && existing.length > 0 ? [...existing] : [...DOCUMENT_CATEGORIES]);
+    setFieldDraft(existing && existing.length > 0 ? [...existing] : []);
     setFieldError(null);
     setFieldModalOpen(true);
   }
