@@ -113,8 +113,11 @@ export default function DocumentUploadPage() {
               <img src="/logo-color.png" alt="DS Permitting Services" className="dc-logo" />
               <div className="dc-head-right">
                 <div className="dc-title">DOCUMENT REQUEST</div>
+                <span className={`qc-status${submitted ? " accepted" : ""}`}>{submitted ? "Submitted" : "Awaiting Documents"}</span>
                 <div className="dc-company-name">DS Permitting Services</div>
                 <div className="dc-company-line">Fort McCoy, FL</div>
+                <div className="dc-company-line">(352) 809-1717</div>
+                <div className="dc-company-line">dspermitting.com&nbsp;|&nbsp;info@dspermitting.com</div>
               </div>
             </div>
 
