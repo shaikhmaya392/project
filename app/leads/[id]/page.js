@@ -84,8 +84,11 @@ export default function LeadDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [savedAt, setSavedAt] = useState(null);
-  const [docLink, setDocLink] = useState(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [fieldModalOpen, setFieldModalOpen] = useState(false);
+  const [fieldDraft, setFieldDraft] = useState([]);
+  const [fieldSaving, setFieldSaving] = useState(false);
+  const [fieldError, setFieldError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -133,34 +136,25 @@ export default function LeadDetailPage() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [menuOpen]);
 
-  // Document upload link + live sync: the client uploads through a public
-  // page with no login, so while staff has this tab open we poll for new
-  // files rather than requiring a manual refresh to see them land.
+  // Live sync while the Documents tab is open: the client uploads through a
+  // public page with no login, so poll for new files rather than requiring
+  // a manual refresh to see them land.
   useEffect(() => {
     if (tab !== "Documents" || !id) return;
     let cancelled = false;
-
-    if (!docLink) {
-      fetch(`/api/leads/${id}/doc-token`)
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled && d.token) setDocLink(`${window.location.origin}/documents/${d.token}`);
-        })
-        .catch(() => {});
-    }
 
     function poll() {
       fetch(`/api/leads/${id}`, { cache: "no-store" })
         .then((r) => r.json())
         .then((d) => {
           if (cancelled || !d || d.error) return;
-          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity, documents_submitted_at: d.documents_submitted_at } : l));
+          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity, documents_submitted_at: d.documents_submitted_at, document_fields: d.document_fields, doc_token: d.doc_token } : l));
         })
         .catch(() => {});
     }
     const t = setInterval(poll, 6000);
     return () => { cancelled = true; clearInterval(t); };
-  }, [tab, id, docLink]);
+  }, [tab, id]);
 
   const leadQuotes = useMemo(() => {
     if (!lead) return [];
@@ -255,6 +249,45 @@ export default function LeadDetailPage() {
       setTimeout(() => setLinkCopied(false), 2000);
     } catch {}
   }
+
+  // Staff define the document fields themselves — there's no fixed set.
+  // Opening the editor pre-fills with whatever's already configured, or
+  // the standard starting list for a brand-new link.
+  function openFieldModal() {
+    const existing = lead.document_fields;
+    setFieldDraft(existing && existing.length > 0 ? [...existing] : [...DOCUMENT_CATEGORIES]);
+    setFieldError(null);
+    setFieldModalOpen(true);
+  }
+  function updateFieldDraft(i, value) {
+    setFieldDraft((f) => f.map((v, idx) => (idx === i ? value : v)));
+  }
+  function removeFieldDraft(i) {
+    setFieldDraft((f) => f.filter((_, idx) => idx !== i));
+  }
+  function addFieldDraft() {
+    setFieldDraft((f) => [...f, ""]);
+  }
+  async function saveFieldDraft() {
+    const cleaned = fieldDraft.map((f) => f.trim()).filter(Boolean);
+    if (cleaned.length === 0) { setFieldError("Add at least one field"); return; }
+    setFieldSaving(true);
+    setFieldError(null);
+    try {
+      const res = await fetch(`/api/leads/${id}/doc-fields`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fields: cleaned }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Couldn't save");
+      setLead((l) => ({ ...l, doc_token: d.token, document_fields: d.fields }));
+      setFieldModalOpen(false);
+    } catch (err) {
+      setFieldError(err.message);
+    }
+    setFieldSaving(false);
+  }
   function saveNote() { patchLead({ notes: noteDraft }, "Notes updated"); }
   async function handleDelete() {
     const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
@@ -271,13 +304,15 @@ export default function LeadDetailPage() {
   const permit = lead.permit_request || {};
   const primaryQuote = leadQuotes[0];
   const docs = lead.documents || [];
-  // Grouped by category so it's obvious at a glance which requested
-  // document is which, instead of one flat list with the category as a
-  // small inline label. Anything without a category (old staff uploads
-  // from before the client link existed) falls into its own group.
+  const docFields = lead.document_fields || [];
+  const docLink = lead.doc_token ? `${typeof window !== "undefined" ? window.location.origin : ""}/documents/${lead.doc_token}` : null;
+  // Grouped by field so it's obvious at a glance which requested document
+  // is which, instead of one flat list with the field as a small inline
+  // label. Anything without a field (old staff uploads from before the
+  // client link existed) falls into its own group.
   const uncategorized = docs.filter((d) => !d.category);
   const docGroups = [
-    ...DOCUMENT_CATEGORIES.map((cat) => ({ cat, files: docs.filter((d) => d.category === cat) })),
+    ...docFields.map((cat) => ({ cat, files: docs.filter((d) => d.category === cat) })),
     ...(uncategorized.length > 0 ? [{ cat: "Other", files: uncategorized }] : []),
   ];
   const msgs = lead.messages || [];
@@ -502,16 +537,28 @@ export default function LeadDetailPage() {
                 )}
               </div>
 
-              <div className="ld-doclink">
-                <span className="ld-ic">{I.upload}</span>
-                <div className="ld-doclink-text">
-                  <b>Client upload link</b>
-                  <span>Send this to the customer so they can upload their own documents — it updates here automatically.</span>
+              {docFields.length === 0 ? (
+                <div className="ld-doclink">
+                  <span className="ld-ic">{I.upload}</span>
+                  <div className="ld-doclink-text">
+                    <b>No upload link yet</b>
+                    <span>Choose which documents to request, then generate a link to send the customer.</span>
+                  </div>
+                  <button type="button" className="btn-navy" onClick={openFieldModal}>{I.plus} Generate Link</button>
                 </div>
-                <button type="button" className="btn-outline" onClick={copyDocLink} disabled={!docLink}>
-                  {linkCopied ? "Copied!" : "Copy Link"}
-                </button>
-              </div>
+              ) : (
+                <div className="ld-doclink">
+                  <span className="ld-ic">{I.upload}</span>
+                  <div className="ld-doclink-text">
+                    <b>Client upload link</b>
+                    <span>Send this to the customer so they can upload their own documents — it updates here automatically.</span>
+                  </div>
+                  <button type="button" className="btn-outline" onClick={openFieldModal}>Edit Fields</button>
+                  <button type="button" className="btn-outline" onClick={copyDocLink} disabled={!docLink}>
+                    {linkCopied ? "Copied!" : "Copy Link"}
+                  </button>
+                </div>
+              )}
 
               {docs.length === 0 ? (
                 <div className="ld-empty">{I.doc}<p>No documents yet.</p><span>Files the customer uploads through their link will appear in this list automatically.</span></div>
@@ -661,6 +708,42 @@ export default function LeadDetailPage() {
             <div className="ld-modal-actions">
               <button className="btn-outline" onClick={() => setEditOpen(false)}>Cancel</button>
               <button className="btn-navy" onClick={saveEdit}>{I.save} Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ DOCUMENT FIELDS POPUP ============ */}
+      {fieldModalOpen && (
+        <div className="toast-backdrop" onClick={() => !fieldSaving && setFieldModalOpen(false)}>
+          <div className="ld-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-head">
+              <div>
+                <h3>{docFields.length > 0 ? "Edit Requested Documents" : "Request Documents"}</h3>
+                <p>Add, rename or remove fields — the client&apos;s link shows exactly these, in this order.</p>
+              </div>
+              <button className="ld-modal-x" onClick={() => setFieldModalOpen(false)} title="Close">×</button>
+            </div>
+            <div className="ld-field-list">
+              {fieldDraft.map((f, i) => (
+                <div className="ld-field-row" key={i}>
+                  <input
+                    value={f}
+                    placeholder="Field name, e.g. Photo ID"
+                    onChange={(e) => updateFieldDraft(i, e.target.value)}
+                  />
+                  <button type="button" className="ld-del" onClick={() => removeFieldDraft(i)} title="Remove field">{I.trash}</button>
+                </div>
+              ))}
+              {fieldDraft.length === 0 && <div className="ld-empty" style={{ padding: "20px 0" }}>No fields yet — add one below.</div>}
+            </div>
+            <button type="button" className="ld-add-field-btn" onClick={addFieldDraft}>{I.plus} Add Field</button>
+            {fieldError && <div className="error-banner">{fieldError}</div>}
+            <div className="ld-modal-actions">
+              <button className="btn-outline" onClick={() => setFieldModalOpen(false)} disabled={fieldSaving}>Cancel</button>
+              <button className="btn-navy" onClick={saveFieldDraft} disabled={fieldSaving}>
+                {fieldSaving ? "Saving…" : docFields.length > 0 ? "Save Changes" : "Generate Link"}
+              </button>
             </div>
           </div>
         </div>

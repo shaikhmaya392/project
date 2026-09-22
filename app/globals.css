@@ -915,6 +915,20 @@ textarea { resize: vertical; }
 }
 .ld-modal-grid textarea { height: auto; padding: 11px 13px; resize: vertical; line-height: 1.5; }
 .ld-modal-grid input:focus, .ld-modal-grid textarea:focus { outline: none; border-color: #16296e; box-shadow: 0 0 0 3px rgba(22,41,110,0.12); background: #fff; }
+.ld-field-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; }
+.ld-field-row { display: flex; align-items: center; gap: 10px; }
+.ld-field-row input {
+  flex: 1; min-width: 0; padding: 0 13px; height: 44px; border: 1px solid #dbe2f0; border-radius: 11px;
+  background: #f7f9fc; font-family: inherit; font-size: 14px; color: #1a1a1a;
+}
+.ld-field-row input:focus { outline: none; border-color: #16296e; box-shadow: 0 0 0 3px rgba(22,41,110,0.12); background: #fff; }
+.ld-add-field-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 9px 16px;
+  border-radius: 9px; border: 1px dashed #c7d0e0; background: #fff; color: #16296e;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+}
+.ld-add-field-btn:hover { background: #f4f6fb; border-color: #16296e; }
+.ld-add-field-btn svg { width: 15px; height: 15px; }
 .ld-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
 .ld-modal-actions.center { justify-content: center; }
 .ld-modal-actions .btn-outline, .ld-modal-actions .btn-navy, .ld-modal-actions .btn-danger { border-radius: 12px; height: 42px; padding: 0 18px; font-weight: 700; }

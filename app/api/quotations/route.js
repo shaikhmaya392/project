@@ -3,7 +3,7 @@ import { getQuotations, createQuotation } from "../../../lib/quotationsStore";
 import { quotationEmailHtml } from "../../../lib/quotationEmail";
 import { buildQuotationPdf } from "../../../lib/quotationPdf";
 import { sendEmail } from "../../../lib/mailer";
-import { getLead, updateLead, ensureDocToken } from "../../../lib/leadsStore";
+import { getLead, updateLead } from "../../../lib/leadsStore";
 
 // Sending a quotation moves the lead to "Quotation Sent" so the status is
 // the same on the leads list, the lead detail page and the dashboard.
@@ -36,10 +36,13 @@ export async function POST(request) {
     await syncLeadOnSend(quotation);
     const origin = new URL(request.url).origin;
     const acceptUrl = `${origin}/quotations/${quotation.token}`;
-    // Include the client's own document-upload link in the same email, so
-    // they can send their paperwork right from the quotation they got.
-    const docToken = quotation.lead_id ? await ensureDocToken(quotation.lead_id) : null;
-    const docUploadUrl = docToken ? `${origin}/documents/${docToken}` : null;
+    // Include the client's own document-upload link in the same email, but
+    // only once staff have actually configured what to ask for — a link
+    // with no fields would just be a blank, confusing page.
+    const docLead = quotation.lead_id ? await getLead(quotation.lead_id) : null;
+    const docUploadUrl = docLead?.doc_token && docLead.document_fields?.length > 0
+      ? `${origin}/documents/${docLead.doc_token}`
+      : null;
 
     try {
       const pdfBuffer = await buildQuotationPdf(quotation);

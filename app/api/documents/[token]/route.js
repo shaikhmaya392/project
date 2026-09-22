@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { put, del } from "@vercel/blob";
 import { getLeadByDocToken, updateLeadSafely } from "../../../../lib/leadsStore";
-import { DOCUMENT_CATEGORIES } from "../../../../lib/leadMeta";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,6 +14,7 @@ function publicView(lead) {
     client_name: lead.name || "",
     client_email: lead.email || "",
     client_phone: lead.phone || "",
+    fields: lead.document_fields || [],
     documents_submitted_at: lead.documents_submitted_at || null,
     documents: (lead.documents || []).map((d) => ({ id: d.id, name: d.name, category: d.category || null, uploaded_at: d.uploaded_at })),
   };
@@ -46,8 +46,8 @@ export async function POST(request, { params }) {
     if (!file || typeof file === "string") {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-    if (!DOCUMENT_CATEGORIES.includes(category)) {
-      return NextResponse.json({ error: "Invalid document category" }, { status: 400 });
+    if (!(lead.document_fields || []).includes(category)) {
+      return NextResponse.json({ error: "Invalid document field" }, { status: 400 });
     }
 
     const key = `lead-files/${lead.id}/${Date.now()}-${safeName(file.name)}`;

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { DOCUMENT_CATEGORIES } from "../../../lib/leadMeta";
 
 export default function DocumentUploadPage() {
   const { token } = useParams();
@@ -99,6 +98,7 @@ export default function DocumentUploadPage() {
 
   const filesFor = (cat) => (data?.documents || []).filter((d) => d.category === cat);
   const submitted = !!data?.documents_submitted_at;
+  const fields = data?.fields || [];
 
   return (
     <div className="qc-page">
@@ -131,11 +131,13 @@ export default function DocumentUploadPage() {
             </div>
 
             <div className="dc-intro">
-              Please upload all four documents below, then press Submit. You can come back to this page any time to add, remove or replace a file.
+              {fields.length > 0
+                ? "Please upload the documents below, then press Submit. You can come back to this page any time to add, remove or replace a file."
+                : "No documents have been requested yet — please check back later or contact us."}
             </div>
 
             <div className="dc-categories">
-              {DOCUMENT_CATEGORIES.map((cat) => {
+              {fields.map((cat) => {
                 const files = filesFor(cat);
                 const pending = uploadingFiles.filter((u) => u.category === cat);
                 const isMissing = missing.includes(cat);
@@ -185,17 +187,19 @@ export default function DocumentUploadPage() {
               })}
             </div>
 
-            <div className="dc-submit-wrap">
-              {submitted ? (
-                <div className="dc-submitted-note">
-                  ✓ Submitted on {new Date(data.documents_submitted_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}. You can still add or remove files any time.
-                </div>
-              ) : (
-                <button type="button" className="dc-submit-btn" onClick={handleSubmit} disabled={submitting}>
-                  {submitting ? "Submitting…" : "Submit Documents"}
-                </button>
-              )}
-            </div>
+            {fields.length > 0 && (
+              <div className="dc-submit-wrap">
+                {submitted ? (
+                  <div className="dc-submitted-note">
+                    ✓ Submitted on {new Date(data.documents_submitted_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}. You can still add or remove files any time.
+                  </div>
+                ) : (
+                  <button type="button" className="dc-submit-btn" onClick={handleSubmit} disabled={submitting}>
+                    {submitting ? "Submitting…" : "Submit Documents"}
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="qc-footer">
               <img src="/logo-color.png" alt="" className="qc-footer-logo" />
