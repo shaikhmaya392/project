@@ -67,10 +67,18 @@ export async function POST(request, { params }) {
 
     const updated = await updateLeadSafely(
       lead.id,
-      (current) => ({
-        documents: [...(current.documents || []), entry],
-        activity: [...(current.activity || []), { text: `Client uploaded ${category}: ${file.name}`, at: entry.uploaded_at, kind: "document" }],
-      }),
+      (current) => {
+        // Idempotent: a previous attempt's write can land durably even
+        // though its own verification read raced a concurrent writer and
+        // looked like it failed. Without this check, the retry that
+        // follows would append the same entry a second time.
+        const already = (current.documents || []).some((d) => d.id === entry.id);
+        if (already) return {};
+        return {
+          documents: [...(current.documents || []), entry],
+          activity: [...(current.activity || []), { text: `Client uploaded ${category}: ${file.name}`, at: entry.uploaded_at, kind: "document" }],
+        };
+      },
       (finalLead) => (finalLead.documents || []).some((d) => d.id === entry.id)
     );
     if (!updated) {
