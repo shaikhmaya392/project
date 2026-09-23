@@ -89,6 +89,17 @@ export default function LeadDetailPage() {
   const [fieldDraft, setFieldDraft] = useState([]);
   const [fieldSaving, setFieldSaving] = useState(false);
   const [fieldError, setFieldError] = useState(null);
+  const [fieldDeleteTarget, setFieldDeleteTarget] = useState(null);
+  const [fieldDeleting, setFieldDeleting] = useState(false);
+  // The Documents tab polls the server every 6s so it stays in sync with a
+  // client uploading through their own link. A delete (of a file or a whole
+  // field) removes it from local state immediately, but the DELETE request
+  // itself can take a few seconds under storage contention — if a poll lands
+  // in that window it re-reads the still-not-yet-updated server copy and
+  // makes the just-deleted item reappear. These track what's mid-deletion so
+  // the poll never resurrects it.
+  const pendingDocDeletesRef = useRef(new Set());
+  const pendingFieldDeletesRef = useRef(new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -148,7 +159,9 @@ export default function LeadDetailPage() {
         .then((r) => r.json())
         .then((d) => {
           if (cancelled || !d || d.error) return;
-          setLead((l) => (l ? { ...l, documents: d.documents, activity: d.activity, documents_submitted_at: d.documents_submitted_at, document_fields: d.document_fields, doc_token: d.doc_token } : l));
+          const documents = (d.documents || []).filter((doc) => !pendingDocDeletesRef.current.has(doc.id));
+          const document_fields = (d.document_fields || []).filter((f) => !pendingFieldDeletesRef.current.has(f));
+          setLead((l) => (l ? { ...l, documents, activity: d.activity, documents_submitted_at: d.documents_submitted_at, document_fields, doc_token: d.doc_token } : l));
         })
         .catch(() => {});
     }
@@ -237,9 +250,30 @@ export default function LeadDetailPage() {
     setNewMsg("");
   }
   async function deleteDoc(fileId) {
+    pendingDocDeletesRef.current.add(fileId);
     setLead((l) => ({ ...l, documents: (l.documents || []).filter((f) => f.id !== fileId) }));
-    await fetch(`/api/leads/${id}/files?fileId=${fileId}`, { method: "DELETE" });
     setDocDeleteId(null);
+    try {
+      await fetch(`/api/leads/${id}/files?fileId=${fileId}`, { method: "DELETE" });
+    } finally {
+      pendingDocDeletesRef.current.delete(fileId);
+    }
+  }
+  async function deleteField(field) {
+    pendingFieldDeletesRef.current.add(field);
+    setLead((l) => ({
+      ...l,
+      document_fields: (l.document_fields || []).filter((f) => f !== field),
+      documents: (l.documents || []).filter((d) => d.category !== field),
+    }));
+    setFieldDeleteTarget(null);
+    setFieldDeleting(true);
+    try {
+      await fetch(`/api/leads/${id}/doc-fields?field=${encodeURIComponent(field)}`, { method: "DELETE" });
+    } finally {
+      pendingFieldDeletesRef.current.delete(field);
+      setFieldDeleting(false);
+    }
   }
   async function copyDocLink() {
     if (!docLink) return;
@@ -560,7 +594,7 @@ export default function LeadDetailPage() {
                 </div>
               )}
 
-              {docs.length === 0 ? (
+              {docGroups.length === 0 ? (
                 <div className="ld-empty">{I.doc}<p>No documents yet.</p><span>Files the customer uploads through their link will appear in this list automatically.</span></div>
               ) : (
                 <div className="ld-docgroups">
@@ -568,7 +602,19 @@ export default function LeadDetailPage() {
                     <div className="ld-docgroup" key={cat}>
                       <div className="ld-docgroup-head">
                         <span>{cat}</span>
-                        <span className={`ld-docgroup-count${files.length ? " has" : ""}`}>{files.length || "None"}</span>
+                        <span className="ld-docgroup-head-right">
+                          <span className={`ld-docgroup-count${files.length ? " has" : ""}`}>{files.length || "None"}</span>
+                          {cat !== "Other" && (
+                            <button
+                              type="button"
+                              className="ld-del"
+                              onClick={() => setFieldDeleteTarget(cat)}
+                              title="Remove this field"
+                            >
+                              {I.trash}
+                            </button>
+                          )}
+                        </span>
                       </div>
                       {files.length === 0 ? (
                         <div className="ld-docgroup-empty">No file uploaded yet</div>
@@ -780,6 +826,26 @@ export default function LeadDetailPage() {
             <div className="ld-modal-actions stacked">
               <button className="btn-danger full" onClick={() => deleteDoc(docDeleteId)}>{I.trash} Yes, delete this document</button>
               <button className="ld-modal-link" onClick={() => setDocDeleteId(null)}>Keep this document</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ DELETE FIELD CONFIRM ============ */}
+      {fieldDeleteTarget && (
+        <div className="toast-backdrop" onClick={() => !fieldDeleting && setFieldDeleteTarget(null)}>
+          <div className="ld-modal ld-modal-sm ld-modal-warn" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-warn-bar" />
+            <div className="ld-modal-danger-ic">{I.warn}</div>
+            <h3 className="ld-modal-center-title">Remove this field?</h3>
+            <p className="ld-modal-center-text">
+              <b>{fieldDeleteTarget}</b> will be removed from the client&apos;s link, along with any documents already uploaded to it. This can&apos;t be undone.
+            </p>
+            <div className="ld-modal-actions stacked">
+              <button className="btn-danger full" onClick={() => deleteField(fieldDeleteTarget)} disabled={fieldDeleting}>
+                {I.trash} {fieldDeleting ? "Removing…" : "Yes, remove this field"}
+              </button>
+              <button className="ld-modal-link" onClick={() => setFieldDeleteTarget(null)} disabled={fieldDeleting}>Keep this field</button>
             </div>
           </div>
         </div>

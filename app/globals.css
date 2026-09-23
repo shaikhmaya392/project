@@ -1173,6 +1173,7 @@ textarea { resize: vertical; }
 .ld-docgroups { display: flex; flex-direction: column; gap: 18px; }
 .ld-docgroup-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
 .ld-docgroup-head span:first-child { font-size: 13px; font-weight: 700; color: #16296e; text-transform: uppercase; letter-spacing: 0.03em; }
+.ld-docgroup-head-right { display: flex; align-items: center; gap: 6px; }
 .ld-docgroup-count { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--border-soft); color: var(--muted); }
 .ld-docgroup-count.has { background: var(--green-soft); color: var(--green); }
 .ld-docgroup-empty { font-size: 13px; color: var(--muted-soft); font-style: italic; padding: 10px 2px; }
