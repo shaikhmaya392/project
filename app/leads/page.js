@@ -16,6 +16,13 @@ function fmtDate(s) {
 
 const PAGE_SIZES = [10, 25, 50, 100];
 
+const trashIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13" strokeLinecap="round" strokeLinejoin="round" /></svg>
+);
+const warnIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3.2L2 20.5h20L12 3.2z" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 10v4.2M12 17.6v.01" strokeLinecap="round" strokeLinejoin="round" /></svg>
+);
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +30,8 @@ export default function LeadsPage() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   function load() {
     setLoading(true);
@@ -66,6 +75,21 @@ export default function LeadsPage() {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/leads/${deleteTarget.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setLeads((prev) => prev.filter((l) => l.id !== deleteTarget.id));
+        setDeleteTarget(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setDeleting(false);
   }
 
   const filtered = useMemo(() => {
@@ -165,6 +189,7 @@ export default function LeadsPage() {
                 <col style={{ width: 130 }} />
                 <col style={{ width: 170 }} />
                 <col style={{ width: 170 }} />
+                <col style={{ width: 46 }} />
               </colgroup>
 
               <thead>
@@ -176,6 +201,7 @@ export default function LeadsPage() {
                   <th>Work Location</th>
                   <th>Status</th>
                   <th>Next Action</th>
+                  <th></th>
                 </tr>
               </thead>
 
@@ -233,6 +259,13 @@ export default function LeadsPage() {
                         ]}
                       />
                     </td>
+
+                    {/* DELETE */}
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <button type="button" className="ld-del" onClick={() => setDeleteTarget(lead)} title="Delete lead">
+                        {trashIcon}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -266,6 +299,25 @@ export default function LeadsPage() {
                 onChange={(v) => setPageSize(Number(v))}
                 options={PAGE_SIZES.map((n) => ({ value: n, label: String(n) }))}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="toast-backdrop" onClick={() => !deleting && setDeleteTarget(null)}>
+          <div className="ld-modal ld-modal-sm ld-modal-warn" onClick={(e) => e.stopPropagation()}>
+            <div className="ld-modal-warn-bar" />
+            <div className="ld-modal-danger-ic">{warnIcon}</div>
+            <h3 className="ld-modal-center-title">Delete this lead?</h3>
+            <p className="ld-modal-center-text">
+              <b>{deleteTarget.name || "This lead"}</b> will be permanently removed. This can&apos;t be undone.
+            </p>
+            <div className="ld-modal-actions stacked">
+              <button className="btn-danger full" onClick={confirmDelete} disabled={deleting}>
+                {trashIcon} {deleting ? "Deleting…" : "Yes, delete this lead"}
+              </button>
+              <button className="ld-modal-link" onClick={() => setDeleteTarget(null)} disabled={deleting}>Keep this lead</button>
             </div>
           </div>
         </div>
