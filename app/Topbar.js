@@ -6,20 +6,35 @@ import Link from "next/link";
 
 const TITLES = [
   [/^\/$/, "Dashboard"],
+
   [/^\/leads\/new/, "New Lead"],
   [/^\/leads\/[^/]+\/quotation/, "Send Quotation"],
   [/^\/leads\/[^/]+/, "Lead Details"],
   [/^\/leads/, "Leads"],
-  [/^\/quotations\/[^/]+\/edit/, "Edit Quotation"],
-  [/^\/quotations/, "Quotations"],
+
+  [/^\/clients\/[^/]+/, "Client Details"],
+  [/^\/clients/, "Clients"],
+
   [/^\/projects\/new/, "New Project"],
   [/^\/projects\/[^/]+/, "Project Details"],
   [/^\/projects/, "Projects"],
-  [/^\/staff/, "Staff"],
-  [/^\/settings/, "Settings"],
+
+  [/^\/permits\/[^/]+/, "Permit Details"],
+  [/^\/permits/, "Permits"],
+
+  [/^\/quotations\/[^/]+\/edit/, "Edit Quotation"],
+  [/^\/quotations/, "Quotations"],
+
+  [/^\/documents/, "Documents"],
+  [/^\/inbox/, "Messages"],
+  [/^\/tasks/, "Tasks"],
+  [/^\/invoices/, "Invoices"],
   [/^\/reports/, "Reports"],
-  [/^\/inbox/, "Inbox"],
+  [/^\/settings/, "Settings"],
+
+  [/^\/staff/, "Staff"],
   [/^\/pipeline/, "Pipeline"],
+  [/^\/workflows/, "Workflows"],
 ];
 
 function initials(name) {
