@@ -8,7 +8,8 @@ const empty = {
   name: "",
   email: "",
   phone: "",
-  address: "",
+  contractor_name: "",
+  property: { street: "", city: "", state: "", zip: "", county: "" },
   message: "",
 };
 
@@ -21,16 +22,27 @@ export default function NewLeadPage() {
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
   }
+  function setProperty(field, value) {
+    setForm((f) => ({ ...f, property: { ...f.property, [field]: value } }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
     setError(null);
     try {
+      // Address stays a plain string too, composed from the structured
+      // fields — the leads list, search and dashboard all read it directly.
+      const address = [
+        form.property.street,
+        [form.property.city, form.property.state].filter(Boolean).join(", "),
+        form.property.zip,
+      ].filter(Boolean).join(" ");
+
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, address }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create lead");
@@ -72,8 +84,28 @@ export default function NewLeadPage() {
             <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
           </div>
           <div className="full">
-            <label>Where is the work located?</label>
-            <input value={form.address} onChange={(e) => set("address", e.target.value)} />
+            <label>Contractor Name</label>
+            <input value={form.contractor_name} onChange={(e) => set("contractor_name", e.target.value)} />
+          </div>
+          <div className="full">
+            <label>Street Address</label>
+            <input value={form.property.street} onChange={(e) => setProperty("street", e.target.value)} />
+          </div>
+          <div>
+            <label>City</label>
+            <input value={form.property.city} onChange={(e) => setProperty("city", e.target.value)} />
+          </div>
+          <div>
+            <label>State</label>
+            <input value={form.property.state} onChange={(e) => setProperty("state", e.target.value)} />
+          </div>
+          <div>
+            <label>ZIP</label>
+            <input value={form.property.zip} onChange={(e) => setProperty("zip", e.target.value)} />
+          </div>
+          <div>
+            <label>County / Jurisdiction</label>
+            <input value={form.property.county} onChange={(e) => setProperty("county", e.target.value)} />
           </div>
           <div className="full">
             <label>Message</label>

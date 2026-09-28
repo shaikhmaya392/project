@@ -1077,13 +1077,25 @@ textarea { resize: vertical; }
   height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: 10px;
   font-size: 14px; color: var(--text); background: #fff; font-family: inherit;
 }
-.ld-fields input:focus { outline: none; border-color: #16296e; box-shadow: 0 0 0 3px rgba(22,41,110,0.1); }
+.ld-fields input:focus, .ld-fields textarea:focus { outline: none; border-color: #16296e; box-shadow: 0 0 0 3px rgba(22,41,110,0.1); }
+.ld-fields input:disabled, .ld-fields textarea:disabled { background: #f4f6fb; color: var(--muted); }
+.ld-fields textarea {
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+  font-size: 14px; color: var(--text); background: #fff; font-family: inherit; resize: vertical; line-height: 1.5;
+}
+
+.ld-check-row {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 12px 68px;
+  font-size: 13px; font-weight: 600; color: #1a1a1a; cursor: pointer;
+}
+.ld-check-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #16296e; cursor: pointer; }
 
 .ld-permit { margin-left: 68px; }
 .ld-permit .pr-work { font-size: 15px; font-weight: 700; color: #1a1a1a; }
 .ld-permit .pr-type { font-size: 13.5px; color: #1a1a1a; margin-top: 3px; }
 .ld-permit .pr-val { font-size: 14px; color: #1a1a1a; margin-top: 10px; }
 .ld-permit .pr-val b { color: #1a1a1a; }
+.ld-permit .pr-scope { font-size: 13.5px; color: #1a1a1a; margin-top: 10px; line-height: 1.55; white-space: pre-wrap; }
 
 .ld-quote-row { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1a1a1a; cursor: pointer; margin-left: 68px; }
 .ld-quote-row .sep { color: var(--border); }

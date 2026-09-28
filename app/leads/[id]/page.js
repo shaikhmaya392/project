@@ -10,7 +10,7 @@ const EDIT_FIELDS = [
   { key: "name", label: "Name" },
   { key: "phone", label: "Phone" },
   { key: "email", label: "Email Address", full: true },
-  { key: "address", label: "Work Location", full: true },
+  { key: "contractor_name", label: "Contractor Name", full: true },
   { key: "service_type", label: "Project Type", list: true },
   { key: "message", label: "Message / Details", full: true, textarea: true },
 ];
@@ -38,6 +38,7 @@ const I = {
   cal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" strokeLinecap="round" /></svg>,
   save: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" strokeLinejoin="round" /><path d="M17 21v-8H7v8M7 3v5h8" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   warn: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3.2L2 20.5h20L12 3.2z" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 10v4.2M12 17.6v.01" strokeLinecap="round" strokeLinejoin="round" /></svg>,
+  contractor: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
 };
 
 function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
@@ -75,6 +76,8 @@ export default function LeadDetailPage() {
   const [draft, setDraft] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editPermit, setEditPermit] = useState(false);
+  const [editProperty, setEditProperty] = useState(false);
+  const [editHomeowner, setEditHomeowner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [docDeleteId, setDocDeleteId] = useState(null);
   const menuRef = useRef(null);
@@ -227,6 +230,24 @@ export default function LeadDetailPage() {
     patchLead({ permit_request: lead.permit_request || {} }, "Permit request updated");
     setEditPermit(false);
   }
+  function setProperty(patch) {
+    set("property", { ...(lead.property || {}), ...patch });
+  }
+  function saveProperty() {
+    const p = lead.property || {};
+    // Kept as a plain string too — the leads list, search and the page
+    // header all read lead.address directly.
+    const address = [p.street, [p.city, p.state].filter(Boolean).join(", "), p.zip].filter(Boolean).join(" ");
+    patchLead({ property: p, address: address || lead.address }, "Property updated");
+    setEditProperty(false);
+  }
+  function setHomeowner(patch) {
+    set("homeowner", { ...(lead.homeowner || {}), ...patch });
+  }
+  function saveHomeowner() {
+    patchLead({ homeowner: lead.homeowner || {} }, "Homeowner info updated");
+    setEditHomeowner(false);
+  }
   // Header Save: commit anything still pending (an open permit edit) and
   // flush the current lead state.
   function saveAll() {
@@ -336,6 +357,8 @@ export default function LeadDetailPage() {
   const assigned = lead.assigned_to || "Unassigned";
   const sourceLabel = lead.source === "website_form" ? "Website" : "Manual";
   const permit = lead.permit_request || {};
+  const homeowner = lead.homeowner || {};
+  const property = lead.property || {};
   const primaryQuote = leadQuotes[0];
   const docs = lead.documents || [];
   const docFields = lead.document_fields || [];
@@ -410,7 +433,7 @@ export default function LeadDetailPage() {
 
         {/* summary bar */}
         <div className="ld-pills">
-          <span className="ld-pill"><i className="pi">{I.phone}</i>Contacted</span>
+          <span className="ld-pill"><i className="pi">{I.phone}</i>{statusText(lead.status)}</span>
           <span className="ld-pill"><i className="pi">{I.person}</i>Assigned: {assigned}</span>
           <span className="ld-pill"><i className="pi">{I.globe}</i>Source: {sourceLabel}</span>
           <span className="ld-pill"><i className="pi">{I.flag}</i>Priority: {priority}</span>
@@ -440,13 +463,72 @@ export default function LeadDetailPage() {
                     <div>{I.person}<span>{lead.name || "—"}</span></div>
                     <div>{I.phone}<span>{lead.phone || "—"}</span></div>
                     <div>{I.mail}<span>{lead.email || "—"}</span></div>
+                    <div>{I.contractor}<span>{lead.contractor_name || "—"}</span></div>
                   </div>
+                </div>
+
+                {/* Homeowner */}
+                <div className="ld-panel">
+                  <div className="ld-panel-head">
+                    <span className="ld-ic">{I.person}</span><h3>Homeowner</h3>
+                    <button className="ld-edit-mini" onClick={() => (editHomeowner ? saveHomeowner() : setEditHomeowner(true))}>
+                      {editHomeowner ? "Save" : I.edit}
+                    </button>
+                  </div>
+                  {editHomeowner && (
+                    <label className="ld-check-row">
+                      <input
+                        type="checkbox"
+                        checked={!!homeowner.same_as_customer}
+                        onChange={(e) =>
+                          e.target.checked
+                            ? setHomeowner({ same_as_customer: true, name: lead.name || "", phone: lead.phone || "", email: lead.email || "" })
+                            : setHomeowner({ same_as_customer: false })
+                        }
+                      />
+                      Same as Customer Information
+                    </label>
+                  )}
+                  {editHomeowner ? (
+                    <div className="ld-fields">
+                      <label>Name<input value={homeowner.name || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ name: e.target.value })} /></label>
+                      <label>Phone<input value={homeowner.phone || ""} disabled={homeowner.same_as_customer} onChange={(e) => onPhoneChange(e, (v) => setHomeowner({ phone: v }))} /></label>
+                      <label>Email<input value={homeowner.email || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ email: e.target.value })} /></label>
+                    </div>
+                  ) : (
+                    <div className="ld-info">
+                      <div>{I.person}<span>{homeowner.name || "—"}</span></div>
+                      <div>{I.phone}<span>{homeowner.phone || "—"}</span></div>
+                      <div>{I.mail}<span>{homeowner.email || "—"}</span></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Property */}
                 <div className="ld-panel">
-                  <div className="ld-panel-head"><span className="ld-ic">{I.home}</span><h3>Property</h3></div>
-                  <div className="ld-plain">{lead.address || "No address on file"}</div>
+                  <div className="ld-panel-head">
+                    <span className="ld-ic">{I.home}</span><h3>Property</h3>
+                    <button className="ld-edit-mini" onClick={() => (editProperty ? saveProperty() : setEditProperty(true))}>
+                      {editProperty ? "Save" : I.edit}
+                    </button>
+                  </div>
+                  {editProperty ? (
+                    <div className="ld-fields">
+                      <label>Street Address<input value={property.street || ""} onChange={(e) => setProperty({ street: e.target.value })} /></label>
+                      <label>City<input value={property.city || ""} onChange={(e) => setProperty({ city: e.target.value })} /></label>
+                      <label>State<input value={property.state || ""} onChange={(e) => setProperty({ state: e.target.value })} /></label>
+                      <label>ZIP<input value={property.zip || ""} onChange={(e) => setProperty({ zip: e.target.value })} /></label>
+                      <label>County / Jurisdiction<input value={property.county || ""} onChange={(e) => setProperty({ county: e.target.value })} /></label>
+                    </div>
+                  ) : property.street || property.city || property.state || property.zip || property.county ? (
+                    <div className="ld-info">
+                      {property.street && <div>{I.home}<span>{property.street}</span></div>}
+                      {(property.city || property.state || property.zip) && <div>{I.pin}<span>{[property.city, property.state, property.zip].filter(Boolean).join(", ")}</span></div>}
+                      {property.county && <div>{I.flag}<span>{property.county}</span></div>}
+                    </div>
+                  ) : (
+                    <div className="ld-plain">{lead.address || "No address on file"}</div>
+                  )}
                 </div>
 
                 {/* Permit Request (staff editable) */}
@@ -464,12 +546,14 @@ export default function LeadDetailPage() {
                         <datalist id="pt">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
                       </label>
                       <label>Estimated Job Value<input value={permit.job_value || ""} onChange={(e) => set("permit_request", { ...permit, job_value: e.target.value })} placeholder="e.g. 25000" /></label>
+                      <label>Scope of Work<textarea rows={3} value={permit.scope_of_work || ""} onChange={(e) => set("permit_request", { ...permit, scope_of_work: e.target.value })} placeholder="Describe the scope of work…" /></label>
                     </div>
                   ) : (
                     <div className="ld-permit">
                       <div className="pr-work">{permit.work || lead.service_type || "No work described"}</div>
                       <div className="pr-type">{permit.permit_type || "Permit type not set"}</div>
                       <div className="pr-val">Estimated Job Value: <b>{permit.job_value ? money(permit.job_value) : "—"}</b></div>
+                      {permit.scope_of_work && <div className="pr-scope">{permit.scope_of_work}</div>}
                     </div>
                   )}
                 </div>
