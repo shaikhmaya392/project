@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { onPhoneChange } from "../../../lib/formatPhone";
+import { US_STATES, COMMON_CITIES, FLORIDA_COUNTIES, lookupZip } from "../../../lib/usGeo";
 
 const empty = {
   name: "",
@@ -24,6 +25,27 @@ export default function NewLeadPage() {
   }
   function setProperty(field, value) {
     setForm((f) => ({ ...f, property: { ...f.property, [field]: value } }));
+  }
+  // A real 5-digit ZIP is a far more reliable auto-fill source than
+  // free-text city suggestions, so look it up and fill City/State the
+  // moment one's typed (without stomping on anything already filled in).
+  async function handleZipChange(raw) {
+    const zip = raw.replace(/\D/g, "").slice(0, 5);
+    setProperty("zip", zip);
+    if (zip.length === 5) {
+      const place = await lookupZip(zip);
+      if (place) {
+        setForm((f) => ({
+          ...f,
+          property: {
+            ...f.property,
+            zip,
+            city: f.property.city || place.city,
+            state: f.property.state || place.state,
+          },
+        }));
+      }
+    }
   }
 
   async function handleSubmit(e) {
@@ -93,20 +115,23 @@ export default function NewLeadPage() {
           </div>
           <div>
             <label>City</label>
-            <input value={form.property.city} onChange={(e) => setProperty("city", e.target.value)} />
+            <input list="nl-cities" value={form.property.city} onChange={(e) => setProperty("city", e.target.value)} />
           </div>
           <div>
             <label>State</label>
-            <input value={form.property.state} onChange={(e) => setProperty("state", e.target.value)} />
+            <input list="nl-states" value={form.property.state} onChange={(e) => setProperty("state", e.target.value)} />
           </div>
           <div>
             <label>ZIP</label>
-            <input value={form.property.zip} onChange={(e) => setProperty("zip", e.target.value)} />
+            <input value={form.property.zip} onChange={(e) => handleZipChange(e.target.value)} placeholder="e.g. 32202" />
           </div>
           <div>
             <label>County / Jurisdiction</label>
-            <input value={form.property.county} onChange={(e) => setProperty("county", e.target.value)} />
+            <input list="nl-counties" value={form.property.county} onChange={(e) => setProperty("county", e.target.value)} />
           </div>
+          <datalist id="nl-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
+          <datalist id="nl-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
+          <datalist id="nl-counties">{FLORIDA_COUNTIES.map((c) => <option key={c} value={c} />)}</datalist>
           <div className="full">
             <label>Message</label>
             <textarea rows={4} value={form.message} onChange={(e) => set("message", e.target.value)} />

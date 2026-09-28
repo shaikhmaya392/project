@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
 import { onPhoneChange } from "../../../lib/formatPhone";
+import { US_STATES, COMMON_CITIES, FLORIDA_COUNTIES, lookupZip } from "../../../lib/usGeo";
 import Select from "../../Select";
 
 const EDIT_FIELDS = [
@@ -12,7 +13,6 @@ const EDIT_FIELDS = [
   { key: "email", label: "Email Address", full: true },
   { key: "contractor_name", label: "Contractor Name", full: true },
   { key: "service_type", label: "Project Type", list: true },
-  { key: "message", label: "Message / Details", full: true, textarea: true },
 ];
 const TABS = ["Overview", "Documents", "Messages", "Quotes", "Notes", "Activity"];
 
@@ -219,11 +219,32 @@ export default function LeadDetailPage() {
   function openEdit() {
     const d = {};
     EDIT_FIELDS.forEach((f) => { d[f.key] = lead[f.key] || ""; });
+    d.message = lead.message || "";
+    d.property = { ...(lead.property || {}) };
     setDraft(d);
     setEditOpen(true);
   }
+  function setDraftProperty(patch) {
+    setDraft((d) => ({ ...d, property: { ...(d.property || {}), ...patch } }));
+  }
+  async function handleDraftZipChange(raw) {
+    const zip = raw.replace(/\D/g, "").slice(0, 5);
+    setDraftProperty({ zip });
+    if (zip.length === 5) {
+      const place = await lookupZip(zip);
+      if (place) {
+        setDraft((d) => {
+          const p = d.property || {};
+          return { ...d, property: { ...p, zip, city: p.city || place.city, state: p.state || place.state } };
+        });
+      }
+    }
+  }
   function saveEdit() {
-    patchLead({ ...draft }, "Customer details updated");
+    const { property, ...flat } = draft;
+    const p = property || {};
+    const address = [p.street, [p.city, p.state].filter(Boolean).join(", "), p.zip].filter(Boolean).join(" ");
+    patchLead({ ...flat, property: p, address: address || lead.address }, "Customer details updated");
     setEditOpen(false);
   }
   function savePermit() {
@@ -232,6 +253,19 @@ export default function LeadDetailPage() {
   }
   function setProperty(patch) {
     set("property", { ...(lead.property || {}), ...patch });
+  }
+  async function handleZipChange(raw) {
+    const zip = raw.replace(/\D/g, "").slice(0, 5);
+    setProperty({ zip });
+    if (zip.length === 5) {
+      const place = await lookupZip(zip);
+      if (place) {
+        setLead((l) => {
+          const p = l.property || {};
+          return { ...l, property: { ...p, zip, city: p.city || place.city, state: p.state || place.state } };
+        });
+      }
+    }
   }
   function saveProperty() {
     const p = lead.property || {};
@@ -515,10 +549,13 @@ export default function LeadDetailPage() {
                   {editProperty ? (
                     <div className="ld-fields">
                       <label>Street Address<input value={property.street || ""} onChange={(e) => setProperty({ street: e.target.value })} /></label>
-                      <label>City<input value={property.city || ""} onChange={(e) => setProperty({ city: e.target.value })} /></label>
-                      <label>State<input value={property.state || ""} onChange={(e) => setProperty({ state: e.target.value })} /></label>
-                      <label>ZIP<input value={property.zip || ""} onChange={(e) => setProperty({ zip: e.target.value })} /></label>
-                      <label>County / Jurisdiction<input value={property.county || ""} onChange={(e) => setProperty({ county: e.target.value })} /></label>
+                      <label>City<input list="ld-cities" value={property.city || ""} onChange={(e) => setProperty({ city: e.target.value })} /></label>
+                      <label>State<input list="ld-states" value={property.state || ""} onChange={(e) => setProperty({ state: e.target.value })} /></label>
+                      <label>ZIP<input value={property.zip || ""} onChange={(e) => handleZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
+                      <label>County / Jurisdiction<input list="ld-counties" value={property.county || ""} onChange={(e) => setProperty({ county: e.target.value })} /></label>
+                      <datalist id="ld-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
+                      <datalist id="ld-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
+                      <datalist id="ld-counties">{FLORIDA_COUNTIES.map((c) => <option key={c} value={c} />)}</datalist>
                     </div>
                   ) : property.street || property.city || property.state || property.zip || property.county ? (
                     <div className="ld-info">
@@ -818,22 +855,28 @@ export default function LeadDetailPage() {
               {EDIT_FIELDS.map((f) => (
                 <label key={f.key} className={f.full ? "full" : ""}>
                   {f.label}
-                  {f.textarea ? (
-                    <textarea rows={4} value={draft[f.key] || ""} onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))} />
-                  ) : (
-                    <input
-                      list={f.list ? "edit-project-types" : undefined}
-                      value={draft[f.key] || ""}
-                      onChange={(e) =>
-                        f.key === "phone"
-                          ? onPhoneChange(e, (v) => setDraft((d) => ({ ...d, phone: v })))
-                          : setDraft((d) => ({ ...d, [f.key]: e.target.value }))
-                      }
-                    />
-                  )}
+                  <input
+                    list={f.list ? "edit-project-types" : undefined}
+                    value={draft[f.key] || ""}
+                    onChange={(e) =>
+                      f.key === "phone"
+                        ? onPhoneChange(e, (v) => setDraft((d) => ({ ...d, phone: v })))
+                        : setDraft((d) => ({ ...d, [f.key]: e.target.value }))
+                    }
+                  />
                 </label>
               ))}
+              <label className="full"><b>Property</b></label>
+              <label className="full">Street Address<input value={draft.property?.street || ""} onChange={(e) => setDraftProperty({ street: e.target.value })} /></label>
+              <label>City<input list="edit-cities" value={draft.property?.city || ""} onChange={(e) => setDraftProperty({ city: e.target.value })} /></label>
+              <label>State<input list="edit-states" value={draft.property?.state || ""} onChange={(e) => setDraftProperty({ state: e.target.value })} /></label>
+              <label>ZIP<input value={draft.property?.zip || ""} onChange={(e) => handleDraftZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
+              <label>County / Jurisdiction<input list="edit-counties" value={draft.property?.county || ""} onChange={(e) => setDraftProperty({ county: e.target.value })} /></label>
+              <label className="full">Message / Details<textarea rows={4} value={draft.message || ""} onChange={(e) => setDraft((d) => ({ ...d, message: e.target.value }))} /></label>
               <datalist id="edit-project-types">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
+              <datalist id="edit-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
+              <datalist id="edit-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
+              <datalist id="edit-counties">{FLORIDA_COUNTIES.map((c) => <option key={c} value={c} />)}</datalist>
             </div>
             <div className="ld-modal-actions">
               <button className="btn-outline" onClick={() => setEditOpen(false)}>Cancel</button>
