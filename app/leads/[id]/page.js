@@ -78,6 +78,7 @@ export default function LeadDetailPage() {
   const [editPermit, setEditPermit] = useState(false);
   const [editProperty, setEditProperty] = useState(false);
   const [editHomeowner, setEditHomeowner] = useState(false);
+  const [editCustomer, setEditCustomer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [docDeleteId, setDocDeleteId] = useState(null);
   const menuRef = useRef(null);
@@ -281,6 +282,10 @@ export default function LeadDetailPage() {
   function saveHomeowner() {
     patchLead({ homeowner: lead.homeowner || {} }, "Homeowner info updated");
     setEditHomeowner(false);
+  }
+  function saveCustomer() {
+    patchLead({ name: lead.name, phone: lead.phone, email: lead.email, contractor_name: lead.contractor_name }, "Customer details updated");
+    setEditCustomer(false);
   }
   // Header Save: commit anything still pending (an open permit edit) and
   // flush the current lead state.
@@ -492,13 +497,27 @@ export default function LeadDetailPage() {
               <div className="ld-col">
                 {/* Customer Information */}
                 <div className="ld-panel">
-                  <div className="ld-panel-head"><span className="ld-ic">{I.person}</span><h3>Customer Information</h3></div>
-                  <div className="ld-info">
-                    <div>{I.person}<span>{lead.name || "—"}</span></div>
-                    <div>{I.phone}<span>{lead.phone || "—"}</span></div>
-                    <div>{I.mail}<span>{lead.email || "—"}</span></div>
-                    <div>{I.contractor}<span>{lead.contractor_name || "—"}</span></div>
+                  <div className="ld-panel-head">
+                    <span className="ld-ic">{I.person}</span><h3>Customer Information</h3>
+                    <button className="ld-edit-mini" onClick={() => (editCustomer ? saveCustomer() : setEditCustomer(true))}>
+                      {editCustomer ? "Save" : I.edit}
+                    </button>
                   </div>
+                  {editCustomer ? (
+                    <div className="ld-fields">
+                      <label>Name<input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} /></label>
+                      <label>Phone<input value={lead.phone || ""} onChange={(e) => onPhoneChange(e, (v) => set("phone", v))} /></label>
+                      <label>Email<input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} /></label>
+                      <label>Contractor Name<input value={lead.contractor_name || ""} onChange={(e) => set("contractor_name", e.target.value)} /></label>
+                    </div>
+                  ) : (
+                    <div className="ld-info">
+                      <div>{I.person}<span>{lead.name || "—"}</span></div>
+                      <div>{I.phone}<span>{lead.phone || "—"}</span></div>
+                      <div>{I.mail}<span>{lead.email || "—"}</span></div>
+                      <div>{I.contractor}<span>{lead.contractor_name || "—"}</span></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Homeowner */}
