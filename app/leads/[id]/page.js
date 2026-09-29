@@ -2,17 +2,17 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES } from "../../../lib/leadMeta";
+import { STATUS_LABELS, STATUSES, PRIORITIES, NEXT_ACTIONS, PROJECT_TYPES, PERMIT_TYPES, LEAD_SOURCES } from "../../../lib/leadMeta";
 import { onPhoneChange } from "../../../lib/formatPhone";
 import { US_STATES, COMMON_CITIES, FLORIDA_COUNTIES, lookupZip } from "../../../lib/usGeo";
 import Select from "../../Select";
 
 const EDIT_FIELDS = [
-  { key: "name", label: "Name" },
-  { key: "phone", label: "Phone" },
-  { key: "email", label: "Email Address", full: true },
-  { key: "contractor_name", label: "Contractor Name", full: true },
-  { key: "service_type", label: "Project Type", list: true },
+  { key: "company_name", label: "Company Name" },
+  { key: "name", label: "Contact Person / Name" },
+  { key: "phone", label: "Phone Number" },
+  { key: "email", label: "Email Address" },
+  { key: "license_number", label: "License Number (if applicable)", full: true },
 ];
 const TABS = ["Overview", "Documents", "Messages", "Quotes", "Notes", "Activity"];
 
@@ -249,7 +249,10 @@ export default function LeadDetailPage() {
     setEditOpen(false);
   }
   function savePermit() {
-    patchLead({ permit_request: lead.permit_request || {} }, "Permit request updated");
+    const p = lead.permit_request || {};
+    // service_type stays in sync too — the pipeline board and the
+    // quotation builder both read it as a fallback project description.
+    patchLead({ permit_request: p, service_type: p.type_of_work || lead.service_type }, "Permit request updated");
     setEditPermit(false);
   }
   function setProperty(patch) {
@@ -284,7 +287,10 @@ export default function LeadDetailPage() {
     setEditHomeowner(false);
   }
   function saveCustomer() {
-    patchLead({ name: lead.name, phone: lead.phone, email: lead.email, contractor_name: lead.contractor_name }, "Customer details updated");
+    patchLead(
+      { company_name: lead.company_name, name: lead.name, phone: lead.phone, email: lead.email, license_number: lead.license_number },
+      "Contractor details updated"
+    );
     setEditCustomer(false);
   }
   // Header Save: commit anything still pending (an open permit edit) and
@@ -394,7 +400,7 @@ export default function LeadDetailPage() {
 
   const priority = lead.priority || "Medium";
   const assigned = lead.assigned_to || "Unassigned";
-  const sourceLabel = lead.source === "website_form" ? "Website" : "Manual";
+  const sourceLabel = lead.source === "website_form" ? "Website" : (lead.source || "Manual");
   const permit = lead.permit_request || {};
   const homeowner = lead.homeowner || {};
   const property = lead.property || {};
@@ -467,6 +473,9 @@ export default function LeadDetailPage() {
             <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>
               {I.plus}Create Quote
             </button>
+            <button className="btn-black" onClick={() => router.push(`/projects/new?lead=${id}`)}>
+              {I.plus}New Project
+            </button>
           </div>
         </div>
 
@@ -495,27 +504,29 @@ export default function LeadDetailPage() {
           {tab === "Overview" && (
             <div className="ld-overview">
               <div className="ld-col">
-                {/* Customer Information */}
+                {/* Contractor Information */}
                 <div className="ld-panel">
                   <div className="ld-panel-head">
-                    <span className="ld-ic">{I.person}</span><h3>Customer Information</h3>
+                    <span className="ld-ic">{I.contractor}</span><h3>Contractor Information</h3>
                     <button className="ld-edit-mini" onClick={() => (editCustomer ? saveCustomer() : setEditCustomer(true))}>
                       {editCustomer ? "Save" : I.edit}
                     </button>
                   </div>
                   {editCustomer ? (
                     <div className="ld-fields">
-                      <label>Name<input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} /></label>
-                      <label>Phone<input value={lead.phone || ""} onChange={(e) => onPhoneChange(e, (v) => set("phone", v))} /></label>
-                      <label>Email<input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} /></label>
-                      <label>Contractor Name<input value={lead.contractor_name || ""} onChange={(e) => set("contractor_name", e.target.value)} /></label>
+                      <label>Company Name<input value={lead.company_name || ""} onChange={(e) => set("company_name", e.target.value)} /></label>
+                      <label>Contact Person / Name<input value={lead.name || ""} onChange={(e) => set("name", e.target.value)} /></label>
+                      <label>Phone Number<input value={lead.phone || ""} onChange={(e) => onPhoneChange(e, (v) => set("phone", v))} /></label>
+                      <label>Email Address<input value={lead.email || ""} onChange={(e) => set("email", e.target.value)} /></label>
+                      <label>License Number (if applicable)<input value={lead.license_number || ""} onChange={(e) => set("license_number", e.target.value)} /></label>
                     </div>
                   ) : (
                     <div className="ld-info">
-                      <div>{I.person}<span>{lead.name || "—"}</span></div>
-                      <div>{I.phone}<span>{lead.phone || "—"}</span></div>
-                      <div>{I.mail}<span>{lead.email || "—"}</span></div>
-                      <div>{I.contractor}<span>{lead.contractor_name || "—"}</span></div>
+                      <div><span className="ld-kv-label">Company Name</span><span className="ld-kv-value">{lead.company_name || "—"}</span></div>
+                      <div><span className="ld-kv-label">Contact Person</span><span className="ld-kv-value">{lead.name || "—"}</span></div>
+                      <div><span className="ld-kv-label">Phone Number</span><span className="ld-kv-value">{lead.phone || "—"}</span></div>
+                      <div><span className="ld-kv-label">Email Address</span><span className="ld-kv-value">{lead.email || "—"}</span></div>
+                      <div><span className="ld-kv-label">License Number</span><span className="ld-kv-value">{lead.license_number || "—"}</span></div>
                     </div>
                   )}
                 </div>
@@ -533,26 +544,33 @@ export default function LeadDetailPage() {
                       <input
                         type="checkbox"
                         checked={!!homeowner.same_as_customer}
-                        onChange={(e) =>
-                          e.target.checked
-                            ? setHomeowner({ same_as_customer: true, name: lead.name || "", phone: lead.phone || "", email: lead.email || "" })
-                            : setHomeowner({ same_as_customer: false })
-                        }
+                        onChange={(e) => {
+                          if (!e.target.checked) return setHomeowner({ same_as_customer: false });
+                          const parts = (lead.name || "").trim().split(/\s+/);
+                          setHomeowner({
+                            same_as_customer: true,
+                            first_name: parts[0] || "",
+                            last_name: parts.slice(1).join(" "),
+                            phone: lead.phone || "",
+                            email: lead.email || "",
+                          });
+                        }}
                       />
-                      Same as Customer Information
+                      Same as Customer? (copies Contractor Information)
                     </label>
                   )}
                   {editHomeowner ? (
                     <div className="ld-fields">
-                      <label>Name<input value={homeowner.name || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ name: e.target.value })} /></label>
-                      <label>Phone<input value={homeowner.phone || ""} disabled={homeowner.same_as_customer} onChange={(e) => onPhoneChange(e, (v) => setHomeowner({ phone: v }))} /></label>
-                      <label>Email<input value={homeowner.email || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ email: e.target.value })} /></label>
+                      <label>First Name<input value={homeowner.first_name || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ first_name: e.target.value })} /></label>
+                      <label>Last Name<input value={homeowner.last_name || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ last_name: e.target.value })} /></label>
+                      <label>Phone Number<input value={homeowner.phone || ""} disabled={homeowner.same_as_customer} onChange={(e) => onPhoneChange(e, (v) => setHomeowner({ phone: v }))} /></label>
+                      <label>Email Address<input value={homeowner.email || ""} disabled={homeowner.same_as_customer} onChange={(e) => setHomeowner({ email: e.target.value })} /></label>
                     </div>
                   ) : (
                     <div className="ld-info">
-                      <div>{I.person}<span>{homeowner.name || "—"}</span></div>
-                      <div>{I.phone}<span>{homeowner.phone || "—"}</span></div>
-                      <div>{I.mail}<span>{homeowner.email || "—"}</span></div>
+                      <div><span className="ld-kv-label">Name</span><span className="ld-kv-value">{[homeowner.first_name, homeowner.last_name].filter(Boolean).join(" ") || "—"}</span></div>
+                      <div><span className="ld-kv-label">Phone Number</span><span className="ld-kv-value">{homeowner.phone || "—"}</span></div>
+                      <div><span className="ld-kv-label">Email Address</span><span className="ld-kv-value">{homeowner.email || "—"}</span></div>
                     </div>
                   )}
                 </div>
@@ -560,17 +578,17 @@ export default function LeadDetailPage() {
                 {/* Property */}
                 <div className="ld-panel">
                   <div className="ld-panel-head">
-                    <span className="ld-ic">{I.home}</span><h3>Property</h3>
+                    <span className="ld-ic">{I.home}</span><h3>Property Information</h3>
                     <button className="ld-edit-mini" onClick={() => (editProperty ? saveProperty() : setEditProperty(true))}>
                       {editProperty ? "Save" : I.edit}
                     </button>
                   </div>
                   {editProperty ? (
                     <div className="ld-fields">
-                      <label>Street Address<input value={property.street || ""} onChange={(e) => setProperty({ street: e.target.value })} /></label>
+                      <label>Property Address<input value={property.street || ""} onChange={(e) => setProperty({ street: e.target.value })} /></label>
                       <label>City<input list="ld-cities" value={property.city || ""} onChange={(e) => setProperty({ city: e.target.value })} /></label>
                       <label>State<input list="ld-states" value={property.state || ""} onChange={(e) => setProperty({ state: e.target.value })} /></label>
-                      <label>ZIP<input value={property.zip || ""} onChange={(e) => handleZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
+                      <label>ZIP Code<input value={property.zip || ""} onChange={(e) => handleZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
                       <label>County / Jurisdiction<input list="ld-counties" value={property.county || ""} onChange={(e) => setProperty({ county: e.target.value })} /></label>
                       <datalist id="ld-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
                       <datalist id="ld-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
@@ -578,9 +596,11 @@ export default function LeadDetailPage() {
                     </div>
                   ) : property.street || property.city || property.state || property.zip || property.county ? (
                     <div className="ld-info">
-                      {property.street && <div>{I.home}<span>{property.street}</span></div>}
-                      {(property.city || property.state || property.zip) && <div>{I.pin}<span>{[property.city, property.state, property.zip].filter(Boolean).join(", ")}</span></div>}
-                      {property.county && <div>{I.flag}<span>{property.county}</span></div>}
+                      {property.street && <div><span className="ld-kv-label">Property Address</span><span className="ld-kv-value">{property.street}</span></div>}
+                      {property.city && <div><span className="ld-kv-label">City</span><span className="ld-kv-value">{property.city}</span></div>}
+                      {property.state && <div><span className="ld-kv-label">State</span><span className="ld-kv-value">{property.state}</span></div>}
+                      {property.zip && <div><span className="ld-kv-label">ZIP Code</span><span className="ld-kv-value">{property.zip}</span></div>}
+                      {property.county && <div><span className="ld-kv-label">County / Jurisdiction</span><span className="ld-kv-value">{property.county}</span></div>}
                     </div>
                   ) : (
                     <div className="ld-plain">{lead.address || "No address on file"}</div>
@@ -597,19 +617,23 @@ export default function LeadDetailPage() {
                   </div>
                   {editPermit ? (
                     <div className="ld-fields">
-                      <label>Work Description<input value={permit.work || lead.service_type || ""} onChange={(e) => set("permit_request", { ...permit, work: e.target.value })} placeholder="e.g. Roof Replacement" /></label>
-                      <label>Permit Type<input list="pt" value={permit.permit_type || ""} onChange={(e) => set("permit_request", { ...permit, permit_type: e.target.value })} placeholder="e.g. Roofing Permit" />
-                        <datalist id="pt">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
+                      <label>Type of Work<input list="tow" value={permit.type_of_work || lead.service_type || ""} onChange={(e) => set("permit_request", { ...permit, type_of_work: e.target.value })} placeholder="e.g. Residential Renovation" />
+                        <datalist id="tow">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
                       </label>
-                      <label>Estimated Job Value<input value={permit.job_value || ""} onChange={(e) => set("permit_request", { ...permit, job_value: e.target.value })} placeholder="e.g. 25000" /></label>
+                      <label>Permit Type<input list="pt" value={permit.permit_type || ""} onChange={(e) => set("permit_request", { ...permit, permit_type: e.target.value })} placeholder="e.g. Roofing Permit" />
+                        <datalist id="pt">{PERMIT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
+                      </label>
+                      <label>Work Description<input value={permit.work_description || ""} onChange={(e) => set("permit_request", { ...permit, work_description: e.target.value })} placeholder="e.g. Roof Replacement" /></label>
                       <label>Scope of Work<textarea rows={3} value={permit.scope_of_work || ""} onChange={(e) => set("permit_request", { ...permit, scope_of_work: e.target.value })} placeholder="Describe the scope of work…" /></label>
+                      <label>Estimated Job Value<input value={permit.job_value || ""} onChange={(e) => set("permit_request", { ...permit, job_value: e.target.value })} placeholder="e.g. 25000" /></label>
                     </div>
                   ) : (
-                    <div className="ld-permit">
-                      <div className="pr-work">{permit.work || lead.service_type || "No work described"}</div>
-                      <div className="pr-type">{permit.permit_type || "Permit type not set"}</div>
-                      <div className="pr-val">Estimated Job Value: <b>{permit.job_value ? money(permit.job_value) : "—"}</b></div>
-                      {permit.scope_of_work && <div className="pr-scope">{permit.scope_of_work}</div>}
+                    <div className="ld-info">
+                      <div><span className="ld-kv-label">Type of Work</span><span className="ld-kv-value">{permit.type_of_work || lead.service_type || "—"}</span></div>
+                      <div><span className="ld-kv-label">Permit Type</span><span className="ld-kv-value">{permit.permit_type || "—"}</span></div>
+                      <div><span className="ld-kv-label">Work Description</span><span className="ld-kv-value">{permit.work_description || "—"}</span></div>
+                      <div><span className="ld-kv-label">Scope of Work</span><span className="ld-kv-value">{permit.scope_of_work || "—"}</span></div>
+                      <div><span className="ld-kv-label">Est. Job Value</span><span className="ld-kv-value">{permit.job_value ? money(permit.job_value) : "—"}</span></div>
                     </div>
                   )}
                 </div>
@@ -621,7 +645,7 @@ export default function LeadDetailPage() {
                     <div className="ld-quote-row" onClick={() => router.push(`/quotations/${primaryQuote.token}`)}>
                       <b>{primaryQuote.number}</b><span className="sep">|</span>
                       <b>{money(primaryQuote.total)}</b><span className="sep">|</span>
-                      <span className={`ld-badge status-${primaryQuote.status === "accepted" ? "won" : "contacted"}`}><span className="dot" />{primaryQuote.status === "accepted" ? "Accepted" : "Sent"}</span>
+                      <span className={`ld-badge status-${lead.status || "new"}`}><span className="dot" />{statusText(lead.status)}</span>
                     </div>
                   ) : (
                     <div className="ld-plain muted">No quotation yet. <a onClick={() => router.push(`/leads/${id}/quotation`)}>Create one →</a></div>
@@ -663,6 +687,13 @@ export default function LeadDetailPage() {
                         ...team.map((t) => ({ value: t.name, label: t.name })),
                         ...(lead.assigned_to && !team.some((t) => t.name === lead.assigned_to) ? [{ value: lead.assigned_to, label: lead.assigned_to }] : []),
                       ]}
+                    />
+                  </label>
+                  <label className="ld-field">Lead Source
+                    <Select
+                      value={lead.source === "website_form" ? "Website" : (lead.source || "Manual")}
+                      onChange={(v) => patchLead({ source: v === "Website" ? "website_form" : v }, `Source set to ${v}`)}
+                      options={LEAD_SOURCES}
                     />
                   </label>
                   <label className="ld-field">Priority
@@ -865,7 +896,7 @@ export default function LeadDetailPage() {
           <div className="ld-modal" onClick={(e) => e.stopPropagation()}>
             <div className="ld-modal-head">
               <div>
-                <h3>Edit Customer</h3>
+                <h3>Edit Contractor</h3>
                 <p>Changes update everywhere as soon as you save.</p>
               </div>
               <button className="ld-modal-x" onClick={() => setEditOpen(false)} title="Close">×</button>
@@ -875,7 +906,6 @@ export default function LeadDetailPage() {
                 <label key={f.key} className={f.full ? "full" : ""}>
                   {f.label}
                   <input
-                    list={f.list ? "edit-project-types" : undefined}
                     value={draft[f.key] || ""}
                     onChange={(e) =>
                       f.key === "phone"
@@ -885,14 +915,13 @@ export default function LeadDetailPage() {
                   />
                 </label>
               ))}
-              <label className="full"><b>Property</b></label>
-              <label className="full">Street Address<input value={draft.property?.street || ""} onChange={(e) => setDraftProperty({ street: e.target.value })} /></label>
+              <label className="full"><b>Property Information</b></label>
+              <label className="full">Property Address<input value={draft.property?.street || ""} onChange={(e) => setDraftProperty({ street: e.target.value })} /></label>
               <label>City<input list="edit-cities" value={draft.property?.city || ""} onChange={(e) => setDraftProperty({ city: e.target.value })} /></label>
               <label>State<input list="edit-states" value={draft.property?.state || ""} onChange={(e) => setDraftProperty({ state: e.target.value })} /></label>
-              <label>ZIP<input value={draft.property?.zip || ""} onChange={(e) => handleDraftZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
+              <label>ZIP Code<input value={draft.property?.zip || ""} onChange={(e) => handleDraftZipChange(e.target.value)} placeholder="e.g. 32202" /></label>
               <label>County / Jurisdiction<input list="edit-counties" value={draft.property?.county || ""} onChange={(e) => setDraftProperty({ county: e.target.value })} /></label>
               <label className="full">Message / Details<textarea rows={4} value={draft.message || ""} onChange={(e) => setDraft((d) => ({ ...d, message: e.target.value }))} /></label>
-              <datalist id="edit-project-types">{PROJECT_TYPES.map((p) => <option key={p} value={p} />)}</datalist>
               <datalist id="edit-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
               <datalist id="edit-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
               <datalist id="edit-counties">{FLORIDA_COUNTIES.map((c) => <option key={c} value={c} />)}</datalist>

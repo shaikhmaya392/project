@@ -38,6 +38,9 @@ function NewProjectForm() {
         .then((r) => r.json())
         .then((lead) => {
           if (!lead || lead.error) return;
+          const homeowner = lead.homeowner || {};
+          const homeownerName = [homeowner.first_name, homeowner.last_name].filter(Boolean).join(" ");
+          const permit = lead.permit_request || {};
           setForm((f) => ({
             ...f,
             lead_id: leadId,
@@ -46,7 +49,13 @@ function NewProjectForm() {
             client_phone: lead.phone || "",
             property_address: lead.address || "",
             project_name: lead.address ? `${lead.address}` : lead.name || "",
-            scope_of_work: lead.message || "",
+            homeowner_name: homeownerName,
+            homeowner_phone: homeowner.phone || "",
+            contractor_name: lead.company_name || lead.name || "",
+            contractor_license: lead.license_number || "",
+            contractor_phone: lead.phone || "",
+            scope_of_work: permit.scope_of_work || lead.message || "",
+            job_value: permit.job_value || "",
           }));
         })
         .catch(() => {});

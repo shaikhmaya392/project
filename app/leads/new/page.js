@@ -6,10 +6,11 @@ import { onPhoneChange } from "../../../lib/formatPhone";
 import { US_STATES, COMMON_CITIES, FLORIDA_COUNTIES, lookupZip } from "../../../lib/usGeo";
 
 const empty = {
+  company_name: "",
   name: "",
   email: "",
   phone: "",
-  contractor_name: "",
+  license_number: "",
   property: { street: "", city: "", state: "", zip: "", county: "" },
   message: "",
 };
@@ -91,26 +92,34 @@ export default function NewLeadPage() {
       </div>
       {error && <div className="error-banner">{error}</div>}
       <form className="card" onSubmit={handleSubmit}>
-        <div className="panel-title">Lead details</div>
-        <div className="form-grid">
+        <div className="panel-title">Contractor Information</div>
+        <div className="form-grid" style={{ marginBottom: 20 }}>
           <div>
-            <label>Name</label>
+            <label>Company Name</label>
+            <input value={form.company_name} onChange={(e) => set("company_name", e.target.value)} />
+          </div>
+          <div>
+            <label>Contact Person / Name</label>
             <input value={form.name} onChange={(e) => set("name", e.target.value)} required />
           </div>
           <div>
-            <label>Phone</label>
+            <label>Phone Number</label>
             <input value={form.phone} onChange={(e) => onPhoneChange(e, (v) => set("phone", v))} placeholder="+1 (123) 456-7890" />
           </div>
-          <div className="full">
+          <div>
             <label>Email Address</label>
             <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
           </div>
           <div className="full">
-            <label>Contractor Name</label>
-            <input value={form.contractor_name} onChange={(e) => set("contractor_name", e.target.value)} />
+            <label>License Number (if applicable)</label>
+            <input value={form.license_number} onChange={(e) => set("license_number", e.target.value)} />
           </div>
+        </div>
+
+        <div className="panel-title">Property Information</div>
+        <div className="form-grid" style={{ marginBottom: 20 }}>
           <div className="full">
-            <label>Street Address</label>
+            <label>Property Address</label>
             <input value={form.property.street} onChange={(e) => setProperty("street", e.target.value)} />
           </div>
           <div>
@@ -122,7 +131,7 @@ export default function NewLeadPage() {
             <input list="nl-states" value={form.property.state} onChange={(e) => setProperty("state", e.target.value)} />
           </div>
           <div>
-            <label>ZIP</label>
+            <label>ZIP Code</label>
             <input value={form.property.zip} onChange={(e) => handleZipChange(e.target.value)} placeholder="e.g. 32202" />
           </div>
           <div>
@@ -132,11 +141,15 @@ export default function NewLeadPage() {
           <datalist id="nl-cities">{COMMON_CITIES.map((c) => <option key={c} value={c} />)}</datalist>
           <datalist id="nl-states">{US_STATES.map((s) => <option key={s} value={s} />)}</datalist>
           <datalist id="nl-counties">{FLORIDA_COUNTIES.map((c) => <option key={c} value={c} />)}</datalist>
+        </div>
+
+        <div className="panel-title">Message</div>
+        <div className="form-grid">
           <div className="full">
-            <label>Message</label>
             <textarea rows={4} value={form.message} onChange={(e) => set("message", e.target.value)} />
           </div>
         </div>
+
         <div className="actions-row">
           <button className="btn" type="submit" disabled={saving}>
             {saving ? "Saving..." : "Create Lead"}

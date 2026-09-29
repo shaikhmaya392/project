@@ -1016,7 +1016,8 @@ textarea { resize: vertical; }
 
 /* header action buttons (Edit / Save / Create Quote): pill shape, bare icon (no badge) */
 .ld-head-actions .btn-outline,
-.ld-head-actions .btn-navy {
+.ld-head-actions .btn-navy,
+.ld-head-actions .btn-black {
   border-radius: 12px; height: 42px; padding: 0 18px; gap: 8px; font-weight: 700;
 }
 .ld-head-actions .btn-outline svg,
@@ -1030,6 +1031,13 @@ textarea { resize: vertical; }
 .btn-navy:hover { filter: brightness(1.1); }
 .btn-navy svg { width: 16px; height: 16px; }
 .btn-navy.full { width: 100%; margin-top: 4px; height: 42px; }
+.btn-black {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 16px;
+  border-radius: 11px; border: none; background: linear-gradient(135deg, #1a1a1a, #000); color: #fff;
+  font-size: 13.5px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+}
+.btn-black:hover { filter: brightness(1.15); }
+.btn-black svg { width: 16px; height: 16px; }
 .btn-ghost { height: 40px; padding: 0 12px; border-radius: 11px; border: none; background: none; color: var(--muted); font-weight: 600; font-size: 13.5px; cursor: pointer; }
 .btn-ghost:hover { background: #f4f6fb; color: var(--text); }
 
@@ -1084,9 +1092,11 @@ textarea { resize: vertical; }
 
 /* body content sits under the heading TEXT, not the icon */
 .ld-info { display: flex; flex-direction: column; gap: 11px; margin-left: 68px; }
-.ld-info > div { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #1a1a1a; }
+.ld-info > div { display: flex; align-items: baseline; gap: 10px; font-size: 14px; color: #1a1a1a; }
 .ld-info svg { width: 16px; height: 16px; color: #1a1a1a; flex-shrink: 0; }
 .ld-info span { word-break: break-word; }
+.ld-kv-label { font-weight: 600; color: var(--muted); min-width: 130px; flex-shrink: 0; }
+.ld-kv-value { color: #1a1a1a; }
 .ld-plain { font-size: 14px; color: #1a1a1a; line-height: 1.55; margin-left: 68px; }
 .ld-plain.muted { color: var(--muted); }
 .ld-plain a { color: #16296e; font-weight: 600; cursor: pointer; }
