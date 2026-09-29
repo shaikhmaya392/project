@@ -39,6 +39,7 @@ const I = {
   save: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" strokeLinejoin="round" /><path d="M17 21v-8H7v8M7 3v5h8" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   warn: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3.2L2 20.5h20L12 3.2z" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 10v4.2M12 17.6v.01" strokeLinecap="round" strokeLinejoin="round" /></svg>,
   contractor: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
+  check: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12l5 5L20 6" strokeLinecap="round" strokeLinejoin="round" /></svg>,
 };
 
 function statusText(s) { return STATUS_LABELS[s] || String(s || "new").replace(/_/g, " "); }
@@ -79,6 +80,7 @@ export default function LeadDetailPage() {
   const [editProperty, setEditProperty] = useState(false);
   const [editHomeowner, setEditHomeowner] = useState(false);
   const [editCustomer, setEditCustomer] = useState(false);
+  const [saveFlash, setSaveFlash] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [docDeleteId, setDocDeleteId] = useState(null);
   const menuRef = useRef(null);
@@ -294,10 +296,15 @@ export default function LeadDetailPage() {
     setEditCustomer(false);
   }
   // Header Save: commit anything still pending (an open permit edit) and
-  // flush the current lead state.
-  function saveAll() {
+  // flush the current lead state. Most fields already autosave the moment
+  // they change (the Lead Management dropdowns, each panel's own inline
+  // Save) — this button exists as a catch-all, so it needs its own visible
+  // confirmation or a click looks like it did nothing.
+  async function saveAll() {
     if (editPermit) { savePermit(); return; }
-    patchLead({ ...lead });
+    await patchLead({ ...lead });
+    setSaveFlash(true);
+    setTimeout(() => setSaveFlash(false), 1800);
   }
   function addTask() {
     const title = (lead.next_action || "").trim();
@@ -405,6 +412,7 @@ export default function LeadDetailPage() {
   const homeowner = lead.homeowner || {};
   const property = lead.property || {};
   const primaryQuote = leadQuotes[0];
+  const hasAcceptedQuote = leadQuotes.some((q) => q.status === "accepted");
   const docs = lead.documents || [];
   const docFields = lead.document_fields || [];
   const docLink = lead.doc_token ? `${typeof window !== "undefined" ? window.location.origin : ""}/documents/${lead.doc_token}` : null;
@@ -468,14 +476,16 @@ export default function LeadDetailPage() {
               {I.edit}Edit
             </button>
             <button className="btn-outline" onClick={saveAll}>
-              {I.save}Save
+              {saveFlash ? I.check : I.save}{saveFlash ? "Saved" : "Save"}
             </button>
             <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>
               {I.plus}Create Quote
             </button>
-            <button className="btn-black" onClick={() => router.push(`/projects/new?lead=${id}`)}>
-              {I.plus}New Project
-            </button>
+            {hasAcceptedQuote && (
+              <button className="btn-black" onClick={() => router.push(`/projects/new?lead=${id}`)}>
+                {I.plus}Create Project
+              </button>
+            )}
           </div>
         </div>
 
@@ -507,7 +517,7 @@ export default function LeadDetailPage() {
                 {/* Contractor Information */}
                 <div className="ld-panel">
                   <div className="ld-panel-head">
-                    <span className="ld-ic">{I.contractor}</span><h3>Contractor Information</h3>
+                    <span className="ld-ic">{I.person}</span><h3>Contractor Information</h3>
                     <button className="ld-edit-mini" onClick={() => (editCustomer ? saveCustomer() : setEditCustomer(true))}>
                       {editCustomer ? "Save" : I.edit}
                     </button>
