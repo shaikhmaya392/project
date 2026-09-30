@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { del } from "@vercel/blob";
 import { ensureDocToken, getLead, updateLeadSafely } from "../../../../../lib/leadsStore";
+import { deleteFile } from "../../../../../lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -47,7 +47,7 @@ export async function DELETE(request, { params }) {
   const toRemove = (lead.documents || []).filter((d) => d.category === field);
   for (const doc of toRemove) {
     try {
-      await del(doc.url);
+      await deleteFile(doc.id);
     } catch {}
   }
 

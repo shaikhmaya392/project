@@ -23,6 +23,12 @@ function isPublic(pathname, method) {
   if (/^\/api\/documents\/[^/]+\/submit$/.test(pathname)) {
     return method === "POST";
   }
+  // Uploaded files are served by id. The random file id is the access
+  // control (same as the token links above), so a client viewing their own
+  // upload on the public document page can open it without logging in.
+  if (/^\/api\/files\/[^/]+$/.test(pathname)) {
+    return method === "GET";
+  }
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 }
 

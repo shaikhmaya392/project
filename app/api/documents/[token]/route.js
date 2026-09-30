@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { put, del } from "@vercel/blob";
 import { getLeadByDocToken, updateLeadSafely } from "../../../../lib/leadsStore";
+import { saveFile, deleteFile } from "../../../../lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-function safeName(name) {
-  return (name || "file").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-}
 
 function publicView(lead) {
   return {
@@ -50,15 +46,27 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: "Invalid document field" }, { status: 400 });
     }
 
-    const key = `lead-files/${lead.id}/${Date.now()}-${safeName(file.name)}`;
-    const blob = await put(key, file, { access: "public", contentType: file.type || undefined });
-
-    const entry = {
-      id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    const fileId = `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await saveFile({
+      id: fileId,
+      owner_type: "lead",
+      owner_id: lead.id,
       name: file.name,
       original_name: file.name,
-      url: blob.url,
-      size: file.size || 0,
+      content_type: file.type || "",
+      size: file.size || buffer.length,
+      data: buffer,
+      uploaded_by: lead.name || "Client",
+      uploaded_at: new Date().toISOString(),
+    });
+
+    const entry = {
+      id: fileId,
+      name: file.name,
+      original_name: file.name,
+      url: `/api/files/${fileId}`,
+      size: file.size || buffer.length,
       content_type: file.type || "",
       category,
       uploaded_by: lead.name || "Client",
@@ -82,9 +90,9 @@ export async function POST(request, { params }) {
       (finalLead) => (finalLead.documents || []).some((d) => d.id === entry.id)
     );
     if (!updated) {
-      // Couldn't confirm the write after retries — don't leave an orphaned
-      // blob with nothing pointing at it.
-      try { await del(blob.url); } catch {}
+      // Couldn't confirm the write — don't leave an orphaned file with
+      // nothing pointing at it.
+      try { await deleteFile(fileId); } catch {}
       return NextResponse.json({ error: "Upload didn't save, please try again" }, { status: 409 });
     }
     return NextResponse.json(publicView(updated), { status: 201 });
@@ -106,7 +114,7 @@ export async function DELETE(request, { params }) {
   if (!target) return NextResponse.json({ error: "File not found" }, { status: 404 });
 
   try {
-    await del(target.url);
+    await deleteFile(fileId);
   } catch {}
 
   const updated = await updateLeadSafely(

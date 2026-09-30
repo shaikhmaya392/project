@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { put, del } from "@vercel/blob";
 import { getProject, updateProject } from "../../../../../lib/projectsStore";
+import { saveFile, deleteFile } from "../../../../../lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-function safeName(name) {
-  return (name || "file").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-}
 
 export async function POST(request, { params }) {
   const project = await getProject(params.id);
@@ -20,15 +16,28 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
     const label = form.get("label") || file.name;
-    const key = `project-files/${params.id}/${Date.now()}-${safeName(file.name)}`;
-    const blob = await put(key, file, { access: "public", contentType: file.type || undefined });
+    const fileId = `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const entry = {
-      id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    await saveFile({
+      id: fileId,
+      owner_type: "project",
+      owner_id: params.id,
       name: label,
       original_name: file.name,
-      url: blob.url,
-      size: file.size || 0,
+      content_type: file.type || "",
+      size: file.size || buffer.length,
+      data: buffer,
+      uploaded_by: "Staff",
+      uploaded_at: new Date().toISOString(),
+    });
+
+    const entry = {
+      id: fileId,
+      name: label,
+      original_name: file.name,
+      url: `/api/files/${fileId}`,
+      size: file.size || buffer.length,
       content_type: file.type || "",
       uploaded_at: new Date().toISOString(),
     };
@@ -46,13 +55,9 @@ export async function DELETE(request, { params }) {
   if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 });
   const fileId = new URL(request.url).searchParams.get("fileId");
   const files = Array.isArray(project.files) ? project.files : [];
-  const target = files.find((f) => f.id === fileId);
-  const remaining = files.filter((f) => f.id !== fileId);
-  if (target) {
-    try {
-      await del(target.url);
-    } catch {}
-  }
-  await updateProject(params.id, { files: remaining });
+  try {
+    await deleteFile(fileId);
+  } catch {}
+  await updateProject(params.id, { files: files.filter((f) => f.id !== fileId) });
   return NextResponse.json({ deleted: true });
 }

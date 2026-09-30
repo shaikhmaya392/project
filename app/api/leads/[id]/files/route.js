@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { put, del } from "@vercel/blob";
 import { getLead, updateLead, updateLeadSafely } from "../../../../../lib/leadsStore";
+import { saveFile, deleteFile } from "../../../../../lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-function safeName(name) {
-  return (name || "file").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-}
 
 export async function POST(request, { params }) {
   const lead = await getLead(params.id);
@@ -21,15 +17,28 @@ export async function POST(request, { params }) {
     }
     const label = form.get("label") || file.name;
     const uploaded_by = form.get("uploaded_by") || "Staff";
-    const key = `lead-files/${params.id}/${Date.now()}-${safeName(file.name)}`;
-    const blob = await put(key, file, { access: "public", contentType: file.type || undefined });
+    const fileId = `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const entry = {
-      id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    await saveFile({
+      id: fileId,
+      owner_type: "lead",
+      owner_id: params.id,
       name: label,
       original_name: file.name,
-      url: blob.url,
-      size: file.size || 0,
+      content_type: file.type || "",
+      size: file.size || buffer.length,
+      data: buffer,
+      uploaded_by,
+      uploaded_at: new Date().toISOString(),
+    });
+
+    const entry = {
+      id: fileId,
+      name: label,
+      original_name: file.name,
+      url: `/api/files/${fileId}`,
+      size: file.size || buffer.length,
       content_type: file.type || "",
       uploaded_by,
       uploaded_at: new Date().toISOString(),
@@ -51,12 +60,9 @@ export async function DELETE(request, { params }) {
   const lead = await getLead(params.id);
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const fileId = new URL(request.url).searchParams.get("fileId");
-  const target = (lead.documents || []).find((f) => f.id === fileId);
-  if (target) {
-    try {
-      await del(target.url);
-    } catch {}
-  }
+  try {
+    await deleteFile(fileId);
+  } catch {}
   // Removing a document after the client submitted means the "submitted"
   // status is no longer accurate, so clear it here too (mirrors the
   // client's own delete on the public page).
