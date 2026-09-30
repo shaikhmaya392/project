@@ -412,7 +412,6 @@ export default function LeadDetailPage() {
   const homeowner = lead.homeowner || {};
   const property = lead.property || {};
   const primaryQuote = leadQuotes[0];
-  const hasAcceptedQuote = leadQuotes.some((q) => q.status === "accepted");
   const docs = lead.documents || [];
   const docFields = lead.document_fields || [];
   const docLink = lead.doc_token ? `${typeof window !== "undefined" ? window.location.origin : ""}/documents/${lead.doc_token}` : null;
@@ -481,11 +480,9 @@ export default function LeadDetailPage() {
             <button className="btn-navy" onClick={() => router.push(`/leads/${id}/quotation`)}>
               {I.plus}Create Quote
             </button>
-            {hasAcceptedQuote && (
-              <button className="btn-black" onClick={() => router.push(`/projects/new?lead=${id}`)}>
-                {I.plus}Create Project
-              </button>
-            )}
+            <button className="btn-black" onClick={() => router.push(`/projects/new?lead=${id}`)}>
+              {I.plus}Create Project
+            </button>
           </div>
         </div>
 

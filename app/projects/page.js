@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { PROJECT_STATUSES, projectStatusLabel } from "../../lib/leadMeta";
+import { projectStatusLabel } from "../../lib/leadMeta";
 
 const STATUS_BADGE = {
   new: "status-new",
@@ -37,7 +37,6 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
 
   useEffect(() => {
     fetch("/api/projects")
@@ -51,18 +50,15 @@ export default function ProjectsPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    return projects.filter((p) => {
-      if (status !== "all" && (p.status || "new") !== status) return false;
-      if (!query.trim()) return true;
-      const q = query.toLowerCase();
-      return (
-        (p.project_name || "").toLowerCase().includes(q) ||
-        (p.property_address || "").toLowerCase().includes(q) ||
-        customerName(p).toLowerCase().includes(q) ||
-        (p.number || "").toLowerCase().includes(q)
-      );
-    });
-  }, [projects, query, status]);
+    if (!query.trim()) return projects;
+    const q = query.toLowerCase();
+    return projects.filter((p) =>
+      (p.project_name || "").toLowerCase().includes(q) ||
+      (p.property_address || "").toLowerCase().includes(q) ||
+      customerName(p).toLowerCase().includes(q) ||
+      (p.number || "").toLowerCase().includes(q)
+    );
+  }, [projects, query]);
 
   return (
     <div>
@@ -85,14 +81,6 @@ export default function ProjectsPage() {
             <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
           </svg>
           <input placeholder="Search by project, address, customer..." value={query} onChange={(e) => setQuery(e.target.value)} />
-        </div>
-        <div className="filter-pills">
-          <button type="button" className={`pill${status === "all" ? " active" : ""}`} onClick={() => setStatus("all")}>All</button>
-          {PROJECT_STATUSES.map((s) => (
-            <button key={s} type="button" className={`pill${status === s ? " active" : ""}`} onClick={() => setStatus(s)}>
-              {projectStatusLabel(s)}
-            </button>
-          ))}
         </div>
       </div>
 
