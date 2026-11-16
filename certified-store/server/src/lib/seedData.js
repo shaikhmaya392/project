@@ -28,9 +28,10 @@ function blockText(blocks, acc = []) {
   return acc;
 }
 
-export async function seedCatalog() {
+/** Catalog rows + pages exactly as they are stored in MongoDB (also used when no database is configured) */
+export function buildSeed() {
   const catalog = read('catalog.json');
-  const pages = read('pages.json');
+  const pages = read('pages.json').map((p) => ({ ...p, searchText: blockText(p.blocks).join(' ').replace(/\s+/g, ' ').slice(0, 20000) }));
   const rows = [];
   let seq = 0;
   for (const r of catalog) {
@@ -41,12 +42,17 @@ export async function seedCatalog() {
       continue;
     }
     seq += 1;
-    rows.push({ ...r, seq, lines: [] });
+    rows.push({ active: true, ...r, seq, lines: [] });
   }
+  return { rows, pages };
+}
+
+export async function seedCatalog() {
+  const { rows, pages } = buildSeed();
   await CatalogRow.deleteMany({});
   await CatalogRow.insertMany(rows);
   await Page.deleteMany({});
-  await Page.insertMany(pages.map((p) => ({ ...p, searchText: blockText(p.blocks).join(' ').replace(/\s+/g, ' ').slice(0, 20000) })));
+  await Page.insertMany(pages);
   await CatalogRow.syncIndexes();
   await Page.syncIndexes();
   const products = rows.filter((r) => r.kind === 'product').length;
