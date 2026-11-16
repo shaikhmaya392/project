@@ -4,3 +4,4 @@ server/.env
 server/uploads
 server/media
 .vercel
+.env*.local
