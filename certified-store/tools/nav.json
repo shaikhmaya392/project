@@ -1,0 +1,30 @@
+{
+  "menu": [
+    {"label": "Home", "href": "/"},
+    {"label": "About Us", "href": "/p/about-us"},
+    {"label": "Custom Orthotics", "href": "/p/custom-orthotics"},
+    {"label": "KidFab", "href": "/p/kidfab"},
+    {"label": "Orthotic Components", "children": [
+      {"label": "Baseline Orthotic Components", "href": "/p/baseline-orthotic-components"},
+      {"label": "Thermoplastic Components", "href": "/p/thermoplastic-ankle-joints"},
+      {"label": "Orthotic Joints & Accessories", "href": "/p/orthotic-joints-accessories"}
+    ]},
+    {"label": "Pre-Sized Orthotics", "href": "/p/pre-sized-orthotics"},
+    {"label": "Scan App & CAD", "href": "/p/certified-app"},
+    {"label": "Contact Us", "href": "/p/contact-us"}
+  ],
+  "contact": {
+    "phone": "970-482-7116",
+    "tollFree": "800-466-7015",
+    "email": "info@certifiedortho.com",
+    "address": "2415 East Mulberry Street, Unit 7 Fort Collins, CO 80524"
+  },
+  "social": [
+    {"label": "Facebook", "href": "https://www.facebook.com/certefiedorthopedics"},
+    {"label": "Linkedin", "href": "https://www.linkedin.com/company/certifiedorthopedics/"},
+    {"label": "Instagram", "href": "https://www.instagram.com/certifiedorthopedics/"}
+  ],
+  "logo": "https://certifiedortho.com/wp-content/uploads/2024/12/logo-4.png",
+  "logoWhite": "https://certifiedortho.com/wp-content/uploads/2024/12/logo-whiite.png",
+  "copyright": "© All rights reserved by certifiedortho.com"
+}

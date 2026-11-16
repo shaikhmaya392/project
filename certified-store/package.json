@@ -1,0 +1,20 @@
+{
+  "name": "certified-ortho-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Certified Ortho online store (React + Express + MongoDB, Node 20) connected to the Certified CRM",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "build": "npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "start": "npm --prefix server start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "create-admin": "npm --prefix server run create-admin --",
+    "mirror-media": "npm --prefix server run mirror-media"
+  },
+  "type": "module"
+}

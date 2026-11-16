@@ -1,0 +1,268 @@
+Products (SKUs): 1221
+  linked to a website page by part number printed on the page: 645
+  linked by product family (rest of a group printed on that page): 47
+  linked by product line name (group name = page): 292
+  not shown on the website (catalog/price list only): 237
+  with an image: 94
+Headings: 197  Notes: 9  Kit lines: 34
+Pages: 94 (with SKUs: 70)
+
+Images matched by caption:
+DA-2250A 'Baseline Double Action Y-Insert Stirrup Adult' -> 'Double Action Y Insert Stirrup' (0.83)
+DA-2250A-T 'Baseline Double Action Y-Insert Stirrup Adult -Tapped' -> 'Double Action Y Insert Stirrup' (0.71)
+DA-2230A 'Baseline Double Action Split Stirrup Adult' -> 'Double Action Split Stirrup' (0.80)
+2260A 'Stirrup Strut Reinforcement Adult' -> 'Stirrup Strut/Reinforcement' (0.75)
+DS-2250A 'Baseline Dorsi-Assist Y-Insert Stirrup Adult' -> 'Dorsi-Assist Y-Insert Stirrup' (0.83)
+DS-2250A-T 'Baseline Dorsi-Assist Y-Insert Stirrup Adult -Tapped' -> 'Dorsi-Assist Y-Insert Stirrup' (0.71)
+ST-2250A 'Baseline Standard Action Y-Insert Stirrup Adult' -> 'Standard Action Y- Insert Stirrup' (0.83)
+ST-2250A-T 'Baseline Standard Action Y-Insert Stirrup Adult -Tapped' -> 'Standard Action Y- Insert Stirrup' (0.71)
+ST-2230A 'Baseline Standard Action Split Stirrup Adult' -> 'Standard Action Split Stirrup' (0.80)
+HF-100P 'Hi-Five Pediatric SEWHO - Pediatric' -> 'Hi-Five SEWHO' (0.75)
+SLA-004 'Heel Cut Out' -> 'Heel Cut Out' (1.00)
+SLA-020 'Plastazote Lining' -> 'Plastazote Lining' (1.00)
+SLA-025 'X-Static Lining' -> 'X-static Lining' (1.00)
+CTA-05 'Custom SMO - Standard Molded' -> 'SMO Standard Molded' (1.00)
+CTA-07 'Custom SMO w/Flexible Plastic Molded Inner Boot' -> 'SMO w/Flexible Plastic Inner Boot' (0.83)
+CTA-09 'Custom SMO w/Flexible Foam Inner Boot' -> 'SMO w/Flexible Foam Inner Boot' (1.00)
+
+Excel vs CRM differences:
+BHL-3350-30M9: Excel description 'Heel Lift 30 Durometer - Medium 6mm' vs CRM 'Heel Lift 30 Durometer - Medium 9mm' (store uses CRM)
+
+SKUs not on any website page:
+general | THERMOPLASTIC COMPONENTS | Baseline Adjustable Stop | BAS-100A | Baseline Adjustable Stop-Kit Adult (1 Ea. Bumper & Threaded Stem, 2 Ea. Nuts, 1 Ea. Insert)
+general | THERMOPLASTIC COMPONENTS | Baseline Adjustable Stop | BAS-100#1 | Baseline Adjustable Stop - Bumper & Threaded Stem Adult
+general | THERMOPLASTIC COMPONENTS | Baseline Adjustable Stop | BAS-100#2 | Baseline Adjustable Stop - Nut Only Adult
+general | THERMOPLASTIC COMPONENTS | Baseline Adjustable Stop | BAS-100#3 | Baseline Adjustable Stop- Insert Only Adult
+general | TOOLS & ACCESSORIES | Bending Iron | BI-140 | Bending Iron Standard
+general | TOOLS & ACCESSORIES | Bending Iron | BI-180 | Bending Iron - Small for Thermoplastic Joints
+custom | KIDFAB - Pediatric Custom Fabrication |  | KF-RUSH | Rush Charge
+custom | KIDFAB - Pediatric Custom Fabrication | Modifications | KFMD-10 | Standard (Plaster, CAD, or Measurement)
+custom | KIDFAB - Pediatric Custom Fabrication | Modifications | KFMD-15 | Minor-(Only for Pour and Smooth on Positive Cast)
+custom | KIDFAB - Pediatric Custom Fabrication | Ankle Joints | SPECIFY | Other Ankle Joint - Billed at Manufacturer List Price
+custom | KIDFAB - Pediatric Custom Fabrication | Posterior Stops | SPECIFY | Other Posterior Stop - Billed at Manufacturer List Price
+custom | KIDFAB - Pediatric Custom Fabrication | Set Up for Thermoplastic & Laminated Only | KFSMA-10 | Mount Ankle Joint - Minor Set Up
+custom | KIDFAB - Pediatric Custom Fabrication | Set Up for Thermoplastic & Laminated Only | KFSMA-25 | Mount Ankle Joint - Major Set Up
+custom | KIDFAB - Pediatric Custom Fabrication | Set Up for Thermoplastic & Laminated Only | KFSMP-5 | Mount Posterior Stop Set Up (Baseline, Cinch)
+custom | KIDFAB - Pediatric Custom Fabrication | Set Up for Thermoplastic & Laminated Only | KFSMP-15 | Mount Posterior Stop Set Up (i.e. Elite Line)
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-20 | Tibial Strap-Additional (Tibial Strap Included with all AFO Styles)
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-2 | Ankle Strap
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-21 | Figure 8 Strap
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-211 | Instep (Arch) Strap (Medial of Lateral)
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-212 | Forefoot Strap
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-22 | Check Rein Strap
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-221 | Night-Time Straps (Medial and Lateral)
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-23 | Banjo Style Strap - Leather with Padding
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-231 | Banjo Style Strap - Soft
+custom | KIDFAB - Pediatric Custom Fabrication | Additional Straps | KFA-24 | Attachment of T-Strap with Padding (specify color) includes cost of T-Strap
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-203 | ST Pad
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-201 | Malleolus Pads
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-202 | Arch Pads and/or Navicular Pads
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-34 | Soft Interface Lining Ankle (Includes Calf, or Full AFO including Foot)
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-37 | Soft Interface Lining Foot - Removable Foot Insert
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-TP1 | Toe Raise Pad - Standard (No Drop)
+custom | KIDFAB - Pediatric Custom Fabrication | Padding & Lining | KFA-TP2 | Toe Pad with 1st Ray Drop
+custom | KIDFAB - Pediatric Custom Fabrication | Posting & Tread | KFA-4 | Heel Posting - Plastic
+custom | KIDFAB - Pediatric Custom Fabrication | Posting & Tread | KFA-41 | Heel Posting-Crepe
+custom | KIDFAB - Pediatric Custom Fabrication | Posting & Tread | KFA-46 | Non-Skid Sole Added to Footplate
+custom | KIDFAB - Pediatric Custom Fabrication | Reinforcements | KFA-51 | Compcore Band Reinforcement
+custom | KIDFAB - Pediatric Custom Fabrication | Reinforcements | KFA-51A | Compcore Posterior AFO Reinforcement
+custom | KIDFAB - Pediatric Custom Fabrication | Reinforcements | KFA-52 | Compcore or Similar Ankle Form Reinforcement
+custom | KIDFAB - Pediatric Custom Fabrication | Reinforcements | KFA-53 | Reinforce Ankle Joints with Compcore or Similar
+custom | KIDFAB - Pediatric Custom Fabrication | Trim Lines, Flares, Cut Outs | KFA-54 | Correction Flare Padded & Lined (Sabolich) -Please Specify Location
+custom | KIDFAB - Pediatric Custom Fabrication | Trim Lines, Flares, Cut Outs | KFA-55 | Proximal Trim Line Flare
+custom | KIDFAB - Pediatric Custom Fabrication | Trim Lines, Flares, Cut Outs | KFA-56 | Cut Out-Specify
+custom | KIDFAB - Pediatric Custom Fabrication | Trim Lines, Flares, Cut Outs | KFA-57 | Extend Trim Line to Control Forefoot
+custom | KIDFAB - Pediatric Custom Fabrication | Trim Lines, Flares, Cut Outs | KFA-58 | Rear Entry Trim Lines
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-3 | Molded Inner Boot - LDPE
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-32 | Molded Inner Boot - Flexible Plastic
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-32F | Molded Inner Boot - Foam (Pe-Lite or Similar)
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-3C | Modled Calf Lacer - LDPE (Included Foam Lining if Desired)
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-32C | Molded Calf Lacer - Flexible Plastic (Includes Foam Lining if Desiried)
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-33 | Molded Calf Lacer - Leather
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-6 | PTB Shell - Thermoplastic
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-62E | Anterior Tibial Shell Exterior Overlap
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-62I | Anterior Tibial Shell Interior Tuck
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-7 | UCB Insert w/Stirrups
+custom | KIDFAB - Pediatric Custom Fabrication | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-9 | Lap Growth Adjustment - Specify A/K or B/K
+custom | KIDFAB - Pediatric Custom Fabrication | Plastic and Transfer Patterns | KFAA-30 | Fabricate with Colored Plastic
+custom | KIDFAB - Pediatric Custom Fabrication | Plastic and Transfer Patterns | KFAA-37 | Transfer paper added to AFO
+custom | CUSTOM ORTHOTIC FABRICATION | Certified HKAFO Module Product Line | CMLH-85 | HKAFO Module - Pelvic Band with Bi-Lateral Hip Joints
+custom | CUSTOM ORTHOTIC FABRICATION | Certified HKAFO Module Product Line | CMLH-90 | HKAFO Module - Thermoplastic LSO with Bilateral Hip Joints
+custom | CUSTOM ORTHOTIC FABRICATION | Certified HKAFO Module Product Line | CMLH-95 | HKAFO Module - Pelvic Band with Uni-Lateral Hip Joints
+custom | CUSTOM ORTHOTIC FABRICATION | Certified HKAFO Module Product Line | CMLH-100 | HKAFO Module - Thermoplastic LSO with Uni-Lateral Hip Joints
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated AFO Product Line | CLA-70 | Laminated AFO Solid Ankle
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated AFO Product Line | CLA-75 | Laminated Floor Reaction AFO
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated AFO Product Line | CLA-80 | Laminated AFO Solid Ankle-with Pretibial Shell
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated AFO Product Line | CLA-82 | Laminated AFO w/Articulating Ankle & Appropriate Thermoplastic Ankle Joint
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated AFO Product Line | CLA-85 | Laminated AFO-Double Upright (Includes Cost of Stirrup)
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated KAFO Product Line | CLK-01 | Double Upright with Solid Ankle
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated KAFO Product Line | CLK-05 | Double Upright with Articulating Ankle & Appropraite Thermoplastic A.J.
+custom | CUSTOM ORTHOTIC FABRICATION | Certified Laminated KAFO Product Line | CLK-10 | Double Upright Knee with Double Upright Articulating Ankle Choice of Stirrup & Ankle Joint
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Modifications | MD-10 | Standard (Plaster, CAD, or Measurement)
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Modifications | MD-15 | Minor-(Only for Pour and Smooth on Positive Cast)
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMK-15 | Mount Knee Joint - Minor Set Up
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMK-30 | Mount Knee Joint - Major Set Up
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMA-10 | Mount Ankle Joint - Minor Set Up
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMA-25 | Mount Ankle Joint - Major Set Up
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMP-5 | Mount Posterior Stop Set Up (Baseline, Cinch)
+custom | Thermoplastic & Conventional Modifications, Set Up, Components & Additional Options for AFO and KAFO Fabrication | Set Up for Thermoplastic & Laminated Only | SMP-15 | Mount Posterior Stop Set Up (i.e. Elite Line)
+custom | Components - Hip Joints, Knee Joints, Ankle Joints & Posterior Stops | Hip Joints and Knee Joints | SPECIFY | Hip Joints & Knee Joints - Billed at Manufacturer List Price
+custom | Components - Hip Joints, Knee Joints, Ankle Joints & Posterior Stops | Ankle Joints | SPECIFY | Other Ankle Joint - Billed at Manufacturer List Price
+custom | Components - Hip Joints, Knee Joints, Ankle Joints & Posterior Stops | Posterior Stops | SPECIFY | Other Posterior Stop - Billed at Manufacturer List Price
+custom | Additional Options | Knee Joint and Upright Additions | A-1 | Install Cable Release System (Cable System Provided)
+custom | Additional Options | Knee Joint and Upright Additions | A-12 | Install Ball Keepers for Knee Joint
+custom | Additional Options | Knee Joint and Upright Additions | A-14 | Install Spring Pull for Knee Joint (Spring Pull Provided)
+custom | Additional Options | Knee Joint and Upright Additions | 4338 | Standard Extension Assist Kit
+custom | Additional Options | Knee Joint and Upright Additions | 4339 | Tension Relief Extension Assist Kit
+custom | Additional Options | Knee Joint and Upright Additions | A-16 | Lateral Round Condyle Pad (Specify Size)
+custom | Additional Options | Knee Joint and Upright Additions | A-17 | Lateral Pear Condyle Pad (Specify Size)
+custom | Additional Options | Knee Joint and Upright Additions | A-18 | Knee Joint Cover
+custom | Additional Options | Knee Joint and Upright Additions | A-19 | Non-Corrosive Upright Finish- Per Section - Polish, Powder Coat or Covered
+custom | Additional Options | Knee Joint and Upright Additions | A-9 | Lap Growth Adjustment - Specify A/K or B/K
+custom | Additional Options | Knee Joint and Upright Additions | A-92 | Quick Disconnect for Uprights (Component and Installation)
+custom | Additional Options | Knee Joint and Upright Additions | A-921 | KAFO-AFO Quick Disconnect - Pin Release System
+custom | Additional Options | Additional Straps | A-20 | Tibial Strap (Additional Pre-Tibial Strap)
+custom | Additional Options | Additional Straps | A-2 | Ankle Strap
+custom | Additional Options | Additional Straps | A-21 | Figure 8 Strap
+custom | Additional Options | Additional Straps | A-211 | Instep (Arch) Strap (Medial of Lateral)
+custom | Additional Options | Additional Straps | A-212 | Forefoot Strap
+custom | Additional Options | Additional Straps | A-22 | Check Rein Strap
+custom | Additional Options | Additional Straps | A-221 | Night-Time Straps (Medial and Lateral)
+custom | Additional Options | Additional Straps | A-231 | Banjo Style Strap - Soft
+custom | Additional Options | Additional Straps | A-25 | Bale Lock Safety Strap Elastic or Similar (Bale to Posterior AFO)
+custom | Additional Options | Additional Straps | A-27 | 4 Buckle Knee Pad
+custom | Additional Options | Additional Straps | A-29 | Knee Pad-Custom: Specify Buckles & Measurement or Duplicate
+custom | Additional Options | Additional Straps | A-30 | Patellar Knee Strap
+custom | Additional Options | Additional Straps | 4331 | Recurvatum Straps
+custom | Additional Options | Padding & Lining | A-201 | Malleolus Pad
+custom | Additional Options | Padding & Lining | A-202 | Arch Pad and/or Navicular Pad
+custom | Additional Options | Padding & Lining | A-36 | Soft Interface Lining Thigh
+custom | Additional Options | Padding & Lining | A-37 | Soft Interface Lining Foot (Foot Insert)
+custom | Additional Options | Padding & Lining | A-38 | Sheep Skin Lining - Specify
+custom | Additional Options | Posting and Tread | A-4 | Heel Posting - Plastic
+custom | Additional Options | Posting and Tread | A-41 | Heel Posting-Crepe
+custom | Additional Options | Posting and Tread | A-46 | Non-Skid Sole Added to Footplate
+custom | Additional Options | Reinforcements | A-5 | Metal Stay Reinforcement
+custom | Additional Options | Reinforcements | A-51 | Compcore Band Reinforcement
+custom | Additional Options | Reinforcements | A-51A | Compcore Posterior AFO Reinforcement
+custom | Additional Options | Reinforcements | A-52 | Compcore Ankle Form Reinforcement
+custom | Additional Options | Reinforcements | A-53 | Reinforce Ankle Joints with Compcore or Similar
+custom | Additional Options | Trim Lines, Flares, Cut Outs | A-54 | Correction Flare Padded & Lined (Sabolich) -Please Specify Location
+custom | Additional Options | Trim Lines, Flares, Cut Outs | A-55 | Proximal Trim Line Flare - Specify
+custom | Additional Options | Trim Lines, Flares, Cut Outs | A-56 | Cut Out-Specify
+custom | Additional Options | Trim Lines, Flares, Cut Outs | A-57 | Extend Trim Line to Control Forefoot
+custom | Additional Options | Trim Lines, Flares, Cut Outs | A-58 | Rear Entry Trim Lines
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-3 | Molded Inner Boot - LDPE
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-32 | Molded Inner Boot - Flexible Plastic
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-32F | Molded Inner Boot - Foam (Pe-Lite or Similar)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-3C | Modled Calf Lacer - LDPE (Included Foam Lining if Desired)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-32C | Molded Calf Lacer - Flexible Plastic (Includes Foam Lining if Desiried)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-33 | Molded Calf Lacer - Leather
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-6 | PTB Shell - Thermoplastic
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-61 | PTB Shell-Laminated
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-62E | Anterior Tibial Shell Exterior Overlap
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-62I | Anterior Tibial Shell Interior Tuck
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-63 | Anterior Thigh Shell Molded Thermoplastic
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-64 | Anterior Thigh Shell Non-Molded Thermoplastic
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-65 | Anterior Thigh Shell Laminated
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-7 | UCB Insert w/Stirrups
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-72 | Stainless Steel Foot Plate (Cast/Scan Required)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-8 | Plastic Thigh Or Calf Section - Hybrid Fabrication (Cast/Scan Required)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-82 | Quad Socket (Cast/Scan Required)
+custom | Additional Options | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | AA-1 | Pelvic Belt and Band
+custom | Additional Options | Plastic and Transfer Patterns | AA-30 | Fabricate with Colored Plastic
+custom | Additional Options | Plastic and Transfer Patterns | AA-31 | Fabricate with Colored Plastic-KAFO
+custom | Additional Options | Plastic and Transfer Patterns | AA-33 | Fabric Added Lamination
+custom | Additional Options | Plastic and Transfer Patterns | AA-37 | Transfer paper added to AFO
+custom | Additional Options | Plastic and Transfer Patterns | AA-39 | Transfer paper added to KAFO
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SHR-150 | Stirrup Transfer-customer supplies shoe
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SHR-153 | Stirrup/Caliper Attachment to Shoe (Customer Provides Stirrup)
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SHR-156 | Attach Torsion Stirrup to Shoe
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-100 | Scott Craig Shoe Set Up w/Strut, Wedge, and Sach
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-150 | Scott Craig Stirrup Complete, Stirrup Bent, Strut Bent, Strut Welded to Stirrup (Per Measurement)
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-200 | Scott-Craig Anterior Swing Band with Hinge
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-300 | Scott Craig Stirrup Strut Only-Welded to Existing Stirrup, Bent and Attached Shoe
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-350 | Stirrup Struts Attached to Exisitng Stirrup
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-20 | Scott-Craig Anterior Swing Band with Hinge (Kit Purchase Only)
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-40-4 | Spreader Bar 4"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-40-4.5 | Spreader Bar 4.5"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-40-5 | Spreader Bar 5"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-40-5.5 | Spreader Bar 5.5"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SC-40-6 | Spreader Bar 6"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | AA-29C | Custom Stirrup
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-13 | Molded Leather Calf Lacer 3”-6”
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-16 | Molded Leather Calf Lacer 6”-9”
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-19 | Molded Leather Calf Lacer 9”-12”
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-18D | Duplicate-Molded Leather Calf Lacer
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-23 | Molded Leather Thigh Lacer 3”-6”
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-26 | Molded Leather Thigh Lacer 6”-9"
+custom | Additional Options | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | L-28D | Duplicate Leather Thigh Lacer
+custom | Additional Options | Conventional Repair/Replacements | R-1 | Ischial Ring-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-10 | Ischial Band-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-12 | Ischial Ring-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-14 | Ischial Band-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-2 | Pelvic Band-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-22 | U/M Pelvic Band
+custom | Additional Options | Conventional Repair/Replacements | R-24 | Pelvic Band-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-26 | Leather Pelvic Band-Duplicate
+custom | Additional Options | Conventional Repair/Replacements | R-3 | Top Thigh Band-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-32 | Top Thigh Cuff-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-34 | Top Thigh Cuff-Leather Only, Duplicate
+custom | Additional Options | Conventional Repair/Replacements | R-4 | Mid Thigh Band-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-42 | Mid Thigh Cuff-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-5 | Calf Band-Metal Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-52 | Calf Cuff-Leather Work Only
+custom | Additional Options | Conventional Repair/Replacements | R-54 | Calf Cuff-Leather Work Only-Duplicate
+custom | Additional Options | Conventional Repair/Replacements | R-7 | Non Standard Band
+custom | Additional Options | Conventional Repair/Replacements | R-72 | Stainless Steel Band
+custom | Additional Options | Conventional Repair/Replacements | R-74 | Aluminum Band Reinforcement
+custom | Additional Options | Conventional Repair/Replacements | R-8 | Roll Top Thigh
+custom | Additional Options | Conventional Repair/Replacements | R-82 | Ischial Seat-Complete
+custom | Additional Options | Conventional Repair/Replacements | R-84 | Speed Lacers
+custom | Additional Options | Conventional Repair/Replacements | R-9 | Cover Long Leg Brace
+custom | Additional Options | Conventional Repair/Replacements | R-92 | Complete Leather Work on KAFO-Regular Bands
+custom | Additional Options | Conventional Repair/Replacements | R-94 | Attachment of T-Strap
+custom | Additional Options | Conventional Repair/Replacements | R-1A | Tibial Torsion
+custom | Additional Options | Conventional Repair/Replacements | R-12A | Re-Square Joints/New Bushing, Screw, Springs, Finish
+custom | Additional Options | Conventional Repair/Replacements | R-13A | Replace Proximal or Distal Upright
+custom | Additional Options | Conventional Repair/Replacements | R-14A | Add Flexion-Alum. Bars
+custom | Additional Options | Conventional Repair/Replacements | R16A | Add Flexion or Extension S.S. Bars
+custom | Additional Options | Conventional Repair/Replacements | R-18A | Heavy Duty Rings
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-1 | Top Cover Choice for Plastic FO (Spenco, Leather, Naug, PPT Sueded)
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-10 | Rearfoot Post, Extrinsic
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-12 | Forefoot Post, Extrinsic
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-20 | Heel Pad
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-21 | Met Pad
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-22 | Heel Cushion/ Heel Pad
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-30 | Add Toe Prosthesis to Foot Orthosis
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-40 | Recover Orthosis
+custom | CUSTOM UCBL'S, FOOT ORTHOTICS, & PARTIAL FEET | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-42 | Rebuild Orthosis
+thirdparty | Third Party Products |  | TPAK-1 | Fabtech Neuromuscular Anchor Kit & Hardware, Thermoplastic
+thirdparty | Third Party Products |  | TPAS-1 | Fabtech Adult Alignment Shim Set
+thirdparty | Third Party Products |  | TP250-4 | Fabtech PDE Thermoplastic Individual Spring Category 4 250mm
+thirdparty | Third Party Products |  | 740-P | Tamarack Free Motion Ankle Joint - Pediatric
+thirdparty | Third Party Products |  | 740-M | Tamarack Free Motion Ankle Joint - Medium
+thirdparty | Third Party Products |  | 740-L | Tamarack Free Motion Ankle Joint - Large
+thirdparty | Third Party Products |  | 742-P-75 | Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Pediatric
+thirdparty | Third Party Products |  | 742-M-75 | Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Medium
+thirdparty | Third Party Products |  | 742-L-75 | Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Large
+thirdparty | Third Party Products |  | 742-P-85 | Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Pediatric
+thirdparty | Third Party Products |  | 742-M-85 | Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Medium
+thirdparty | Third Party Products |  | 742-L-85 | Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Large
+thirdparty | Third Party Products |  | PAS-100 | Elite Line Stop or Similar
+thirdparty | Third Party Products |  | 1002-A4 | Becker Modified Drop Lock Knee Joint 1/4" x 3/4" Aluminum Uprights
+thirdparty | Third Party Products |  | 1002-A6 | Becker Modified Drop Lock Knee Joint 3/16" x 3/4" Aluminum Uprights
+thirdparty | Third Party Products |  | ULTRAFLEX ONE KNEE JOINT SMALL | Ultra-Flex One Knee Joint Small
+thirdparty | Third Party Products |  | XTN-PD0010-01 | X-Tension Pediatric Dynamic 3/32in
+thirdparty | Third Party Products |  | XTN-PD0020-01 | X-Tension Pediatric Dynamic 1/8”
+thirdparty | Third Party Products |  | XTN-PD0030-01 | X-Tension Pediatric Dynamic 5/32”
+thirdparty | Third Party Products |  | XTN-PD0040-01 | X-Tension Pediatric Dynamic 3/16”
+thirdparty | Third Party Products |  | MI-220-A1U | Becker M-Line D.A. Ankle Joint Right Lateral
+thirdparty | Third Party Products |  | MI-RS20 | Becker M-Line Adult Y-Stirrup
+thirdparty | Third Party Products |  | 1005-C8-HALF-L | Becker Knee Joint, Free Motion, Aluminum, 1/8x1/2, Left Lateral/Right Media
+thirdparty | Third Party Products |  | BDS2G | Fabtech 2" Green/Minimum Bounder Dorsi-Stop
+thirdparty | Third Party Products |  | 6917600000 | Allard Lateral Multi-Motion Corrective Joint Large with Modular Bar Adapter & T-Bar
+thirdparty | Third Party Products |  | 691790000 | Allard Lateral Multi-Motion Corrective Joint Medium with Modular Bar Adapter & T-Bar
+thirdparty | Third Party Products |  | ARP-100M | Poron Arch Pad (Scaphoid Style) - Size Medium with Self Adhesive Backing
+thirdparty | Third Party Products |  | BFR2R | Fabtech 2" Red/Medium Bounder Free Range
+thirdparty | Third Party Products |  | 691770000 | Allard Multi-Motion Corrective Joint Medium with Integrated Bars
