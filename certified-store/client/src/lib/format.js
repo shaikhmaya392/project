@@ -1,15 +1,23 @@
 let MEDIA_LOCAL = false;
 export const setMediaMode = (mode) => { MEDIA_LOCAL = mode === 'local'; };
 
-/** certifiedortho.com media → local mirror when MEDIA_MODE=local */
+const WP = 'https://certifiedortho.com/wp-content/';
+// Images + the hero video are optimized copies on this site's CDN (tools/optimize-media.mjs):
+//   <WP>uploads/x.png → /media/uploads/x.png.webp   (resized, WebP)
+//   <WP>uploads/x.mp4 → /media/uploads/x.mp4         (compressed)
+// PDFs etc. stay on certifiedortho.com unless MEDIA_MODE=local.
+const IMG = /\.(jpe?g|png|webp|gif)$/i;
 export const media = (url) => {
-  if (!url) return url;
-  if (MEDIA_LOCAL && url.startsWith('https://certifiedortho.com/wp-content/')) {
-    return url.replace('https://certifiedortho.com/wp-content/', '/media/');
-  }
-  return url;
+  if (!url || !url.startsWith(WP)) return url;
+  const rel = url.slice(WP.length);
+  if (IMG.test(rel)) return `/media/${rel}.webp`;
+  if (/\.mp4$/i.test(rel)) return `/media/${rel}`;
+  return MEDIA_LOCAL ? `/media/${rel}` : url;
 };
-export const mediaHtml = (html) => (MEDIA_LOCAL ? html.replaceAll('https://certifiedortho.com/wp-content/', '/media/') : html);
+/** poster frame for an optimized video */
+export const videoPoster = (url) => (url && url.startsWith(WP) && /\.mp4$/i.test(url) ? `/media/${url.slice(WP.length)}.poster.webp` : undefined);
+const WP_URL_RX = /https:\/\/certifiedortho\.com\/wp-content\/[^"'\s)<>\\]+/g;
+export const mediaHtml = (html) => (html ? html.replace(WP_URL_RX, (u) => media(u)) : html);
 
 export const money = (n, cur = 'USD') => {
   if (n === null || n === undefined || Number.isNaN(Number(n))) return '';

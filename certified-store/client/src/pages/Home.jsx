@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Phone, Mail, Check, ShieldCheck, Truck, FileText } from 'lucide-react';
 import { api } from '../lib/api.js';
-import { media } from '../lib/format.js';
+import { media, videoPoster } from '../lib/format.js';
 import { CardLinks } from '../components/Blocks.jsx';
 import { RequestAccountForm } from '../components/AuthModal.jsx';
 import { useAuth } from '../lib/store.jsx';
@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="home">
       <section className="hero">
-        {hero?.video && <video className="hero-video" src={media(hero.video)} autoPlay muted loop playsInline aria-hidden="true" />}
+        {hero?.video && <video className="hero-video" src={media(hero.video)} poster={videoPoster(hero.video)} preload="auto" autoPlay muted loop playsInline aria-hidden="true" />}
         <div className="hero-shade" />
         <div className="container hero-in">
           <span className="eyebrow">Certified Orthopedics · Fort Collins, Colorado</span>
