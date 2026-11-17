@@ -7,11 +7,23 @@ const SiteCtx = createContext(null);
 export function SiteProvider({ children }) {
   const [site, setSite] = useState(null);
   useEffect(() => {
-    api.get('/site').then((s) => { setMediaMode(s.mediaMode); setSite(s); }).catch(() => setSite({ menu: [] }));
+    Promise.all([api.get('/site'), api.get('/shop/categories').catch(() => [])])
+      .then(([s, cats]) => {
+        setMediaMode(s.mediaMode);
+        setSite({ ...s, categories: cats, catSlugs: new Set(cats.map((c) => c.slug)) });
+      })
+      .catch(() => setSite({ menu: [], categories: [], catSlugs: new Set() }));
   }, []);
   return <SiteCtx.Provider value={site}>{children}</SiteCtx.Provider>;
 }
 export const useSite = () => useContext(SiteCtx);
+
+/** a website product-line link (/p/slug) opens the matching shop category when there is one */
+export const shopHref = (href, site) => {
+  const m = /^\/p\/([^/?#]+)$/.exec(href || '');
+  if (m && site?.catSlugs?.has(m[1]) && m[1] !== 'certified-app') return `/shop?category=${m[1]}`;
+  return href;
+};
 
 /* ------------------------------------------------------------------ toasts */
 const ToastCtx = createContext(() => {});
@@ -85,7 +97,7 @@ export function CartProvider({ children }) {
       }
       return [...list, {
         partNumber: p.partNumber, name: p.name, price: p.price ?? null, priceLabel: p.priceLabel || '', unit: p.unit,
-        type: p.type, image: p.image || p.pageImage || null, page: p.page || null, qty, comment,
+        type: p.type, image: p.image || p.pageImage || null, page: p.page || null, product: p.product || null, qty, comment,
       }];
     });
     if (user) {

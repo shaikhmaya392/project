@@ -1,0 +1,413 @@
+Products: 701  (variable: 67, simple: 634)
+SKUs covered: 1221 of 1221
+With own/product-line image: 464, category image: 237, none: 237
+Categories: 61
+
+VARIABLE   2 | Double Action Ankle Joint - Stainless Steel | attrs: Type
+SIMPLE     4 | Double Action Ankle Joint - Aluminum | 2220-SAA, 2220-MAA, 2200-SAA, 2200-MAA
+VARIABLE   2 | Double Action Ankle Joint - Aluminum Black | attrs: Type
+SIMPLE     8 | Double Action Ankle Joint Stainless Steel with Uprights | 2220-SAS-UA1, 2220-MAS-UA1, 2220-SAS-UA2, 2220-MAS-UA2, 2220-SAS-US1, 2220-MAS-US1 …
+SIMPLE     8 | Double Action Ankle Joint Aluminum with Uprights | 2220-SAA-UA1, 2220-MAA-UA1, 2220-SAA-UA2, 2220-MAA-UA2, 2200-SAA-UA1, 2200-MAA-UA1 …
+VARIABLE   4 | Double Action Ankle Joint Aluminum Black with Uprights | attrs: Upright, Type
+VARIABLE   6 | Dorsi-Assist Ankle Joint - Stainless Steel | attrs: Type
+VARIABLE   6 | Dorsi-Assist Ankle Joint - Aluminum | attrs: Type
+VARIABLE  12 | Dorsi-Assist Ankle Joint - Stainless Steel with Aluminum Uprights | attrs: Upright, Type
+VARIABLE  12 | Dorsi-Assist Ankle Joint - Stainless Steel with Stainless Steel Uprights | attrs: Upright, Type
+VARIABLE  12 | Dorsi-Assist Ankle Joint - Aluminum with Uprights | attrs: Upright, Type
+VARIABLE   2 | Standard Action Ankle Joint - Stainless Steel | attrs: Type
+VARIABLE   8 | Standard Action Ankle Joint Stainless Steel with Uprights | attrs: Upright, Type
+VARIABLE   8 | Double Action Standard Tounge Stirrup | attrs: Size
+VARIABLE   8 | Double Action Long Tounge Stirrup | attrs: Size
+SIMPLE     4 | Double Action Y-Insert Strrup | DA-2250A, DA-2250A-T, DA-2250A-DM, DA-2250A-DMT
+VARIABLE   2 | Double Action Split Stirrup | attrs: Type
+SIMPLE     1 | Stirrup/Strut Reinforcement | 2260A
+VARIABLE   8 | Dorsi-Assist Standard Tounge Stirrup | attrs: Size
+VARIABLE   8 | Dorsi-Assist Long Tounge Stirrup | attrs: Size
+SIMPLE     2 | Dorsi-Assist Y-Insert Strrup | DS-2250A, DS-2250A-T
+SIMPLE     1 | Dorsi-Assist Split Stirrup | DS-2230A
+VARIABLE   8 | Standard Action Standard Tounge Stirrup | attrs: Size
+VARIABLE   8 | Standard Action Long Tounge Stirrup | attrs: Size
+SIMPLE     2 | Standard Action Y-Insert Strrup | ST-2250A, ST-2250A-T
+SIMPLE     1 | Standard Action Split Stirrup | ST-2230A
+VARIABLE   8 | Baseline Uprights Only | attrs: Dimension, Type
+SIMPLE     8 | Baseline Double Action Ankle Joint Replacement Parts | 2220#1, 2220#2, 2220#3, 2220#4, 2220#5, 2220#6 …
+SIMPLE     8 | Baseline Dorsi-Assist Ankle Joint Replacement Parts | 2210#1, 2210#2, 2210#3, 2210#4, 2210#5, 2210#6 …
+SIMPLE     4 | Baseline Standard Action Ankle Joint Replacement Parts | 2200#1, 2200#2, 2200#8, 2200#9
+VARIABLE   8 | Vertex Thermoplastic Double Action Ankle Joint | attrs: Size, Type
+SIMPLE    12 | Vertex Thermoplastic Double Action Ankle Joint Replacement Parts | VX-220A-#1, VX-220A-#2, VX-220A-#3, VX-220A-#5, VX-220A-#6, VX-220A-#8 …
+SIMPLE    16 | Vertex Dynamic Ratchet Lock Action Ankle Joint | VX-210A, VX-210P, VX-210A-V3, VX-210P-V3, VX-210A-B, VX-210P-B …
+SIMPLE     8 | Vertex Dynamic Ratchet Lock Ankle Joint Replacement Parts | VX-210A-#1, VX-210P-#1, VX-210A-#2, VX-210P-#2, VX-210A-#6, VX-210P-#6 …
+VARIABLE   4 | Vertex Range of Motion Ankle Joint | attrs: Size, Type
+SIMPLE     8 | Vertex Range of Motion Ankle Joint Replacement Parts | VX-100A-#1, VX-100P-#1, VX-100A-#2, VX-100P-#2, VX-100A-#6, VX-100P-#6 …
+SIMPLE     6 | Baseline Free Motion Ankle Joint | BAJ-1970P, BAJ-1970A, BAJ-1970HD, BAJ-KITP, BAJ-KITA, BAJ-KITHD
+SIMPLE     9 | Baseline Free Motion Ankle Joint Replacement Parts | BAJ-1970P-#1, BAJ-1970A-#1, BAJ-1970HD-#1, BAJ-1970P-#2, BAJ-1970A-#2, BAJ-1970HD-#2 …
+SIMPLE     2 | V-3 Ankle Joint | VJ-100A, VJM-300A
+SIMPLE     4 | V-3 Ankle Joint Replacement Parts | VJ-100A-#1, VJ-100A-#2, VJ-100A-#8, VJ-100A-#9
+SIMPLE     4 | Baseline Adjustable Stop | BAS-100A, BAS-100#1, BAS-100#2, BAS-100#3
+SIMPLE     8 | Baseline Bumper Stop | BBS-100BA, BBS-100BA-PK, BBS-100WA, BBS-100WA-PK, BBS-100BP, BBS-100BP-PK …
+SIMPLE     2 | Polycord Stop | PCS-140, PCS-316
+SIMPLE    10 | Baseline Cinch Stop Kits & Sets - Adult | CS-KITBA, CS-KIT-WA, CS-KIT-35BA, CS-KIT-35WA, CS-KIT-55BA, CS-KIT-55WA …
+VARIABLE  11 | Baseline Cinch Stop Individual Items - Adult | attrs: Color, Type
+VARIABLE  10 | Baseline Cinch Stop Kits & Sets - Pediatric | attrs: Color, Type
+VARIABLE  11 | Baseline Cinch Stop Individual Items - Pediatric | attrs: Color, Type
+VARIABLE   3 | Certified Range of Motion Joint | attrs: Size
+SIMPLE     1 | Polycentric Joint | CKJ-2435
+VARIABLE   2 | Certified Adjustable Positioning Joint | attrs: Size
+VARIABLE   3 | Extension Assist Kits | attrs: Type
+VARIABLE   5 | Extension Assist Kits-Individual Units | attrs: Type
+VARIABLE   5 | GO-Strut Kits | attrs: Type
+VARIABLE   4 | GO-AFO Strut Kits | attrs: Type
+VARIABLE  14 | GO Strut and GO AFO Strut Individual Parts | attrs: Type
+SIMPLE     1 | Upright Bending & Contouring Tool | BCB-TOOL
+SIMPLE     2 | Bending Iron | BI-140, BI-180
+SIMPLE     2 | Scanning Accessories & Tools | SCM-1000, SCS-1000
+VARIABLE  18 | 3 Buckle Knee Pad | attrs: Size, Color
+VARIABLE  18 | 4 Buckle Knee Pad | attrs: Size, Color
+VARIABLE  18 | 5 Buckle Knee Pad | attrs: Size, Color
+VARIABLE  34 | T-Strap Padded | attrs: Side, Size, Color
+VARIABLE  34 | Leather Varus/Valgus Pull Strap for Thermoplastics | attrs: Side, Size, Color
+VARIABLE  18 | Soft Varus/Valgus Pull Strap for Thermoplastics | attrs: Option
+VARIABLE  20 | Soft Varus/Valgus Pull Strap for Thermoplastics with Rivet Tab Attachment | attrs: Option
+SIMPLE     1 | Dial Lock Strap w/Velcro Closure | A-2001
+SIMPLE     1 | Ratcheting Buckle Strap | A-2006
+VARIABLE   2 | Universal AFO Cuff Strap | attrs: Side
+VARIABLE  12 | Universal AFO Anterior Pad | attrs: Size
+VARIABLE  20 | Strap Pads | attrs: Color, Strap Size, Material
+VARIABLE   4 | Condyle Pads | attrs: Size, Thickness
+VARIABLE   4 | Dorsum/Instep Pad | attrs: Size
+VARIABLE   4 | Zero-G AFO Lacer | attrs: Size
+VARIABLE   5 | Zero-G AFO Base | attrs: Size
+SIMPLE     2 | Zero-G AFO Custom Models | ZGA-125C, ZGA-150C
+VARIABLE   3 | Zero-G AFO Seamless Interface Sock | attrs: Option
+VARIABLE  12 | GO AFO Tall | attrs: Side, Size, Height, Shoe Size, Type
+VARIABLE  12 | GO AFO Short | attrs: Side, Size, Height, Shoe Size, Type
+SIMPLE     8 | GO AFO Custom | G0-100C, GO-150C, GO-300C, GO-500C, GO-200C, GO-250C …
+VARIABLE   6 | Energy AFO | attrs: Side, Size
+VARIABLE  12 | Baseline Unloader Knee Orthosis | attrs: Size, Compartment
+VARIABLE  12 | Certified Extension Assist Knee Orthosis | attrs: Side, Size
+SIMPLE     6 | Hi-Five Pediatric SEWHO | HF-100I, HF-100P, HF-100Y, HF-100CM, HF-100CS, HF-100CC
+SIMPLE     6 | Hi-Five Arm Section Only w/All Components | HF-ARMI, HF-ARMP, HF-ARMY, HF-ARMCM, HF-ARMCS, HF-ARMCC
+SIMPLE     2 | Baseline LSO | BLSO-631, BLSO-637
+VARIABLE   5 | Baseline Clamshell Pneumatic Walking Boot - Tall | attrs: Size
+VARIABLE   5 | Baseline Clamshell Pneumatic Walking Boot - Short | attrs: Option
+VARIABLE   5 | Baseline Pneumatic Walking Boot - Tall | attrs: Size
+VARIABLE   5 | Baseline Pneumatic Walking Boot - Short | attrs: Option
+VARIABLE   5 | Baseline Standard Walking Boot - Tall | attrs: Size
+VARIABLE   5 | Baseline Standard Walking Boot - Short | attrs: Option
+VARIABLE   4 | GO Foot Orthotic | attrs: Side
+VARIABLE   4 | GO Heel Stabilizer | attrs: Side
+VARIABLE   8 | Carbon Footplate Contoured | attrs: Side, Size
+VARIABLE   4 | Carbon Footplate Flat | attrs: Size
+VARIABLE   8 | Carbon Footplate Morton's Toe | attrs: Option
+VARIABLE   9 | Heel Lift 60 Durometer | attrs: Size, Height
+VARIABLE   9 | Heel Lift 30 Durometer | attrs: Size, Height
+VARIABLE   9 | Heel Spur/Relief Lift 60 Durometer | attrs: Size, Height
+VARIABLE   9 | Heel Spur/Relief Lift 30 Durometer | attrs: Size, Height
+VARIABLE   9 | Baseline Full Foot in Shoe Tapered Lift | attrs: Side, Size
+VARIABLE  12 | Baseline Heel Wedges 60 & 30 Durometer | attrs: Option
+SIMPLE     2 | KIDFAB Custom UCBL's | KFU-100, KFU-200
+SIMPLE     4 | KIDFAB Custom SMO's | KFS-100, KFS-200, KFS-300, KFS-400
+SIMPLE     5 | KIDFAB Toe Walking Custom SMO's & AFO | TWO-100, TWO-200, TWO-300, TWO-400, TWO-500
+SIMPLE     6 | KIDFAB Custom Pediatric AFO's | KFA-100, KFA-150, KFA-200, KFA-250, KFA-300, KFA-350
+SIMPLE     2 | KIDFAB Custom Skeleton Pediatric AFO's | KFSK-250, KFSK-350
+SIMPLE     4 | KIDFAB Custom Pediatric GO AFO's | KFGO-100, KFGO-150, KFGO-300, KFGO-350
+SIMPLE     1 | KIDFAB Custom Pediatric Dynamic Stretch AFO's | KFDS-350
+SIMPLE     1 | KIDFAB - Pediatric Custom Fabrication | KF-RUSH
+SIMPLE     2 | Modifications | KFMD-10, KFMD-15
+SIMPLE     1 | Ankle Joints | SPECIFY
+SIMPLE     1 | Posterior Stops | SPECIFY
+SIMPLE     4 | Set Up for Thermoplastic & Laminated Only | KFSMA-10, KFSMA-25, KFSMP-5, KFSMP-15
+SIMPLE    10 | Additional Straps | KFA-20, KFA-2, KFA-21, KFA-211, KFA-212, KFA-22 …
+SIMPLE     7 | Padding & Lining | KFA-203, KFA-201, KFA-202, KFA-34, KFA-37, KFA-TP1 …
+SIMPLE     3 | Posting & Tread | KFA-4, KFA-41, KFA-46
+SIMPLE     4 | Reinforcements | KFA-51, KFA-51A, KFA-52, KFA-53
+SIMPLE     5 | Trim Lines, Flares, Cut Outs | KFA-54, KFA-55, KFA-56, KFA-57, KFA-58
+SIMPLE    11 | Molded Inner Boots, Pretibial Shell Additions, Lacers | KFA-3, KFA-32, KFA-32F, KFA-3C, KFA-32C, KFA-33 …
+SIMPLE     2 | Plastic and Transfer Patterns | KFAA-30, KFAA-37
+SIMPLE    10 | Stabilizer Custom Leather AFO Product Line | SLA-10, SLA-20, SLA-30, SLA-40, SLPF-10, SLPF-11 …
+SIMPLE    24 | Stabilizer Custom Leather AFO Additional Option & Repairs | SLA-MOD, SLA-001, SLA-002, SLA-003, SLA-004, SLA-006 …
+SIMPLE     9 | Stabilizer Custom Performance AFO Product Line | SPA-10, SPA-20, SPA-30, SPA-40, SPA-50, SPA-60 …
+SIMPLE    10 | Stabilizer Custom Performance AFO Additional Options | SPA-001, SPA-1, SPA-2, SPA-3, SPA-4, SPA-5 …
+SIMPLE     5 | Stabilizer Custom Dynamic AFO Product Line | SDA-100, SDA-200, SDA-300, SDA-400, SDA-500
+SIMPLE    14 | Stabilizer Custom Unweghting AFO Product Line | SUA-100, SUA-100PL, SUA-100PC, SUA-200, SUA-200PL, SUA-200PC …
+SIMPLE     6 | Stabilizer Custom Unweghting AFO Additional Options | SUA-001, SUA-002, SUA-002X, SUA-003, SUA-004, SUA-005
+SIMPLE     3 | Stabilizer Neuro AFO (CROW) | CRO-10, SLA-100, CRO-PTB
+SIMPLE     3 | Stabilizer SMO Product Line | CTA-05, CTA-07, CTA-09
+SIMPLE    10 | Certified Thermoplastic AFO Product Line | CTA-10, CTA-10P, CTA-10FR, CTA-10PTB, CTA-20F, CTA-20D …
+SIMPLE     6 | Certified Thermoplastic KAFO Product Line | CTK-50, CTK-55, CTK-80, CTK-85, CTK-90, CTK-95
+SIMPLE     4 | Certified HKAFO Module Product Line | CMLH-85, CMLH-90, CMLH-95, CMLH-100
+SIMPLE     5 | Certified Conventional AFO Product Line | CMLA-10, CMLA-15, CMLA-20, CMLA-30, CMLA-50
+SIMPLE     5 | Certified Conventional KAFO Product Line | CMLK-30, CMLK-35, CMLK-40, CMLK-50, CMLK-75
+SIMPLE     5 | Certified Laminated AFO Product Line | CLA-70, CLA-75, CLA-80, CLA-82, CLA-85
+SIMPLE     3 | Certified Laminated KAFO Product Line | CLK-01, CLK-05, CLK-10
+SIMPLE     2 | Modifications | MD-10, MD-15
+SIMPLE     6 | Set Up for Thermoplastic & Laminated Only | SMK-15, SMK-30, SMA-10, SMA-25, SMP-5, SMP-15
+SIMPLE     1 | Hip Joints and Knee Joints | SPECIFY
+SIMPLE     1 | Ankle Joints | SPECIFY
+SIMPLE     1 | Posterior Stops | SPECIFY
+SIMPLE    12 | Knee Joint and Upright Additions | A-1, A-12, A-14, 4338, 4339, A-16 …
+SIMPLE    17 | Additional Straps | A-20, A-2, A-21, A-211, A-212, A-22 …
+SIMPLE     7 | Padding & Lining | A-203, A-201, A-202, A-34, A-36, A-37 …
+SIMPLE     3 | Posting and Tread | A-4, A-41, A-46
+SIMPLE     5 | Reinforcements | A-5, A-51, A-51A, A-52, A-53
+SIMPLE     5 | Trim Lines, Flares, Cut Outs | A-54, A-55, A-56, A-57, A-58
+SIMPLE    18 | Molded Inner Boots, Pretibial/Anterior Shell Additions, Lacers, UCB & Hybrid Additions | A-3, A-32, A-32F, A-3C, A-32C, A-33 …
+SIMPLE     5 | Plastic and Transfer Patterns | AA-30, AA-31, AA-33, AA-37, AA-39
+SIMPLE    22 | Conventional Additonal Options, Stirrup Attachments, Leather Work/Options | SHR-150, SHR-153, SHR-156, SC-100, SC-150, SC-200 …
+SIMPLE    31 | Conventional Repair/Replacements | R-1, R-10, R-12, R-14, R-2, R-22 …
+SIMPLE     2 | Custom UCBL Product Line | CUCB-10, CUCB-20
+SIMPLE     6 | Custom Foot Orthotic Product Line | CFO-05, CFO-10, CFO-12, CFO-15, CFO-20, CFO-30
+SIMPLE     3 | Partial Foot Product Line | CPF-20, CPF-30, CPF-40
+SIMPLE     9 | UCBL, Custom Foot Orthotic, & Partial Foot Addiional Options | F-1, F-10, F-12, F-20, F-21, F-22 …
+SIMPLE    10 | Closure | SHR-012, SHR-014, SHR-016, SHR-018, SHR-020, SH-LAC …
+SIMPLE     5 | Soling | SHR-040, SHR-042, SHR-044, SHR-046, SHR-048
+SIMPLE     7 | Heel | SHR-050, SHR-0501, SHR-0502, SHR-0503, SHR-0504, SHR-0505 …
+SIMPLE     2 | Filler | SHR-060, SHR-060-SG
+SIMPLE     6 | Elevations | SHR-100, SHR-100M, SHR-101, SHR-101M, SHR-102, SHR-102M
+SIMPLE     4 | Flares & Wedges | SHR-103, SHR-104, SHR-1041, SHR-1042
+SIMPLE     5 | Other Mods | SHR-110, SHR-112, SHR-116, R-1161, SHR-118
+SIMPLE     6 | Replace Sole | SHR-120, SHR-122, SHR-123, SHR-124, SHR-125, SHR-1251
+SIMPLE    11 | Shanks and Reinforcements | SHR-130, SHR-131, SHR-131-PL, SHR-132, SHR-133, 500-PL …
+SIMPLE     4 | Orthotic Alterations | SHR-150-C, SHR-150-S, SHR-153-C, SHR-153-S
+SIMPLE    10 | Orthotics | CAD-FO-100, CAD-SMO-100, CAD-AFO-100, CAD-KAFO-100, CAD-FO-200, CAD-SMO-200 …
+SIMPLE    10 | Prosthetics | CAD-TT-100, CAD-SY-100, CAD-TF-100, CAD-TF-110, CAD-HD-100, CAD-TT-200 …
+SIMPLE    29 | Third Party Products | TPAK-1, TPAS-1, TP250-4, 740-P, 740-M, 740-L …
+
+No image:
+Baseline Adjustable Stop-Kit Adult (1 Ea. Bumper & Threaded Stem, 2 Ea. Nuts, 1 Ea. Insert)
+Baseline Adjustable Stop - Bumper & Threaded Stem Adult
+Baseline Adjustable Stop - Nut Only Adult
+Baseline Adjustable Stop- Insert Only Adult
+Bending Iron Standard
+Bending Iron - Small for Thermoplastic Joints
+Rush Charge
+Standard (Plaster, CAD, or Measurement)
+Minor-(Only for Pour and Smooth on Positive Cast)
+Other Ankle Joint - Billed at Manufacturer List Price
+Other Posterior Stop - Billed at Manufacturer List Price
+Mount Ankle Joint - Minor Set Up
+Mount Ankle Joint - Major Set Up
+Mount Posterior Stop Set Up (Baseline, Cinch)
+Mount Posterior Stop Set Up (i.e. Elite Line)
+Tibial Strap-Additional (Tibial Strap Included with all AFO Styles)
+Ankle Strap
+Figure 8 Strap
+Instep (Arch) Strap (Medial of Lateral)
+Forefoot Strap
+Check Rein Strap
+Night-Time Straps (Medial and Lateral)
+Banjo Style Strap - Leather with Padding
+Banjo Style Strap - Soft
+Attachment of T-Strap with Padding (specify color) includes cost of T-Strap
+ST Pad
+Malleolus Pads
+Arch Pads and/or Navicular Pads
+Soft Interface Lining Ankle (Includes Calf, or Full AFO including Foot)
+Soft Interface Lining Foot - Removable Foot Insert
+Toe Raise Pad - Standard (No Drop)
+Toe Pad with 1st Ray Drop
+Heel Posting - Plastic
+Heel Posting-Crepe
+Non-Skid Sole Added to Footplate
+Compcore Band Reinforcement
+Compcore Posterior AFO Reinforcement
+Compcore or Similar Ankle Form Reinforcement
+Reinforce Ankle Joints with Compcore or Similar
+Correction Flare Padded & Lined (Sabolich) -Please Specify Location
+Proximal Trim Line Flare
+Cut Out-Specify
+Extend Trim Line to Control Forefoot
+Rear Entry Trim Lines
+Molded Inner Boot - LDPE
+Molded Inner Boot - Flexible Plastic
+Molded Inner Boot - Foam (Pe-Lite or Similar)
+Modled Calf Lacer - LDPE (Included Foam Lining if Desired)
+Molded Calf Lacer - Flexible Plastic (Includes Foam Lining if Desiried)
+Molded Calf Lacer - Leather
+PTB Shell - Thermoplastic
+Anterior Tibial Shell Exterior Overlap
+Anterior Tibial Shell Interior Tuck
+UCB Insert w/Stirrups
+Lap Growth Adjustment - Specify A/K or B/K
+Fabricate with Colored Plastic
+Transfer paper added to AFO
+HKAFO Module - Pelvic Band with Bi-Lateral Hip Joints
+HKAFO Module - Thermoplastic LSO with Bilateral Hip Joints
+HKAFO Module - Pelvic Band with Uni-Lateral Hip Joints
+HKAFO Module - Thermoplastic LSO with Uni-Lateral Hip Joints
+Laminated AFO Solid Ankle
+Laminated Floor Reaction AFO
+Laminated AFO Solid Ankle-with Pretibial Shell
+Laminated AFO w/Articulating Ankle & Appropriate Thermoplastic Ankle Joint
+Laminated AFO-Double Upright (Includes Cost of Stirrup)
+Double Upright with Solid Ankle
+Double Upright with Articulating Ankle & Appropraite Thermoplastic A.J.
+Double Upright Knee with Double Upright Articulating Ankle Choice of Stirrup & Ankle Joint
+Standard (Plaster, CAD, or Measurement)
+Minor-(Only for Pour and Smooth on Positive Cast)
+Mount Knee Joint - Minor Set Up
+Mount Knee Joint - Major Set Up
+Mount Ankle Joint - Minor Set Up
+Mount Ankle Joint - Major Set Up
+Mount Posterior Stop Set Up (Baseline, Cinch)
+Mount Posterior Stop Set Up (i.e. Elite Line)
+Hip Joints & Knee Joints - Billed at Manufacturer List Price
+Other Ankle Joint - Billed at Manufacturer List Price
+Other Posterior Stop - Billed at Manufacturer List Price
+Install Cable Release System (Cable System Provided)
+Install Ball Keepers for Knee Joint
+Install Spring Pull for Knee Joint (Spring Pull Provided)
+Standard Extension Assist Kit
+Tension Relief Extension Assist Kit
+Lateral Round Condyle Pad (Specify Size)
+Lateral Pear Condyle Pad (Specify Size)
+Knee Joint Cover
+Non-Corrosive Upright Finish- Per Section - Polish, Powder Coat or Covered
+Lap Growth Adjustment - Specify A/K or B/K
+Quick Disconnect for Uprights (Component and Installation)
+KAFO-AFO Quick Disconnect - Pin Release System
+Tibial Strap (Additional Pre-Tibial Strap)
+Ankle Strap
+Figure 8 Strap
+Instep (Arch) Strap (Medial of Lateral)
+Forefoot Strap
+Check Rein Strap
+Night-Time Straps (Medial and Lateral)
+Banjo Style Strap - Soft
+Bale Lock Safety Strap Elastic or Similar (Bale to Posterior AFO)
+4 Buckle Knee Pad
+Knee Pad-Custom: Specify Buckles & Measurement or Duplicate
+Patellar Knee Strap
+Recurvatum Straps
+Malleolus Pad
+Arch Pad and/or Navicular Pad
+Soft Interface Lining Thigh
+Soft Interface Lining Foot (Foot Insert)
+Sheep Skin Lining - Specify
+Heel Posting - Plastic
+Heel Posting-Crepe
+Non-Skid Sole Added to Footplate
+Metal Stay Reinforcement
+Compcore Band Reinforcement
+Compcore Posterior AFO Reinforcement
+Compcore Ankle Form Reinforcement
+Reinforce Ankle Joints with Compcore or Similar
+Correction Flare Padded & Lined (Sabolich) -Please Specify Location
+Proximal Trim Line Flare - Specify
+Cut Out-Specify
+Extend Trim Line to Control Forefoot
+Rear Entry Trim Lines
+Molded Inner Boot - LDPE
+Molded Inner Boot - Flexible Plastic
+Molded Inner Boot - Foam (Pe-Lite or Similar)
+Modled Calf Lacer - LDPE (Included Foam Lining if Desired)
+Molded Calf Lacer - Flexible Plastic (Includes Foam Lining if Desiried)
+Molded Calf Lacer - Leather
+PTB Shell - Thermoplastic
+PTB Shell-Laminated
+Anterior Tibial Shell Exterior Overlap
+Anterior Tibial Shell Interior Tuck
+Anterior Thigh Shell Molded Thermoplastic
+Anterior Thigh Shell Non-Molded Thermoplastic
+Anterior Thigh Shell Laminated
+UCB Insert w/Stirrups
+Stainless Steel Foot Plate (Cast/Scan Required)
+Plastic Thigh Or Calf Section - Hybrid Fabrication (Cast/Scan Required)
+Quad Socket (Cast/Scan Required)
+Pelvic Belt and Band
+Fabricate with Colored Plastic
+Fabricate with Colored Plastic-KAFO
+Fabric Added Lamination
+Transfer paper added to AFO
+Transfer paper added to KAFO
+Stirrup Transfer-customer supplies shoe
+Stirrup/Caliper Attachment to Shoe (Customer Provides Stirrup)
+Attach Torsion Stirrup to Shoe
+Scott Craig Shoe Set Up w/Strut, Wedge, and Sach
+Scott Craig Stirrup Complete, Stirrup Bent, Strut Bent, Strut Welded to Stirrup (Per Measurement)
+Scott-Craig Anterior Swing Band with Hinge
+Scott Craig Stirrup Strut Only-Welded to Existing Stirrup, Bent and Attached Shoe
+Stirrup Struts Attached to Exisitng Stirrup
+Scott-Craig Anterior Swing Band with Hinge (Kit Purchase Only)
+Spreader Bar 4"
+Spreader Bar 4.5"
+Spreader Bar 5"
+Spreader Bar 5.5"
+Spreader Bar 6"
+Custom Stirrup
+Molded Leather Calf Lacer 3”-6”
+Molded Leather Calf Lacer 6”-9”
+Molded Leather Calf Lacer 9”-12”
+Duplicate-Molded Leather Calf Lacer
+Molded Leather Thigh Lacer 3”-6”
+Molded Leather Thigh Lacer 6”-9"
+Duplicate Leather Thigh Lacer
+Ischial Ring-Metal Work Only
+Ischial Band-Metal Work Only
+Ischial Ring-Leather Work Only
+Ischial Band-Leather Work Only
+Pelvic Band-Metal Work Only
+U/M Pelvic Band
+Pelvic Band-Leather Work Only
+Leather Pelvic Band-Duplicate
+Top Thigh Band-Metal Work Only
+Top Thigh Cuff-Leather Work Only
+Top Thigh Cuff-Leather Only, Duplicate
+Mid Thigh Band-Metal Work Only
+Mid Thigh Cuff-Leather Work Only
+Calf Band-Metal Work Only
+Calf Cuff-Leather Work Only
+Calf Cuff-Leather Work Only-Duplicate
+Non Standard Band
+Stainless Steel Band
+Aluminum Band Reinforcement
+Roll Top Thigh
+Ischial Seat-Complete
+Speed Lacers
+Cover Long Leg Brace
+Complete Leather Work on KAFO-Regular Bands
+Attachment of T-Strap
+Tibial Torsion
+Re-Square Joints/New Bushing, Screw, Springs, Finish
+Replace Proximal or Distal Upright
+Add Flexion-Alum. Bars
+Add Flexion or Extension S.S. Bars
+Heavy Duty Rings
+Top Cover Choice for Plastic FO (Spenco, Leather, Naug, PPT Sueded)
+Rearfoot Post, Extrinsic
+Forefoot Post, Extrinsic
+Heel Pad
+Met Pad
+Heel Cushion/ Heel Pad
+Add Toe Prosthesis to Foot Orthosis
+Recover Orthosis
+Rebuild Orthosis
+Fabtech Neuromuscular Anchor Kit & Hardware, Thermoplastic
+Fabtech Adult Alignment Shim Set
+Fabtech PDE Thermoplastic Individual Spring Category 4 250mm
+Tamarack Free Motion Ankle Joint - Pediatric
+Tamarack Free Motion Ankle Joint - Medium
+Tamarack Free Motion Ankle Joint - Large
+Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Pediatric
+Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Medium
+Tamarack Dorsi-Assist Ankle Joint - 75 Durometer - Large
+Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Pediatric
+Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Medium
+Tamarack Dorsi-Assist Ankle Joint - 85 Durometer - Large
+Elite Line Stop or Similar
+Becker Modified Drop Lock Knee Joint 1/4" x 3/4" Aluminum Uprights
+Becker Modified Drop Lock Knee Joint 3/16" x 3/4" Aluminum Uprights
+Ultra-Flex One Knee Joint Small
+X-Tension Pediatric Dynamic 3/32in
+X-Tension Pediatric Dynamic 1/8”
+X-Tension Pediatric Dynamic 5/32”
+X-Tension Pediatric Dynamic 3/16”
+Becker M-Line D.A. Ankle Joint Right Lateral
+Becker M-Line Adult Y-Stirrup
+Becker Knee Joint, Free Motion, Aluminum, 1/8x1/2, Left Lateral/Right Media
+Fabtech 2" Green/Minimum Bounder Dorsi-Stop
+Allard Lateral Multi-Motion Corrective Joint Large with Modular Bar Adapter & T-Bar
+Allard Lateral Multi-Motion Corrective Joint Medium with Modular Bar Adapter & T-Bar
+Poron Arch Pad (Scaphoid Style) - Size Medium with Self Adhesive Backing
+Fabtech 2" Red/Medium Bounder Free Range
+Allard Multi-Motion Corrective Joint Medium with Integrated Bars

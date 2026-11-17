@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, ExternalLink } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { priceText, TYPE_LABEL } from '../lib/format.js';
-import { AddToCart } from '../components/Cart.jsx';
+import { AddToCart, Thumb } from '../components/Cart.jsx';
 
 const TABS = [['all', 'All Products'], ['general', 'General Products'], ['custom', 'Custom Products'], ['thirdparty', 'Third Party Products']];
 
@@ -15,7 +15,9 @@ export default function Catalog() {
   const [q, setQ] = useState(sp.get('q') || '');
   const [section, setSection] = useState(sp.get('section') || '');
 
+  const [skus, setSkus] = useState({});
   useEffect(() => { api.get('/catalog').then(setRows).catch(() => setRows([])); }, []);
+  useEffect(() => { api.get('/shop/skus').then(setSkus).catch(() => {}); }, []);
 
   const sections = useMemo(() => {
     if (!rows) return [];
@@ -70,7 +72,7 @@ export default function Catalog() {
         </div>
       </div>
       <div className="pricelist card">
-        <div className="pl-row pl-hdr"><span>Product ID</span><span>Description</span><span>Unit</span><span className="r">List Price</span><span /></div>
+        <div className="pl-row pl-hdr"><span /><span>Product ID</span><span>Description</span><span>Unit</span><span className="r">List Price</span><span /></div>
         {!rows && <div className="skeleton tall" />}
         {view.map((v) => {
           if (v.h === 'type') return <div key={v.key} className="pl-type">{v.text}</div>;
@@ -78,13 +80,16 @@ export default function Catalog() {
           if (v.h === 'sub') return <div key={v.key} className="pl-sub">{v.text}</div>;
           if (v.h === 'note') return <div key={v.key} className="pl-note">{v.text}</div>;
           const r = v.row;
+          const sp = skus[r.partNumber];
+          const url = sp ? `/product/${sp.slug}` : r.page ? `/p/${r.page}` : null;
           return (
             <div key={v.key} className="pl-row">
+              {url ? <Link to={url} className="pl-thumb"><Thumb src={sp?.image || r.image} alt={r.name} size={52} /></Link> : <Thumb src={r.image} alt={r.name} size={52} />}
               <span className="pn">{r.partNumber}</span>
               <span className="pl-desc">
-                {r.name}
+                {url ? <Link to={url} className="pl-name">{r.name}</Link> : r.name}
                 {(r.lines || []).map((l, i) => <small key={i}>{l}</small>)}
-                {r.page && <Link to={`/p/${r.page}`} className="pl-link">View product <ExternalLink size={12} /></Link>}
+                {url && <Link to={url} className="pl-link">View product <ExternalLink size={12} /></Link>}
               </span>
               <span className="muted">{r.unit}</span>
               <span className="r price">{priceText(r)}</span>

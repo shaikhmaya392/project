@@ -3,28 +3,16 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Phone, Mail, Check, ShieldCheck, Truck, FileText } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { media, videoPoster } from '../lib/format.js';
-import { CardLinks } from '../components/Blocks.jsx';
 import { RequestAccountForm } from '../components/AuthModal.jsx';
 import { useAuth } from '../lib/store.jsx';
-
-// helpers to read the live home page sections (text kept exactly as on certifiedortho.com)
-const findCards = (blocks, n) => blocks.filter((b) => b.t === 'cards')[n]?.cards || [];
-const gridLinks = (blocks) => {
-  const g = blocks.find((b) => b.t === 'grid' && b.cols.every((c) => c.length === 1 && c[0].t === 'link'));
-  return (g?.cols || []).map((c) => {
-    const l = c[0];
-    return { href: l.href, src: l.blocks.find((x) => x.t === 'image')?.src, title: l.blocks.find((x) => x.t === 'heading')?.text };
-  });
-};
+import { CategoryTiles } from './Shop.jsx';
+import ProductSlider from '../components/ProductSlider.jsx';
 
 export default function Home() {
   const [blocks, setBlocks] = useState(null);
   const { user } = useAuth();
   useEffect(() => { api.get('/home').then((d) => setBlocks(d.blocks)).catch(() => setBlocks([])); }, []);
   const hero = blocks?.find((b) => b.t === 'hero');
-  const custom = blocks ? findCards(blocks, 0) : [];
-  const presized = blocks ? findCards(blocks, 1) : [];
-  const components = blocks ? gridLinks(blocks) : [];
 
   return (
     <div className="home">
@@ -36,7 +24,7 @@ export default function Home() {
           <h1>Perfect Fit, Every Step of the Way</h1>
           <p>Explore custom orthotics, prefabricated options, and premium components for unmatched support and comfort.</p>
           <div className="hero-cta">
-            <Link to="/catalog" className="btn btn-primary btn-lg">Shop all products <ArrowRight size={18} /></Link>
+            <Link to="/shop" className="btn btn-primary btn-lg">Shop all products <ArrowRight size={18} /></Link>
             <Link to="/p/about-us" className="btn btn-white btn-lg">About Us</Link>
           </div>
           <div className="hero-points">
@@ -47,6 +35,19 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section section-tight">
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <h2>Shop by <span className="accent">Category</span></h2>
+              <p>Every Certified Ortho product with its sizes, colors and prices – choose, add to cart and order online.</p>
+            </div>
+            <Link to="/shop" className="btn btn-outline">All products <ArrowRight size={16} /></Link>
+          </div>
+          <CategoryTiles />
+        </div>
+      </section>
+
       <section className="section">
         <div className="container">
           <div className="section-head">
@@ -54,9 +55,9 @@ export default function Home() {
               <h2>Custom <span className="accent">Orthotics</span></h2>
               <p>Custom-made orthotic devices designed for specific patients based on casts, measurements, or digital scans.</p>
             </div>
-            <Link to="/p/custom-orthotics" className="btn btn-outline">View all <ArrowRight size={16} /></Link>
+            <Link to="/shop?category=custom-orthotics" className="btn btn-outline">View all <ArrowRight size={16} /></Link>
           </div>
-          <CardLinks cards={custom} />
+          <ProductSlider query="category=custom-orthotics&exclude=custom-options,shoe-modifications,pre-made-straps-and-pads" />
         </div>
       </section>
 
@@ -68,7 +69,7 @@ export default function Home() {
               <p>Parts used in the fabrication of orthotic devices.</p>
             </div>
           </div>
-          <CardLinks cards={components} />
+          <ProductSlider query="category=baseline-orthotic-components" interval={3800} />
         </div>
       </section>
 
@@ -79,20 +80,24 @@ export default function Home() {
               <h2>Prefabricated <span className="accent">(Pre-Sized) Orthotics</span></h2>
               <p>Ready-made orthotic devices available in standardized sizes.</p>
             </div>
-            <Link to="/p/pre-sized-orthotics" className="btn btn-outline">View all <ArrowRight size={16} /></Link>
+            <Link to="/shop?category=pre-sized-orthotics" className="btn btn-outline">View all <ArrowRight size={16} /></Link>
           </div>
-          <CardLinks cards={presized} />
+          <ProductSlider query="category=pre-sized-orthotics" interval={4100} />
         </div>
       </section>
 
       <section className="section kidfab-band">
-        <div className="container kidfab-in">
-          <img src={media('https://certifiedortho.com/wp-content/uploads/2025/11/kidlogo111.webp')} alt="KidFab" loading="lazy" />
-          <div>
-            <h2>KidFab</h2>
-            <p>KIDFAB – Pediatric Custom Fabrication.</p>
-            <Link to="/p/kidfab" className="btn btn-white">Explore KidFab <ArrowRight size={16} /></Link>
+        <div className="container">
+          <div className="kidfab-head">
+            <div className="kidfab-logo"><img src={media('https://certifiedortho.com/wp-content/uploads/2025/11/kidlogo111.webp')} alt="KidFab" loading="lazy" /></div>
+            <div className="kidfab-copy">
+              <span className="eyebrow">Pediatric line</span>
+              <h2>KidFab</h2>
+              <p>KIDFAB - Pediatric Custom Fabrication: UCBL’s, Low-Tone, Standard and Toe Walking SMO’s, AFO’s &amp; SMO/AFO’s, Skeleton Style AFO’s, GO AFO’s, Dynamic Stretch AFO’s and HI-FIVE SEWHO’s.</p>
+            </div>
+            <Link to="/shop?category=kidfab" className="btn btn-white kidfab-cta">Shop KidFab <ArrowRight size={16} /></Link>
           </div>
+          <ProductSlider query="category=kidfab&exclude=kidfab-additions" interval={4400} />
         </div>
       </section>
 

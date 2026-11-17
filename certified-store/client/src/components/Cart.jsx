@@ -44,7 +44,7 @@ export function CartLines({ editable = true }) {
               <span className="pn">{it.partNumber}</span>
               {editable && <button className="iconbtn danger" aria-label="Remove" onClick={() => remove(idx)}><Trash2 size={16} /></button>}
             </div>
-            {it.page ? <Link to={`/p/${it.page}`} className="cart-line-name">{it.name}</Link> : <div className="cart-line-name">{it.name}</div>}
+            {it.product || it.page ? <Link to={it.product ? `/product/${it.product}` : `/p/${it.page}`} className="cart-line-name">{it.name}</Link> : <div className="cart-line-name">{it.name}</div>}
             <div className="cart-line-meta">
               {editable ? <Qty value={it.qty} onChange={(q) => setQty(idx, q)} small /> : <span>Qty {it.qty}</span>}
               <span className="muted">{it.unit}</span>

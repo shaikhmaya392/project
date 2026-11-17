@@ -3,8 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { ChevronRight, FileText, Phone, ShoppingBag, ArrowDown } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { media, norm, priceText } from '../lib/format.js';
-import Blocks, { SkuCtx, CardLinks } from '../components/Blocks.jsx';
-import ProductOptions from '../components/ProductOptions.jsx';
+import Blocks, { SkuCtx, CardLinks, ContactPage } from '../components/Blocks.jsx';
+import ProductCard from '../components/ProductCard.jsx';
 import NotFound from './NotFound.jsx';
 
 const APP_QR = 'https://certifiedortho.com/wp-content/uploads/2025/04/Code.jpeg';
@@ -58,12 +58,15 @@ export default function ProductPage() {
   const { slug } = useParams();
   const [page, setPage] = useState(null);
   const [err, setErr] = useState(null);
+  const [line, setLine] = useState([]);
 
   useEffect(() => {
     setPage(null);
     setErr(null);
     window.scrollTo(0, 0);
+    setLine([]);
     api.get(`/pages/${slug}`).then(setPage).catch((e) => setErr(e));
+    api.get(`/shop/products?line=${slug}&perPage=96`).then((d) => setLine(d.products)).catch(() => {});
   }, [slug]);
 
   const skus = useMemo(() => new Map((page?.products || []).map((p) => [p.partNumber, { ...p, pageImage: page.image }])), [page]);
@@ -119,10 +122,18 @@ export default function ProductPage() {
 
       <div className={`container product-layout page-${page.slug}`}>
         <article className="product-main">
-          <div className="content">
-            <Blocks blocks={content[0]} />
-          </div>
-          {products.length > 0 && <ProductOptions products={products} notes={page.notes} title={page.title} pageImage={page.image} />}
+          {page.slug === 'contact-us' ? <ContactPage blocks={page.blocks} /> : (
+            <div className="content">
+              <Blocks blocks={content[0]} />
+            </div>
+          )}
+          {line.length > 0 && (
+            <section className="line-products" id="order">
+              <h2>Shop {page.title}</h2>
+              <p className="muted">{line.length} product{line.length === 1 ? '' : 's'} – open a product to choose size, color and quantity.</p>
+              <div className="pgrid">{line.map((x) => <ProductCard key={x.slug} p={x} />)}</div>
+            </section>
+          )}
           {isHub && !content[0].some((b) => b.t === 'grid' || b.t === 'cards') && (
             <CardLinks cards={page.children.map((c) => ({ href: `/p/${c.slug}`, src: c.image, title: c.title }))} />
           )}

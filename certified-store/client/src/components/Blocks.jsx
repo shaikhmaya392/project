@@ -5,11 +5,11 @@
  */
 import { createContext, useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, ChevronDown, Check, ExternalLink } from 'lucide-react';
+import { FileText, ChevronDown, Check, ExternalLink, Mail, Phone, MapPin } from 'lucide-react';
 import { media, mediaHtml, priceText } from '../lib/format.js';
 import { AddToCart } from './Cart.jsx';
 import { api } from '../lib/api.js';
-import { useSite } from '../lib/store.jsx';
+import { useSite, shopHref } from '../lib/store.jsx';
 
 export const SkuCtx = createContext(new Map());
 const InCardCtx = createContext(false);
@@ -18,7 +18,9 @@ const InGridCtx = createContext(false);
 const isPdf = (h) => /\.pdf($|\?)/i.test(h || '');
 const isInternal = (h) => h && h.startsWith('/');
 
-function SmartLink({ href, className, children }) {
+function SmartLink({ href: raw, className, children }) {
+  const site = useSite();
+  const href = shopHref(raw, site);
   if (!href || href === '#') return <span className={className}>{children}</span>;
   if (isInternal(href)) return <Link to={href} className={className}>{children}</Link>;
   return <a href={media(href)} className={className} target="_blank" rel="noopener noreferrer">{children}</a>;
@@ -261,4 +263,39 @@ export default function Blocks({ blocks }) {
   return <>{group(blocks).map((b, i) => <Block key={i} b={b} />)}</>;
 }
 
-export { SmartLink, ExternalLink };
+export { SmartLink, ExternalLink, ContactForm };
+
+/** Contact Us – full building photo next to the contact details, form below (text from the live page) */
+export function ContactPage({ blocks }) {
+  const site = useSite();
+  const img = blocks.find((x) => x.t === 'image');
+  let info = [];
+  const scan = (bs) => bs.forEach((x) => { if (x.t === 'list') info = x.items; (x.cols || []).forEach(scan); });
+  scan(blocks);
+  const icon = (t) => (/@/.test(t) ? Mail : /\d{3}-\d{3}-\d{4}/.test(t) ? Phone : MapPin);
+  return (
+    <div className="contact-page">
+      <div className="contact-top">
+        {img && <figure className="contact-photo"><img src={media(img.src)} alt="Certified Orthopedics building, 2415 East Mulberry Street, Fort Collins" /></figure>}
+        <div className="contact-info card">
+          <h2>Contact info</h2>
+          <ul>
+            {info.map((it) => {
+              const I = icon(it.text);
+              return <li key={it.text}><span className="ci-icon"><I size={17} /></span>{it.href ? <a href={it.href}>{it.text}</a> : <span>{it.text.replace('Mulberry Steet', 'Mulberry Street')}</span>}</li>;
+            })}
+          </ul>
+          <h3>Social Links</h3>
+          <div className="contact-social">
+            {(site?.social || []).map((s2) => <a key={s2.href} href={s2.href} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">{s2.label}</a>)}
+          </div>
+        </div>
+      </div>
+      <div className="contact-form-card card">
+        <h2>Get in touch</h2>
+        <p className="muted">Send us a message and our team will get back to you.</p>
+        <ContactForm />
+      </div>
+    </div>
+  );
+}

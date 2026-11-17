@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright, expect
 
 BASE = "http://localhost:5050"
 MOCK = "http://localhost:5099"
-OUT = Path("/home/claude/certified-store/tools/screens"); OUT.mkdir(exist_ok=True)
+OUT = Path("/home/claude/store4/tools/screens"); OUT.mkdir(exist_ok=True)
 PNG = (b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde"
        b"\x00\x00\x00\x0cIDATx\x9cc\xd8\xdd\xe8\x07\x00\x02\xd6\x01\x6e\xc3\x9e\x0c\x1c\x00\x00\x00\x00IEND\xaeB`\x82")
 
@@ -25,8 +25,8 @@ def stub_media(route):
 
 
 import subprocess
-subprocess.run(["node", "-e", "const m=require('mongoose');m.connect('mongodb://127.0.0.1:27017/certified_store').then(async()=>{for(const c of ['customers','accountrequests','orders','outboxes','counters'])await m.connection.db.collection(c).deleteMany({});process.exit(0)})"], cwd="/home/claude/certified-store/server", check=True)
-subprocess.run("pkill -f '^node tools/mock-crm'; sleep 0.5; (nohup node tools/mock-crm.mjs > /tmp/mock.log 2>&1 &); sleep 1", shell=True, cwd="/home/claude/certified-store")
+subprocess.run(["node", "-e", "const m=require('mongoose');m.connect('mongodb://127.0.0.1:27017/certified_store').then(async()=>{for(const c of ['customers','accountrequests','orders','outboxes','counters'])await m.connection.db.collection(c).deleteMany({});process.exit(0)})"], cwd="/home/claude/store4/server", check=True)
+subprocess.run("pkill -f '^node tools/mock-crm'; sleep 0.5; (nohup node tools/mock-crm.mjs > /tmp/mock.log 2>&1 &); sleep 1", shell=True, cwd="/home/claude/store4")
 
 ok = []
 def check(cond, msg):
@@ -42,9 +42,10 @@ with sync_playwright() as p:
     pg.on("pageerror", lambda e: errors.append(str(e)))
 
     pg.goto(BASE + "/")
-    pg.wait_for_selector(".cat-card")
+    pg.wait_for_selector(".pslider .pcard")
     check(pg.locator("h1").first.inner_text() == "Perfect Fit, Every Step of the Way", "home hero text")
-    check(pg.locator(".cat-card").count() >= 20, f"home category cards ({pg.locator('.cat-card').count()})")
+    check(pg.locator(".cat-tile").count() >= 8, f"home category tiles ({pg.locator('.cat-tile').count()})")
+    check(pg.locator(".pslider").count() == 4, f"home product sliders ({pg.locator('.pslider').count()})")
     pg.screenshot(path=str(OUT / "01-home.png"), full_page=False)
 
     # product page
@@ -52,10 +53,17 @@ with sync_playwright() as p:
     pg.wait_for_selector("#order")
     check(pg.locator(".page-band h1").inner_text() == "Stabilizer Leather AFO’s", "product title")
     check("The Stabilizer Leather AFO System is a comprehensive custom product line" in pg.content(), "product description text")
-    pg.evaluate("document.querySelectorAll('#order button.opt-group-title:not(.on)').forEach(b=>b.click())")
-    pg.wait_for_timeout(300)
-    rows = pg.locator("#order .opt-row:not(.opt-hdr)").count()
-    check(rows == 35, f"order options rows = {rows}")
+    cards = pg.locator("#order .pcard").count()
+    check(cards >= 20, f"product line shows product cards ({cards})")
+    # shop
+    shop = ctx.new_page()
+    shop.goto(BASE + "/shop")
+    shop.wait_for_selector(".pcard")
+    check("701 products" in shop.content(), "shop lists 701 products")
+    shop.goto(BASE + "/shop?q=A-27M-BR")
+    shop.wait_for_selector(".pcard")
+    check(shop.locator(".pcard-name").first.inner_text() == "4 Buckle Knee Pad", "search by part number finds the product")
+    shop.close()
     pg.screenshot(path=str(OUT / "02-product.png"), full_page=False)
     pg.locator("#order").scroll_into_view_if_needed()
     pg.screenshot(path=str(OUT / "03-product-options.png"), full_page=False)
@@ -127,12 +135,13 @@ with sync_playwright() as p:
     check(True, "first login + password change")
 
     # add more items as logged-in customer
-    pg.goto(BASE + "/p/3-buckle-4-buckle-and-5-buckleleather-knee-pads")
-    pg.wait_for_selector("#order button.opt-group-title")
-    pg.locator("#order button.opt-group-title", has_text="4 Buckle Knee Pad").click(force=True)
-    row = pg.locator("#order .opt-row", has_text="A-27M-BR").first
-    row.locator(".qty input").fill("2")
-    row.locator("button.btn-primary").click()
+    pg.goto(BASE + "/product/4-buckle-knee-pad")
+    pg.wait_for_selector(".chip")
+    pg.get_by_role("button", name="Medium", exact=True).click()
+    pg.get_by_role("button", name="Brown", exact=True).click()
+    check("A-27M-BR" in pg.locator(".sp-sku").inner_text(), "variation Medium + Brown = A-27M-BR")
+    pg.locator(".sp-buy .qty input").fill("2")
+    pg.locator(".sp-buy button.btn-primary").click()
     pg.wait_for_selector(".drawer")
     pg.screenshot(path=str(OUT / "08-cart-drawer.png"))
     check(pg.locator(".cart-line").count() == 2, "cart has 2 lines")
@@ -208,8 +217,8 @@ with sync_playwright() as p:
     m = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True)
     m.route(re.compile(r"https://(certifiedortho\.com|fonts\.(googleapis|gstatic)\.com)/.*"), stub_media)
     mp = m.new_page()
-    mp.goto(BASE + "/p/baseline-double-action")
-    mp.wait_for_selector("#order")
+    mp.goto(BASE + "/product/t-strap-padded")
+    mp.wait_for_selector(".chip")
     mp.screenshot(path=str(OUT / "15-mobile-product.png"), full_page=False)
     check(not errors, f"no JS errors {errors[:3]}")
     b.close()

@@ -14,6 +14,7 @@ import orders from './routes/orders.js';
 import admin from './routes/admin.js';
 import { retryPendingOrders } from './services/orders.js';
 import staticCatalog from './routes/staticCatalog.js';
+import shop from './routes/shop.js';
 
 // Without MONGODB_URI the store runs as a read-only catalog (browse, search, product pages)
 const dbConfigured = Boolean(process.env.MONGODB_URI) || !process.env.VERCEL;
@@ -33,6 +34,8 @@ app.get('/api/health', async (_req, res) => {
   res.json({ ok: !error, db: mongoose.connection.readyState === 1, ...(error ? { error } : {}) });
 });
 
+// shop (products, variations, categories) is served from the seed files – no database needed
+app.use('/api', shop);
 if (!dbConfigured) app.use('/api', staticCatalog);
 
 // Make sure MongoDB is connected before any other API route runs (serverless-safe)

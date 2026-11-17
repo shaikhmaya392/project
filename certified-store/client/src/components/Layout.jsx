@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, User, Phone, Mail, ChevronDown, Menu, X, LogOut, Package, MapPin } from 'lucide-react';
-import { useAuth, useCart, useSite } from '../lib/store.jsx';
+import { useAuth, useCart, useSite, shopHref } from '../lib/store.jsx';
 import { media } from '../lib/format.js';
 
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
 
   const submit = (e) => {
     e.preventDefault();
-    if (q.trim()) nav(`/search?q=${encodeURIComponent(q.trim())}`);
+    if (q.trim()) nav(`/shop?q=${encodeURIComponent(q.trim())}`);
   };
 
   return (
@@ -38,6 +38,7 @@ export function Header() {
           </div>
           <div className="topbar-right">
             {!user && <button className="linkbtn" onClick={() => openAuth('request')}>Request an account</button>}
+            <Link to="/shop">Shop</Link>
             <Link to="/catalog">Full price list</Link>
           </div>
         </div>
@@ -92,15 +93,15 @@ export function Header() {
                   <>
                     <span className="navlink" tabIndex={0}>{m.label} <ChevronDown size={14} /></span>
                     <ul className="submenu">
-                      {m.children.map((c) => <li key={c.href}><NavLink to={c.href}>{c.label}</NavLink></li>)}
+                      {m.children.map((c) => <li key={c.href}><Link to={shopHref(c.href, site)}>{c.label}</Link></li>)}
                     </ul>
                   </>
                 ) : (
-                  <NavLink to={m.href} end className="navlink">{m.label}</NavLink>
+                  <Link to={shopHref(m.href, site)} className="navlink">{m.label}</Link>
                 )}
               </li>
             ))}
-            <li className="nav-shop"><NavLink to="/catalog" className="navlink">Shop All Products</NavLink></li>
+            <li className="nav-shop"><NavLink to="/shop" className="navlink">Shop All Products</NavLink></li>
           </ul>
         </div>
       </nav>
@@ -141,12 +142,13 @@ export function Footer() {
         <div>
           <h4>Shop</h4>
           <ul>
-            <li><Link to="/p/custom-orthotics">Custom Orthotics</Link></li>
-            <li><Link to="/p/kidfab">KidFab</Link></li>
-            <li><Link to="/p/baseline-orthotic-components">Baseline Orthotic Components</Link></li>
-            <li><Link to="/p/thermoplastic-ankle-joints">Thermoplastic Components</Link></li>
-            <li><Link to="/p/orthotic-joints-accessories">Orthotic Joints &amp; Accessories</Link></li>
-            <li><Link to="/p/pre-sized-orthotics">Pre-Sized Orthotics</Link></li>
+            <li><Link to="/shop?category=custom-orthotics">Custom Orthotics</Link></li>
+            <li><Link to="/shop?category=kidfab">KidFab</Link></li>
+            <li><Link to="/shop?category=baseline-orthotic-components">Baseline Orthotic Components</Link></li>
+            <li><Link to="/shop?category=thermoplastic-ankle-joints">Thermoplastic Components</Link></li>
+            <li><Link to="/shop?category=orthotic-joints-accessories">Orthotic Joints &amp; Accessories</Link></li>
+            <li><Link to="/shop?category=pre-sized-orthotics">Pre-Sized Orthotics</Link></li>
+            <li><Link to="/shop">Shop all products</Link></li>
             <li><Link to="/catalog">Full price list</Link></li>
           </ul>
         </div>

@@ -6,6 +6,8 @@ import CartDrawer from './components/Cart.jsx';
 import Home from './pages/Home.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import Catalog from './pages/Catalog.jsx';
+import Shop from './pages/Shop.jsx';
+import SingleProduct from './pages/SingleProduct.jsx';
 import SearchPage from './pages/Search.jsx';
 import { CartPage, Checkout, OrderPlaced } from './pages/Checkout.jsx';
 import { AccountLayout, AccountOverview, AccountOrders, OrderDetail, AccountInvoices, AccountProfile } from './pages/Account.jsx';
@@ -40,6 +42,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/p/:slug" element={<ProductPage />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:slug" element={<SingleProduct />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
