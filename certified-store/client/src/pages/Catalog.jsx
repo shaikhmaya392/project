@@ -4,11 +4,13 @@ import { Search, ExternalLink } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { priceText, TYPE_LABEL } from '../lib/format.js';
 import { AddToCart, Thumb } from '../components/Cart.jsx';
+import { useSite, pageHref } from '../lib/store.jsx';
 
 const TABS = [['all', 'All Products'], ['general', 'General Products'], ['custom', 'Custom Products'], ['thirdparty', 'Third Party Products']];
 
 /** The complete Certified Ortho price list (same rows, headings and notes as the CRM) */
 export default function Catalog() {
+  const site = useSite();
   const [rows, setRows] = useState(null);
   const [sp, setSp] = useSearchParams();
   const tab = sp.get('type') || 'all';
@@ -81,7 +83,7 @@ export default function Catalog() {
           if (v.h === 'note') return <div key={v.key} className="pl-note">{v.text}</div>;
           const r = v.row;
           const sp = skus[r.partNumber];
-          const url = sp ? `/product/${sp.slug}` : r.page ? `/p/${r.page}` : null;
+          const url = sp ? `/product/${sp.slug}` : r.page ? pageHref(r.page, site) : null;
           return (
             <div key={v.key} className="pl-row">
               {url ? <Link to={url} className="pl-thumb"><Thumb src={sp?.image || r.image} alt={r.name} size={52} /></Link> : <Thumb src={r.image} alt={r.name} size={52} />}
@@ -93,7 +95,7 @@ export default function Catalog() {
               </span>
               <span className="muted">{r.unit}</span>
               <span className="r price">{priceText(r)}</span>
-              <AddToCart product={r} compact />
+              <AddToCart product={{ ...r, image: sp?.image || r.image, product: sp?.slug }} compact />
             </div>
           );
         })}

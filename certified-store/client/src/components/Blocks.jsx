@@ -28,15 +28,18 @@ function SmartLink({ href: raw, className, children }) {
 
 function Html({ html }) {
   const nav = useNavigate();
+  const site = useSite();
   const onClick = (e) => {
     const a = e.target.closest('a');
     if (a && a.getAttribute('href')?.startsWith('/')) {
       e.preventDefault();
-      nav(a.getAttribute('href'));
+      nav(shopHref(a.getAttribute('href'), site));
     }
   };
   // eslint-disable-next-line react/no-danger
-  return <div className="rich" onClick={onClick} dangerouslySetInnerHTML={{ __html: mediaHtml(html) }} />;
+  // old /p/<slug> links inside the copied text point to the shop now
+  const out = mediaHtml(html || '').replace(/href="(\/p\/[^"]*)"/g, (_m, h) => `href="${shopHref(h, site)}"`);
+  return <div className="rich" onClick={onClick} dangerouslySetInnerHTML={{ __html: out }} />;
 }
 
 function SkuBuy({ code }) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useParams } from 'react-router-dom';
 import { LayoutDashboard, Package, FileText, User, Lock, Download, Check, Circle, Truck } from 'lucide-react';
-import { useAuth, useToast } from '../lib/store.jsx';
+import { useAuth, useToast, useSite, pageHref } from '../lib/store.jsx';
 import { api } from '../lib/api.js';
 import { money, date, priceText } from '../lib/format.js';
 
@@ -108,6 +108,7 @@ function Docs({ params }) {
 }
 
 export function OrderDetail() {
+  const site = useSite();
   const { id } = useParams();
   const [o, setO] = useState(null);
   const [err, setErr] = useState('');
@@ -150,7 +151,7 @@ export function OrderDetail() {
             <tbody>
               {o.items.map((i, k) => (
                 <tr key={k}>
-                  <td className="pn">{i.page ? <Link to={`/p/${i.page}`}>{i.partNumber}</Link> : i.partNumber}</td>
+                  <td className="pn">{i.page ? <Link to={pageHref(i.page, site)}>{i.partNumber}</Link> : i.partNumber}</td>
                   <td>{i.name}{i.comment && <div className="muted small">{i.comment}</div>}</td>
                   <td className="r">{i.qty} {i.unit}</td>
                   <td className="r">{priceText({ price: i.listPrice, priceLabel: i.priceLabel })}</td>

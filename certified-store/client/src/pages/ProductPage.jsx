@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronRight, FileText, Phone, ShoppingBag, ArrowDown } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { media, norm, priceText } from '../lib/format.js';
 import Blocks, { SkuCtx, CardLinks, ContactPage } from '../components/Blocks.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import NotFound from './NotFound.jsx';
+import { useSite, pageHref } from '../lib/store.jsx';
 
 const APP_QR = 'https://certifiedortho.com/wp-content/uploads/2025/04/Code.jpeg';
 
@@ -54,8 +55,9 @@ function splitAtArticle(blocks) {
   return [blocks, []];
 }
 
-export default function ProductPage() {
-  const { slug } = useParams();
+/** About Us / Contact Us (content from certifiedortho.com). Product lines live in the shop. */
+export default function ProductPage({ slug }) {
+  const site = useSite();
   const [page, setPage] = useState(null);
   const [err, setErr] = useState(null);
   const [line, setLine] = useState([]);
@@ -95,7 +97,7 @@ export default function ProductPage() {
         <div className="container">
           <nav className="crumbs" aria-label="Breadcrumb">
             <Link to="/">Home</Link>
-            {page.breadcrumbs.map((c) => <span key={c.slug}><ChevronRight size={14} /><Link to={`/p/${c.slug}`}>{c.title}</Link></span>)}
+            {page.breadcrumbs.map((c) => <span key={c.slug}><ChevronRight size={14} /><Link to={pageHref(c.slug, site)}>{c.title}</Link></span>)}
             <span><ChevronRight size={14} />{page.title}</span>
           </nav>
           <h1>{page.title}</h1>
@@ -135,7 +137,7 @@ export default function ProductPage() {
             </section>
           )}
           {isHub && !content[0].some((b) => b.t === 'grid' || b.t === 'cards') && (
-            <CardLinks cards={page.children.map((c) => ({ href: `/p/${c.slug}`, src: c.image, title: c.title }))} />
+            <CardLinks cards={page.children.map((c) => ({ href: pageHref(c.slug, site), src: c.image, title: c.title }))} />
           )}
           {content[1].length > 0 && <div className="content content-article"><Blocks blocks={content[1]} /></div>}
         </article>

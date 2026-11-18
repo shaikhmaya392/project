@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { X, Trash2, Minus, Plus, ShoppingCart, Lock, ImageOff } from 'lucide-react';
-import { useAuth, useCart } from '../lib/store.jsx';
+import { X, Trash2, Minus, Plus, ShoppingCart, Lock } from 'lucide-react';
+import { useAuth, useCart, useSite, pageHref } from '../lib/store.jsx';
 import { media, money, priceText } from '../lib/format.js';
 
 export function Qty({ value, onChange, small }) {
@@ -28,12 +28,13 @@ export function AddToCart({ product, compact }) {
 }
 
 export function Thumb({ src, alt, size = 48 }) {
-  if (!src) return <div className="thumb thumb-empty" style={{ width: size, height: size }}><ImageOff size={16} /></div>;
+  if (!src) return <div className="thumb thumb-empty" style={{ width: size, height: size }}><img src="/media/uploads/2024/12/logo-4.png.webp" alt="" /></div>;
   return <img className="thumb" src={media(src)} alt={alt || ''} style={{ width: size, height: size }} loading="lazy" />;
 }
 
 export function CartLines({ editable = true }) {
   const { items, setQty, remove, setComment } = useCart();
+  const site = useSite();
   return (
     <ul className="cart-lines">
       {items.map((it, idx) => (
@@ -44,7 +45,7 @@ export function CartLines({ editable = true }) {
               <span className="pn">{it.partNumber}</span>
               {editable && <button className="iconbtn danger" aria-label="Remove" onClick={() => remove(idx)}><Trash2 size={16} /></button>}
             </div>
-            {it.product || it.page ? <Link to={it.product ? `/product/${it.product}` : `/p/${it.page}`} className="cart-line-name">{it.name}</Link> : <div className="cart-line-name">{it.name}</div>}
+            {it.product || it.page ? <Link to={it.product ? `/product/${it.product}` : pageHref(it.page, site)} className="cart-line-name">{it.name}</Link> : <div className="cart-line-name">{it.name}</div>}
             <div className="cart-line-meta">
               {editable ? <Qty value={it.qty} onChange={(q) => setQty(idx, q)} small /> : <span>Qty {it.qty}</span>}
               <span className="muted">{it.unit}</span>

@@ -47,12 +47,61 @@ const r = Router();
 
 r.get('/shop/categories', (_req, res) => res.json(load().categories));
 
-/** Product ID → product page + picture (used by the full price list) */
+/** first picture up the category tree (used when a product has no own picture) */
+function categoryImage(slugs) {
+  const { catBySlug } = load();
+  for (const start of [...slugs].reverse()) {
+    let c = catBySlug.get(start);
+    const guard = new Set();
+    while (c && !guard.has(c.slug)) {
+      if (c.image) return c.image;
+      guard.add(c.slug);
+      c = catBySlug.get(c.parent);
+    }
+  }
+  return null;
+}
+
+/** Product ID → product page + picture (full price list, cart thumbnails) */
 r.get('/shop/skus', (_req, res) => {
   const out = {};
-  for (const p of load().products) for (const v of p.variations) out[v.sku] = { slug: p.slug, image: v.image || p.images[0] || null };
+  for (const p of load().products) {
+    const fallback = p.images[0] || categoryImage(p.categories);
+    for (const v of p.variations) out[v.sku] = { slug: p.slug, image: v.image || fallback || null };
+  }
   res.set('Cache-Control', 'public, max-age=3600');
   res.json(out);
+});
+
+/* Old certifiedortho.com page slugs → where they live in the store now.
+   The copied website pages (/p/<slug>) are not shown any more: a product line opens its
+   shop category / product, About Us and Contact Us have their own address. */
+export const INFO_PAGES = { 'about-us': '/about-us', 'contact-us': '/contact-us', home: '/' };
+let LINKS = null;
+function pageLinks() {
+  if (LINKS) return LINKS;
+  const { products, pageBySlug, catBySlug } = load();
+  const bySku = new Map();
+  for (const p of products) for (const v of p.variations) bySku.set(v.sku, p);
+  const target = (slug, guard = new Set()) => {
+    if (INFO_PAGES[slug]) return INFO_PAGES[slug];
+    if (catBySlug.has(slug)) return `/shop?category=${slug}`;
+    const line = products.filter((p) => p.page === slug);
+    if (line.length === 1) return `/product/${line[0].slug}`;
+    if (line.length > 1) return `/shop?line=${slug}`;
+    const page = pageBySlug.get(slug);
+    const fromSkus = [...new Set((page?.skus || []).map((k) => bySku.get(k)).filter(Boolean))];
+    if (fromSkus.length === 1) return `/product/${fromSkus[0].slug}`;
+    if (page?.parent && !guard.has(page.parent)) return target(page.parent, guard.add(slug));
+    return '/shop';
+  };
+  LINKS = Object.fromEntries([...pageBySlug.keys()].map((slug) => [slug, target(slug)]));
+  return LINKS;
+}
+
+r.get('/shop/links', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.json(pageLinks());
 });
 
 r.get('/shop/products', (req, res) => {
@@ -99,6 +148,7 @@ r.get('/shop/products', (req, res) => {
     perPage,
     priceRange: priceRange.min === Infinity ? null : { min: Math.floor(priceRange.min), max: Math.ceil(priceRange.max) },
     category: cat ? catBySlug.get(cat) || null : null,
+    line: line ? { slug: line, title: load().pageBySlug.get(line)?.title || line } : null,
     products: list.slice((page - 1) * perPage, page * perPage).map(card),
   });
 });

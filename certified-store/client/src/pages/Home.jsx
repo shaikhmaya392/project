@@ -25,7 +25,7 @@ export default function Home() {
           <p>Explore custom orthotics, prefabricated options, and premium components for unmatched support and comfort.</p>
           <div className="hero-cta">
             <Link to="/shop" className="btn btn-primary btn-lg">Shop all products <ArrowRight size={18} /></Link>
-            <Link to="/p/about-us" className="btn btn-white btn-lg">About Us</Link>
+            <Link to="/about-us" className="btn btn-white btn-lg">About Us</Link>
           </div>
           <div className="hero-points">
             <span><ShieldCheck size={16} /> Accounts for practices &amp; clinicians</span>

@@ -7,22 +7,25 @@ const SiteCtx = createContext(null);
 export function SiteProvider({ children }) {
   const [site, setSite] = useState(null);
   useEffect(() => {
-    Promise.all([api.get('/site'), api.get('/shop/categories').catch(() => [])])
-      .then(([s, cats]) => {
+    Promise.all([api.get('/site'), api.get('/shop/categories').catch(() => []), api.get('/shop/links').catch(() => ({}))])
+      .then(([s, cats, links]) => {
         setMediaMode(s.mediaMode);
-        setSite({ ...s, categories: cats, catSlugs: new Set(cats.map((c) => c.slug)) });
+        setSite({ ...s, categories: cats, catSlugs: new Set(cats.map((c) => c.slug)), links });
       })
-      .catch(() => setSite({ menu: [], categories: [], catSlugs: new Set() }));
+      .catch(() => setSite({ menu: [], categories: [], catSlugs: new Set(), links: {} }));
   }, []);
   return <SiteCtx.Provider value={site}>{children}</SiteCtx.Provider>;
 }
 export const useSite = () => useContext(SiteCtx);
 
-/** a website product-line link (/p/slug) opens the matching shop category when there is one */
+/** Pages copied from certifiedortho.com are not shown any more: an old /p/<slug> link opens
+ *  the matching shop category / product line / product (server: /api/shop/links). */
+const INFO = { 'about-us': '/about-us', 'contact-us': '/contact-us', home: '/' };
+export const pageHref = (slug, site) => INFO[slug] || site?.links?.[slug]
+  || (site?.catSlugs?.has(slug) ? `/shop?category=${slug}` : '/shop');
 export const shopHref = (href, site) => {
-  const m = /^\/p\/([^/?#]+)$/.exec(href || '');
-  if (m && site?.catSlugs?.has(m[1]) && m[1] !== 'certified-app') return `/shop?category=${m[1]}`;
-  return href;
+  const m = /^\/p\/([^/?#]+)\/?([?#].*)?$/.exec(href || '');
+  return m ? pageHref(m[1], site) : href;
 };
 
 /* ------------------------------------------------------------------ toasts */
@@ -85,6 +88,22 @@ export function CartProvider({ children }) {
   const toast = useToast();
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch { /* ignore */ } }, [items]);
+
+  // Items added from the full price list / older carts may have no picture or product link:
+  // complete them from the shop (Product ID → product page + picture).
+  const [skuInfo, setSkuInfo] = useState(null);
+  const needsInfo = items.some((x) => !x.image || !x.product);
+  useEffect(() => {
+    if (needsInfo && !skuInfo) api.get('/shop/skus').then(setSkuInfo).catch(() => {});
+  }, [needsInfo, skuInfo]);
+  useEffect(() => {
+    if (!skuInfo || !needsInfo) return;
+    setItems((list) => list.map((x) => {
+      const info = skuInfo[x.partNumber];
+      if (!info || (x.image && x.product)) return x;
+      return { ...x, image: x.image || info.image || null, product: x.product || info.slug };
+    }));
+  }, [skuInfo, needsInfo]);
 
   /** p = catalog row {partNumber, name, price, priceLabel, unit, type, image, page} */
   const add = useCallback((p, qty = 1, comment = '') => {

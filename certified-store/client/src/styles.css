@@ -257,6 +257,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .price { font-weight: 700; color: var(--text); white-space: nowrap; }
 .thumb { border-radius: 6px; object-fit: cover; background: var(--bg); border: 1px solid var(--border); flex: none; }
 .thumb-empty { display: grid; place-items: center; color: var(--faint); }
+.thumb-empty img { width: 72%; height: auto; opacity: .35; }
 
 .qty { display: inline-flex; align-items: center; border: 1px solid var(--border-strong); border-radius: 8px; overflow: hidden; background: #fff; }
 .qty button { border: 0; background: none; width: 30px; height: 34px; cursor: pointer; display: grid; place-items: center; color: var(--muted); }

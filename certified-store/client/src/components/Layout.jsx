@@ -117,7 +117,7 @@ export function AppPromo() {
         <div>
           <h2>Download Our App</h2>
           <p>The Certified Ortho App allows for a Turn Key Ordering Process. With access to 3D Scanning, Fillable Order Forms, and our Camera Feature, you can now upload and send all ordering information simultaneously through the app. The Certified Ortho App can be found in the App store and downloaded free of charge.</p>
-          <Link className="btn btn-white" to="/p/certified-app">Download Now</Link>
+          <Link className="btn btn-white" to="/shop?category=certified-app">Download Now</Link>
         </div>
         <img src={media('https://certifiedortho.com/wp-content/uploads/2025/04/Code.jpeg')} alt="Certified Ortho App QR code" loading="lazy" />
       </div>
@@ -155,9 +155,9 @@ export function Footer() {
         <div>
           <h4>Company</h4>
           <ul>
-            <li><Link to="/p/about-us">About Us</Link></li>
-            <li><Link to="/p/certified-app">Scan App &amp; CAD</Link></li>
-            <li><Link to="/p/contact-us">Contact Us</Link></li>
+            <li><Link to="/about-us">About Us</Link></li>
+            <li><Link to="/shop?category=certified-app">Scan App &amp; CAD</Link></li>
+            <li><Link to="/contact-us">Contact Us</Link></li>
             <li><Link to="/account">My account</Link></li>
           </ul>
         </div>

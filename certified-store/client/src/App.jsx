@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { Header, Footer, AppPromo } from './components/Layout.jsx';
 import AuthModal, { ChangePasswordGate } from './components/AuthModal.jsx';
 import CartDrawer from './components/Cart.jsx';
@@ -14,7 +14,7 @@ import { AccountLayout, AccountOverview, AccountOrders, OrderDetail, AccountInvo
 import Admin from './pages/Admin.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import NotFound from './pages/NotFound.jsx';
-import { useAuth } from './lib/store.jsx';
+import { useAuth, useSite, pageHref } from './lib/store.jsx';
 
 function ScrollTop() {
   const { pathname } = useLocation();
@@ -30,6 +30,14 @@ function LoginFromLink() {
   return null;
 }
 
+/** old copied-website address /p/<slug> → its shop category / product line / product */
+function OldPage() {
+  const { slug } = useParams();
+  const site = useSite();
+  if (!site) return <div className="container pad-y"><div className="skeleton tall" /></div>;
+  return <Navigate to={pageHref(slug, site)} replace />;
+}
+
 export default function App() {
   const { pathname } = useLocation();
   const admin = pathname.startsWith('/admin');
@@ -41,7 +49,9 @@ export default function App() {
       <main id="content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/p/:slug" element={<ProductPage />} />
+          <Route path="/about-us" element={<ProductPage slug="about-us" />} />
+          <Route path="/contact-us" element={<ProductPage slug="contact-us" />} />
+          <Route path="/p/:slug" element={<OldPage />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:slug" element={<SingleProduct />} />
           <Route path="/catalog" element={<Catalog />} />

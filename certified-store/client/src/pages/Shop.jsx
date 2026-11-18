@@ -59,6 +59,7 @@ export default function Shop() {
   const categories = site?.categories || [];
   const [sp, setSp] = useSearchParams();
   const category = sp.get('category') || '';
+  const line = sp.get('line') || ''; // one product line from certifiedortho.com (old /p/<slug> link)
   const q = sp.get('q') || '';
   const sort = sp.get('sort') || 'default';
   const page = Number(sp.get('page') || 1);
@@ -81,10 +82,10 @@ export default function Shop() {
   useEffect(() => { setPmin(min); setPmax(max); }, [min, max]);
   useEffect(() => {
     setData(null);
-    const qs = new URLSearchParams({ category, q, sort, page, min, max, perPage: 24 });
+    const qs = new URLSearchParams({ category, line, q, sort, page, min, max, perPage: 24 });
     api.get(`/shop/products?${qs}`).then(setData).catch(() => setData({ total: 0, products: [], pages: 1 }));
     window.scrollTo({ top: 0 });
-  }, [category, q, sort, page, min, max]);
+  }, [category, line, q, sort, page, min, max]);
 
   const cat = categories.find((c) => c.slug === category);
   const parent = cat?.parent ? categories.find((c) => c.slug === cat.parent) : null;
@@ -98,15 +99,14 @@ export default function Shop() {
             <Link to="/">Home</Link><span><ChevronRight size={14} /><Link to="/shop">Shop</Link></span>
             {parent && <span><ChevronRight size={14} /><Link to={`/shop?category=${parent.slug}`}>{parent.name}</Link></span>}
             {cat && <span><ChevronRight size={14} />{cat.name}</span>}
+            {data?.line && <span><ChevronRight size={14} />{data.line.title}</span>}
           </nav>
-          <h1>{q ? `Search: “${q}”` : cat ? cat.name : 'Shop All Products'}</h1>
+          <h1>{q ? `Search: “${q}”` : line && data?.line ? data.line.title : cat ? cat.name : 'Shop All Products'}</h1>
+          {line && <button className="btn btn-outline btn-sm" onClick={() => set({ line: '' })}>Show all products</button>}
           {subs.length > 0 && (
             <div className="subcat-chips">
               {subs.map((s) => <button key={s.slug} className={s.slug === category ? 'on' : ''} onClick={() => set({ category: s.slug })}>{s.name} <em>{s.count}</em></button>)}
             </div>
-          )}
-          {cat && !cat.parent && site?.catSlugs?.has(cat.slug) && (
-            <Link className="small" to={`/p/${cat.slug}`}>About this product line →</Link>
           )}
         </div>
       </div>
