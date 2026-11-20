@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Orders Dashboard</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f5f7; color: #222; font-size: 14px; }
+  .wrap { max-width: 1250px; margin: 0 auto; padding: 24px 16px; }
+  .card { background: #fff; border: 1px solid #e3e5e8; border-radius: 8px; }
+  h1 { font-size: 20px; margin: 0; }
+  .btn { display: inline-block; padding: 9px 16px; border-radius: 6px; border: 1px solid #1f6feb; background: #1f6feb; color: #fff; text-decoration: none; font-size: 14px; cursor: pointer; }
+  .btn.light { background: #fff; color: #1f6feb; }
+  .btn.green { background: #1a7f37; border-color: #1a7f37; }
+  .btn:disabled { opacity: .6; cursor: wait; }
+  input { padding: 8px 10px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 14px; font-family: inherit; }
+  .hidden { display: none !important; }
+  .err { background: #ffebe9; color: #a40e26; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
+  /* dashboard */
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap; }
+  .top .right { display: flex; align-items: center; gap: 12px; }
+  .live { font-size: 12px; color: #1a7f37; }
+  .live::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #1a7f37; margin-right: 6px; animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .bar { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; padding: 14px; margin-bottom: 16px; }
+  .bar label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
+  .bar .sp { flex: 1; }
+  .stats { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stat { padding: 14px 18px; flex: 1; min-width: 160px; }
+  .stat b { display: block; font-size: 22px; margin-top: 4px; }
+  .stat span { color: #666; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eef0f2; vertical-align: middle; }
+  th { background: #fafbfc; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: 0; }
+  tr.new { animation: flash 3s; }
+  @keyframes flash { from { background: #fff8c5; } to { background: transparent; } }
+  td img, .noimg { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; display: block; background: #f0f1f3; }
+  .muted { color: #777; font-size: 12px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #eef2ff; color: #3730a3; font-size: 12px; text-transform: capitalize; }
+  .pill.completed { background: #dafbe1; color: #116329; }
+  .pill.processing { background: #ddf4ff; color: #0550ae; }
+  .pill.cancelled, .pill.failed, .pill.refunded { background: #ffebe9; color: #a40e26; }
+  .pill.on-hold, .pill.pending { background: #fff8c5; color: #7d4e00; }
+  .tbl { overflow-x: auto; }
+  .empty { padding: 40px; text-align: center; color: #777; }
+</style>
+</head>
+<body>
+
+<!-- DASHBOARD -->
+<div id="dashView" class="wrap hidden">
+  <div class="top">
+    <h1>Orders Dashboard</h1>
+    <div class="right">
+      <span class="live" id="updated">Live</span>
+      <button class="btn light" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <form class="card bar" id="filterForm">
+    <div><label>From date</label><input type="date" id="from"></div>
+    <div><label>To date</label><input type="date" id="to"></div>
+    <button class="btn" type="submit" id="filterBtn">Filter</button>
+    <button class="btn light" type="button" id="resetBtn">Reset</button>
+    <div class="sp"></div>
+    <button class="btn green" type="button" id="downloadBtn">Download (Excel / CSV)</button>
+  </form>
+
+  <div id="dashErr" class="err hidden"></div>
+
+  <div class="stats">
+    <div class="card stat"><span>Total Orders</span><b id="sOrders">–</b></div>
+    <div class="card stat"><span>Products Sold</span><b id="sQty">–</b></div>
+    <div class="card stat"><span>Total Sales</span><b id="sTotal">–</b></div>
+  </div>
+
+  <div class="card tbl">
+    <table>
+      <thead><tr id="headRow"></tr></thead>
+      <tbody id="rows"><tr><td class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const REFRESH_SECONDS = 60; // har 60 second baad naye orders check honge
+let data = { rows: [], stores: [] };
+let seen = new Set();
+let timer;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = (n, cur) => {
+  try { return new Intl.NumberFormat('en-US', { style: 'currency', currency: cur || 'USD' }).format(n); }
+  catch { return (cur || '') + ' ' + n.toFixed(2); }
+};
+const fmtDate = d => {
+  if (!d) return '';
+  const x = new Date(d);
+  return x.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
+         x.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+};
+
+function goLogin() { clearInterval(timer); location.replace('/login'); }
+
+async function load(silent) {
+  if (!silent) $('filterBtn').disabled = true;
+  const q = new URLSearchParams();
+  if ($('from').value) q.set('from', $('from').value);
+  if ($('to').value) q.set('to', $('to').value);
+  try {
+    const r = await fetch('/api/orders?' + q, { credentials: 'same-origin' });
+    if (r.status === 401) return goLogin();
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Error');
+    data = j;
+    render();
+    $('dashErr').classList.toggle('hidden', !j.errors?.length);
+    $('dashErr').textContent = j.errors?.length ? 'Kuch store se data nahi aaya: ' + j.errors.join(' | ') : '';
+    $('updated').textContent = 'Live · updated ' + new Date(j.updated).toLocaleTimeString();
+  } catch (e) {
+    $('dashErr').classList.remove('hidden');
+    $('dashErr').textContent = e.message;
+  } finally {
+    $('filterBtn').disabled = false;
+  }
+}
+
+function render() {
+  const multi = data.stores.length > 1;
+  $('headRow').innerHTML = ['Image', 'Order #', ...(multi ? ['Store'] : []), 'Customer', 'Product', 'Qty', 'Price', 'Status', 'Order Date']
+    .map(h => `<th>${h}</th>`).join('');
+
+  const rows = data.rows;
+  const orderKeys = new Set(rows.map(r => r.store + r.order_id));
+  const cur = rows[0]?.currency || 'USD';
+  $('sOrders').textContent = orderKeys.size;
+  $('sQty').textContent = rows.reduce((a, r) => a + r.qty, 0);
+  $('sTotal').textContent = money(rows.reduce((a, r) => a + r.price, 0), cur);
+
+  if (!rows.length) {
+    $('rows').innerHTML = `<tr><td colspan="9" class="empty">Koi order nahi mila.</td></tr>`;
+    return;
+  }
+  const firstLoad = seen.size === 0;
+  $('rows').innerHTML = rows.map(r => {
+    const key = r.store + r.order_id;
+    const isNew = !firstLoad && !seen.has(key);
+    return `<tr class="${isNew ? 'new' : ''}">
+      <td>${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy">` : '<div class="noimg"></div>'}</td>
+      <td><a href="${esc(r.edit_url)}" target="_blank" rel="noopener">#${esc(r.order_id)}</a></td>
+      ${multi ? `<td>${esc(r.store)}</td>` : ''}
+      <td>${esc(r.customer)}<div class="muted">${esc(r.email)}</div></td>
+      <td>${esc(r.product)}</td>
+      <td>${r.qty}</td>
+      <td>${money(r.price, r.currency)}</td>
+      <td><span class="pill ${esc(r.status)}">${esc(r.status.replace('-', ' '))}</span></td>
+      <td>${fmtDate(r.date)}</td>
+    </tr>`;
+  }).join('');
+  orderKeys.forEach(k => seen.add(k));
+}
+
+function downloadCsv() {
+  const head = ['Order #', 'Store', 'Date', 'Customer', 'Email', 'Phone', 'Product', 'Qty', 'Price', 'Currency', 'Status', 'Image URL'];
+  const cell = v => {
+    let s = String(v ?? '');
+    if (/^[=+\-@]/.test(s)) s = "'" + s; // Excel formula se bachao
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+  const lines = [head, ...data.rows.map(r => [r.order_id, r.store, r.date.replace('T', ' '), r.customer, r.email, r.phone, r.product, r.qty, r.price.toFixed(2), r.currency, r.status, r.image])]
+    .map(row => row.map(cell).join(','));
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `orders-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function startDash() {
+  $('dashView').classList.remove('hidden');
+  load();
+  clearInterval(timer);
+  timer = setInterval(() => load(true), REFRESH_SECONDS * 1000);
+}
+
+$('logoutBtn').onclick = async () => { await fetch('/api/logout', { method: 'POST' }); goLogin(); };
+$('filterForm').addEventListener('submit', e => { e.preventDefault(); load(); });
+$('resetBtn').onclick = () => { $('from').value = ''; $('to').value = ''; load(); };
+$('downloadBtn').onclick = downloadCsv;
+
+// Page khulte hi check karo ke login hai ya nahi
+fetch('/api/orders?check=1').then(r => (r.ok ? startDash() : goLogin())).catch(goLogin);
+</script>
+</body>
+</html>
