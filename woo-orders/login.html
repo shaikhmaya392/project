@@ -4,34 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Orders Login</title>
+<meta name="theme-color" content="#C64948">
+<title>Login · Poeller Technologies Orders</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Poeller Technologies branding (poellertechnologies.com) */
+  :root { --red: #C64948; --red-dark: #A93B3A; --gray: #9F9B9B; --gray-dark: #54595F; }
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
-         font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f5f7; color: #222; font-size: 14px; }
-  .login { width: 100%; max-width: 380px; background: #fff; border: 1px solid #e3e5e8; border-radius: 10px; padding: 32px 28px; box-shadow: 0 4px 20px rgba(0,0,0,.05); }
-  .logo { width: 48px; height: 48px; border-radius: 12px; background: #1f6feb; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-  h1 { font-size: 20px; margin: 0 0 4px; text-align: center; }
-  .sub { text-align: center; color: #777; margin: 0 0 20px; }
-  label { display: block; margin: 14px 0 5px; font-weight: 600; }
-  input { width: 100%; padding: 10px 12px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 14px; font-family: inherit; }
-  input:focus { outline: 2px solid #1f6feb33; border-color: #1f6feb; }
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px;
+         font-family: "Roboto", -apple-system, "Segoe UI", Arial, sans-serif; color: #1E1E1E; font-size: 14px;
+         background: linear-gradient(180deg, var(--red) 0, var(--red) 300px, #F4F3F3 300px); }
+  .login { width: 100%; max-width: 400px; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.15); }
+  .head { background: #fff; padding: 28px 28px 8px; text-align: center; border-bottom: 1px solid #eee; }
+  .head img { width: 230px; max-width: 80%; height: auto; display: block; margin: 0 auto 14px; }
+  .body { padding: 22px 28px 28px; }
+  h1 { font-size: 20px; margin: 0 0 4px; font-weight: 700; }
+  .sub { color: #777; margin: 0 0 14px; }
+  label { display: block; margin: 14px 0 5px; font-weight: 500; }
+  input { width: 100%; padding: 11px 12px; border: 1px solid #cfcaca; border-radius: 8px; font-size: 14px; font-family: inherit; }
+  input:focus { outline: 2px solid #c6494833; border-color: var(--red); }
   .pw { position: relative; }
   .pw input { padding-right: 60px; }
-  .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: #1f6feb; cursor: pointer; font-size: 12px; padding: 6px; }
-  .btn { width: 100%; margin-top: 20px; padding: 11px; border-radius: 6px; border: 0; background: #1f6feb; color: #fff; font-size: 15px; cursor: pointer; }
+  .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--red); font-weight: 500; cursor: pointer; font-size: 12px; padding: 6px; font-family: inherit; }
+  .btn { width: 100%; margin-top: 22px; padding: 12px; border-radius: 8px; border: 0; background: var(--red); color: #fff; font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background .15s; }
+  .btn:hover { background: var(--red-dark); }
   .btn:disabled { opacity: .6; cursor: wait; }
-  .err { background: #ffebe9; color: #a40e26; padding: 10px; border-radius: 6px; margin-bottom: 4px; }
+  .err { background: #fdecec; color: #9b2c2b; border: 1px solid #f3c9c9; padding: 10px 12px; border-radius: 8px; margin-bottom: 4px; }
   .hidden { display: none; }
+  footer { margin-top: 20px; color: #888; font-size: 12px; text-align: center; }
+  footer a { color: var(--red); text-decoration: none; }
 </style>
 </head>
 <body>
 <form id="loginForm" class="login">
-  <div class="logo">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+  <div class="head">
+    <img src="/logo.png" alt="Poeller Technologies Inc">
   </div>
+  <div class="body">
   <h1>Orders Dashboard</h1>
-  <p class="sub">Login karein</p>
+  <p class="sub">Apna username aur password daal kar login karein</p>
   <div id="err" class="err hidden"></div>
   <label for="user">Username</label>
   <input id="user" type="text" required autofocus autocomplete="username">
@@ -41,7 +55,9 @@
     <button type="button" id="toggle">Show</button>
   </div>
   <button class="btn" type="submit" id="btn">Login</button>
+  </div>
 </form>
+<footer>© Poeller Technologies Inc · <a href="https://poellertechnologies.com/" target="_blank" rel="noopener">poellertechnologies.com</a></footer>
 <script>
 const $ = id => document.getElementById(id);
 // Pehle se login hai to seedha dashboard

@@ -4,69 +4,97 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Orders Dashboard</title>
+<meta name="theme-color" content="#C64948">
+<title>Orders Dashboard · Poeller Technologies</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Poeller Technologies branding (poellertechnologies.com) */
+  :root { --red: #C64948; --red-dark: #A93B3A; --gray: #9F9B9B; --gray-dark: #54595F; --blue: #34AFDC; --bg: #F4F3F3; --line: #E4E1E1; --text: #1E1E1E; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f5f7; color: #222; font-size: 14px; }
+  body { margin: 0; font-family: "Roboto", -apple-system, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
   .wrap { max-width: 1250px; margin: 0 auto; padding: 24px 16px; }
-  .card { background: #fff; border: 1px solid #e3e5e8; border-radius: 8px; }
-  h1 { font-size: 20px; margin: 0; }
-  .btn { display: inline-block; padding: 9px 16px; border-radius: 6px; border: 1px solid #1f6feb; background: #1f6feb; color: #fff; text-decoration: none; font-size: 14px; cursor: pointer; }
-  .btn.light { background: #fff; color: #1f6feb; }
-  .btn.green { background: #1a7f37; border-color: #1a7f37; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+  h1 { font-size: 22px; margin: 0; font-weight: 700; }
+  .btn { display: inline-block; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--red); background: var(--red); color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background .15s; }
+  .btn:hover { background: var(--red-dark); border-color: var(--red-dark); }
+  .btn.light { background: #fff; color: var(--red); }
+  .btn.light:hover { background: #fbeeee; }
+  .btn.gray { background: var(--gray-dark); border-color: var(--gray-dark); }
+  .btn.gray:hover { background: #3f4347; }
   .btn:disabled { opacity: .6; cursor: wait; }
-  input { padding: 8px 10px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 14px; font-family: inherit; }
+  input { padding: 9px 10px; border: 1px solid #cfcaca; border-radius: 8px; font-size: 14px; font-family: inherit; }
+  input:focus { outline: 2px solid #c6494833; border-color: var(--red); }
   .hidden { display: none !important; }
-  .err { background: #ffebe9; color: #a40e26; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
-  /* dashboard */
-  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap; }
-  .top .right { display: flex; align-items: center; gap: 12px; }
-  .live { font-size: 12px; color: #1a7f37; }
-  .live::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #1a7f37; margin-right: 6px; animation: blink 2s infinite; }
+  .err { background: #fdecec; color: #9b2c2b; border: 1px solid #f3c9c9; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; }
+  a { color: var(--red); font-weight: 500; }
+  /* header - site jaisa laal header aur logo */
+  .brand { background: var(--red); color: #fff; border-bottom: 4px solid var(--gray); }
+  .brand .in { max-width: 1250px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .brand img { height: 64px; width: auto; display: block; }
+  .brand .title { flex: 1; min-width: 180px; }
+  .brand .title small { display: block; opacity: .85; font-size: 13px; margin-top: 2px; }
+  .brand .right { display: flex; align-items: center; gap: 14px; }
+  .brand .btn.light { border-color: #fff; }
+  .live { font-size: 12px; color: #fff; background: rgba(0,0,0,.15); padding: 5px 10px; border-radius: 20px; white-space: nowrap; }
+  .live::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #7CF29A; margin-right: 6px; animation: blink 2s infinite; }
   @keyframes blink { 50% { opacity: .3; } }
-  .bar { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; padding: 14px; margin-bottom: 16px; }
-  .bar label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
+  .bar { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; padding: 16px; margin-bottom: 16px; }
+  .bar label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; font-weight: 500; }
   .bar .sp { flex: 1; }
   .stats { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-  .stat { padding: 14px 18px; flex: 1; min-width: 160px; }
-  .stat b { display: block; font-size: 22px; margin-top: 4px; }
-  .stat span { color: #666; font-size: 12px; }
+  .stat { padding: 16px 20px; flex: 1; min-width: 160px; border-top: 4px solid var(--red); }
+  .stat:nth-child(2) { border-top-color: var(--blue); }
+  .stat:nth-child(3) { border-top-color: var(--gray); }
+  .stat b { display: block; font-size: 26px; margin-top: 4px; font-weight: 700; }
+  .stat span { color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; font-weight: 500; }
   table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eef0f2; vertical-align: middle; }
-  th { background: #fafbfc; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: .03em; }
+  th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid #efeded; vertical-align: middle; }
+  th { background: var(--gray-dark); color: #fff; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+  tbody tr:hover td { background: #fbf7f7; }
   tr:last-child td { border-bottom: 0; }
   tr.new { animation: flash 3s; }
-  @keyframes flash { from { background: #fff8c5; } to { background: transparent; } }
-  td img, .noimg { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; display: block; background: #f0f1f3; }
+  @keyframes flash { from { background: #fff3c4; } to { background: transparent; } }
+  td img, .noimg { width: 52px; height: 52px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; display: block; background: #f0eeee; }
   .muted { color: #777; font-size: 12px; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #eef2ff; color: #3730a3; font-size: 12px; text-transform: capitalize; }
-  .pill.completed { background: #dafbe1; color: #116329; }
-  .pill.processing { background: #ddf4ff; color: #0550ae; }
-  .pill.cancelled, .pill.failed, .pill.refunded { background: #ffebe9; color: #a40e26; }
-  .pill.on-hold, .pill.pending { background: #fff8c5; color: #7d4e00; }
-  .tbl { overflow-x: auto; }
-  .empty { padding: 40px; text-align: center; color: #777; }
+  .pill { display: inline-block; padding: 3px 9px; border-radius: 10px; background: #eceaea; color: #444; font-size: 12px; font-weight: 500; text-transform: capitalize; }
+  .pill.completed { background: #dff5e4; color: #1d6b32; }
+  .pill.processing { background: #ddf2fa; color: #0f6a8c; }
+  .pill.cancelled, .pill.failed, .pill.refunded { background: #fdecec; color: #9b2c2b; }
+  .pill.on-hold, .pill.pending { background: #fff3c4; color: #7d5a00; }
+  .tbl { overflow: hidden; overflow-x: auto; }
+  .empty { padding: 48px; text-align: center; color: #777; }
+  footer { text-align: center; color: #888; font-size: 12px; padding: 8px 16px 28px; }
+  @media (max-width: 640px) { .brand img { height: 48px; } h1 { font-size: 18px; } }
 </style>
 </head>
 <body>
 
-<!-- DASHBOARD -->
-<div id="dashView" class="wrap hidden">
-  <div class="top">
-    <h1>Orders Dashboard</h1>
+<div id="dashView" class="hidden">
+<header class="brand">
+  <div class="in">
+    <a href="https://poellertechnologies.com/" target="_blank" rel="noopener"><img src="/logo.png" alt="Poeller Technologies Inc"></a>
+    <div class="title">
+      <h1>Orders Dashboard</h1>
+      <small>Poeller Technologies Inc</small>
+    </div>
     <div class="right">
       <span class="live" id="updated">Live</span>
       <button class="btn light" id="logoutBtn">Logout</button>
     </div>
   </div>
+</header>
 
+<div class="wrap">
   <form class="card bar" id="filterForm">
     <div><label>From date</label><input type="date" id="from"></div>
     <div><label>To date</label><input type="date" id="to"></div>
     <button class="btn" type="submit" id="filterBtn">Filter</button>
     <button class="btn light" type="button" id="resetBtn">Reset</button>
     <div class="sp"></div>
-    <button class="btn green" type="button" id="downloadBtn">Download (Excel / CSV)</button>
+    <button class="btn gray" type="button" id="downloadBtn">Download (Excel / CSV)</button>
   </form>
 
   <div id="dashErr" class="err hidden"></div>
@@ -83,6 +111,8 @@
       <tbody id="rows"><tr><td class="empty">Loading…</td></tr></tbody>
     </table>
   </div>
+</div>
+<footer>© Poeller Technologies Inc · 334 Pinecrest Drive, Macomb, IL 61455</footer>
 </div>
 
 <script>
