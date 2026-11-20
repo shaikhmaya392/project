@@ -150,7 +150,6 @@ async function load(silent) {
     render();
     $('dashErr').classList.toggle('hidden', !j.errors?.length);
     $('dashErr').textContent = j.errors?.length ? 'Kuch store se data nahi aaya: ' + j.errors.join(' | ') : '';
-    $('updated').textContent = 'Live · updated ' + new Date(j.updated).toLocaleTimeString();
   } catch (e) {
     $('dashErr').classList.remove('hidden');
     $('dashErr').textContent = e.message;
